@@ -1,5 +1,6 @@
 
 class Entity:
+    #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
     def __init__(self, position: tuple[int, int], rotation: float, seeThrough):
         self.position = position
         self.rotation = rotation
