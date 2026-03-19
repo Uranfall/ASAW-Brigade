@@ -5,7 +5,7 @@ class Entity:
         self.rotation = rotation
         self.collision_points = []
         self.drawing_objects = []
-        self.seeThrough = SeeThrough
+        self.seeThrough = seeThrough
 
 
 
