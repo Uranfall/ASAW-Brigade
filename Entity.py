@@ -1,4 +1,7 @@
 from __future__ import annotations  # So we can reference the class in itself.
+from os import PathLike
+
+import pygame
 
 
 class Entity:
@@ -7,12 +10,13 @@ class Entity:
     def __init__(self,
                  position: tuple[int, int],
                  rotation: float,
+                 image: PathLike = "./Sprites/PlaceHolders/place_holder.png",
                  see_through=False,
                  collision=True):
         self.position = position
         self.rotation = rotation
         self.collision_points = []
-        self.drawing_objects = []
+        self.image: PathLike = image
         self.see_through = see_through
         self.collision = collision
 
@@ -24,3 +28,9 @@ class Entity:
 
     def game_tick(self, game_state):  # Will only be implemented for moving objects like units and bullets.
         pass
+
+    def draw(self, screen: pygame.display):
+        img = pygame.image.load(self.image)
+        img = pygame.transform.rotate(img, self.rotation)
+        img = pygame.transform.scale(img, (img.get_width()/2, img.get_height()/2))
+        screen.blit(img, (self.position[0] - img.get_width()/2, self.position[1] - img.get_height()/2))
