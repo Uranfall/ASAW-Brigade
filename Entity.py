@@ -3,20 +3,23 @@ from os import PathLike
 
 import pygame
 
+from graphics_utility import Camera
+
 
 class Entity:
+    IMAGE: PathLike = "./Sprites/PlaceHolders/place_holder.png"
+    IMAGE_SCALE = 0.5
+
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
     #collision - if a unit can go through the object or not
     def __init__(self,
                  position: tuple[int, int],
                  rotation: float,
-                 image: PathLike = "./Sprites/PlaceHolders/place_holder.png",
                  see_through=False,
                  collision=True):
         self.position = position
         self.rotation = rotation
         self.collision_points = []
-        self.image: PathLike = image
         self.see_through = see_through
         self.collision = collision
 
@@ -29,8 +32,11 @@ class Entity:
     def game_tick(self, game_state):  # Will only be implemented for moving objects like units and bullets.
         pass
 
-    def draw(self, screen: pygame.display):
-        img = pygame.image.load(self.image)
+    def draw(self, screen: pygame.display, camera: Camera):
+        scale = camera(self.__class__.IMAGE_SCALE)
+        img = pygame.image.load(self.__class__.IMAGE)
+        dimensions = (img.get_width()*scale, img.get_height()*scale)
         img = pygame.transform.rotate(img, self.rotation)
-        img = pygame.transform.scale(img, (img.get_width()/2, img.get_height()/2))
-        screen.blit(img, (self.position[0] - img.get_width()/2, self.position[1] - img.get_height()/2))
+        img = pygame.transform.scale(img, dimensions)
+        print(camera(self.position[0] - dimensions[0]/2, self.position[1] + dimensions[1]/2))
+        screen.blit(img, camera(self.position[0] - dimensions[0]/2, self.position[1] + dimensions[1]/2))
