@@ -28,8 +28,8 @@ class Entity:
 
     def does_ray_intersect(self, ray_position, ray_rotation: float) -> bool:
         ...
-
-    def game_tick(self, game_state):  # Will only be implemented for moving objects like units and bullets.
+    
+    def game_tick(self, game_state):  # for any object which needs to be updates, checks the game tick and then checks if there were any updates
         pass
 
     def draw(self, screen: pygame.display, camera: Camera):
