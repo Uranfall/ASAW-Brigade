@@ -8,7 +8,7 @@ def invert_y(*args):
 
 
 class Camera:
-    max_zoom = 10
+    max_zoom = 10.0
     min_zoom = 0.05
 
     def __init__(self, position: list[float, float], zoom: float, screen: pygame.display):
@@ -69,5 +69,4 @@ class Camera:
         self.position[0] += self.tmp_offset[0]
         self.position[1] += self.tmp_offset[1]
         self.tmp_offset = [0, 0]
-
 
