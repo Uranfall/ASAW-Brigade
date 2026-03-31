@@ -20,7 +20,7 @@ def main():
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.MOUSEWHEEL:
-                main_camera.adjust_zoom(event.y)
+                main_camera.adjust_zoom(event.y, pygame.mouse.get_pos())
 
         if pygame.mouse.get_pressed()[1]:
             new_mouse = pygame.mouse.get_pos()

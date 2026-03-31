@@ -38,5 +38,5 @@ class Entity:
         dimensions = (img.get_width()*scale, img.get_height()*scale)
         img = pygame.transform.rotate(img, self.rotation)
         img = pygame.transform.scale(img, dimensions)
-        print(camera(self.position[0] - dimensions[0]/2, self.position[1] + dimensions[1]/2))
-        screen.blit(img, camera(self.position[0] - dimensions[0]/2, self.position[1] + dimensions[1]/2))
+        new_pos = camera(self.position[0], self.position[1])
+        screen.blit(img, (new_pos[0] - dimensions[0]/2, new_pos[1] - dimensions[1]/2))
