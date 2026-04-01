@@ -42,19 +42,19 @@ class Entity:
     def game_tick(self, game_state):  # for any object which needs to be updates, checks the game tick and then checks if there were any updates
         pass
 
-    def draw(self, screen: pygame.display, camera: Camera):
+    def draw(self, camera: Camera):
         scale = camera(self.__class__.IMAGE_SCALE)
         img = self.__class__.IMAGE
 
         dimensions = (img.get_width()*scale, img.get_height()*scale)
         new_pos = camera(self.position[0], self.position[1])
         if sum(dimensions) < self.__class__.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
-            self.DRAW_SHAPE(screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
+            self.DRAW_SHAPE(camera.screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
             return
 
         corner = (new_pos[0] - dimensions[0]/2, new_pos[1] - dimensions[1]/2)
-        if not (-dimensions[0] < corner[0] < screen.get_width()+dimensions[0] and
-                -dimensions[1] < corner[1] < screen.get_height()+dimensions[1]):
+        if not (-dimensions[0] < corner[0] < camera.screen.get_width()+dimensions[0] and
+                -dimensions[1] < corner[1] < camera.screen.get_height()+dimensions[1]):
             return
 
         if self.rotated_picture is None:
@@ -67,4 +67,4 @@ class Entity:
         else:
             img = pygame.transform.scale(img, dimensions)
             self.zoom_render = (camera.get_zoom(), img)
-        screen.blit(img, corner)
+        camera.screen.blit(img, corner)

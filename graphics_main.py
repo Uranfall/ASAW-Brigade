@@ -62,7 +62,7 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
                        int(ui_data.camera(40)),
                        int(ui_data.camera(5)))
     for entity in entities:
-        entity.draw(ui_data.screen, ui_data.camera)
+        entity.draw(ui_data.camera)
 
     text_surface = FONT.render(str(ui_data.clock.get_fps()), False, (0, 0, 0))
     ui_data.screen.blit(text_surface, (0, 0))
