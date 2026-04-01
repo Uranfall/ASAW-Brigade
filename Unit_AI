@@ -1,7 +1,7 @@
 import pygame 
+import Unit from Unit
 
-def Unit_AI:
-  
+class moveUnit:
+  def __init__(self, unit: Unit, target_pos: tuple[int,int]):
+    
 
-if __name__ == '__main__':
-    Unit_AI()
