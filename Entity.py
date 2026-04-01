@@ -62,9 +62,9 @@ class Entity:
         else:
             img = self.rotated_picture
         if self.zoom_render is not None\
-                and camera.zoom == self.zoom_render[0]:
+                and camera.get_zoom() == self.zoom_render[0]:
             img = self.zoom_render[1]
         else:
             img = pygame.transform.scale(img, dimensions)
-            self.zoom_render = (camera.zoom, img)
+            self.zoom_render = (camera.get_zoom(), img)
         screen.blit(img, corner)
