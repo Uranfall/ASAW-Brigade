@@ -9,7 +9,7 @@ def invert_y(*args):
 
 class Camera:
     max_zoom = 10.0
-    min_zoom = 0.05
+    min_zoom = 0.025
     default_screen_size = 500
 
     def __init__(self, position: list[float, float], zoom: float, screen: pygame.display):

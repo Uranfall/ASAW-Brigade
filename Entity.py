@@ -10,9 +10,9 @@ class Entity:
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
     IMAGE_SCALE = 0.5
     COLOR = (100, 100, 70)
-    SIMPLIFY_AT = 40  # Draw a simple shape instead of the image if smaller than.
+    SIMPLIFY_AT = 25  # Draw a simple shape instead of the image if smaller than.
     DRAW_SHAPE: pygame.draw = pygame.draw.circle
-    SHAPE_SIZE_ADJUST = 0.3
+    SHAPE_SIZE_ADJUST = 0.25
     STATIC_ROTATION = True
 
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
@@ -48,7 +48,7 @@ class Entity:
 
         dimensions = (img.get_width()*scale, img.get_height()*scale)
         new_pos = camera(self.position[0], self.position[1])
-        if sum(dimensions) < self.__class__.SIMPLIFY_AT:
+        if sum(dimensions) < self.__class__.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
             self.DRAW_SHAPE(screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
             return
 
