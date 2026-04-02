@@ -1,7 +1,17 @@
-import pygame 
-import Unit from Unit
+from Unit import Unit
+act_list = list["move","fire","interact"]
 
-class moveUnit:
-  def __init__(self, unit: Unit, target_pos: tuple[int,int]):
+#check what action is the unit doing right now, call the apropriate function
+
+def check_unit_current_action(unit: Unit):
+  current_act = unit.action_queue[0]
+
+  if current_act in action_list:
+    performing_act = getattr(unit, current_act)
+    performing_act()
+  else:
+    unit.idle()
+    
+  
     
 
