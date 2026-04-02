@@ -1,5 +1,5 @@
 from Entity import Entity
-from Unit_AI import
+import Unit_AI
 
 
 class Unit(Entity):
@@ -10,18 +10,19 @@ class Unit(Entity):
                  target_pos: tuple[int,int], 
                  rotation: float,
                  target_rotation: float,
-                 speed: int, 
-                 action_queue: list[] ):
+                 speed: int,
+                 selected: bool,
+                 action_queue: list ):
         super().__init__(position, rotation)
 
-    def move():
-    ...
-    def fire():
-    ...
-    def interact():
-    ...
-    def idle():
-    ...
+    def move(self):
+        ...
+    def fire(self):
+        ...
+    def interact(self):
+        ...
+    def idle(self):
+        ...
     
     
 
