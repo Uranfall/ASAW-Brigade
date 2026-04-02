@@ -1,8 +1,4 @@
 import math
-
-import pygame.draw
-from graphics_utility import Camera
-
 from Entity import Entity
 import Unit_AI
 
