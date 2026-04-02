@@ -8,7 +8,7 @@ act_list = list["move", "fire", "interact"]
 # check what action is the unit doing right now, call the apropriate function
 
 def check_unit_current_action(unit: Unit):
-    current_act = unit.action_queue[0]
+    current_act = unit.act_queue[0]
 
     if current_act in act_list:
         performing_act = getattr(unit, current_act)

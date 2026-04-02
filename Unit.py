@@ -13,9 +13,9 @@ class Unit(Entity):
                  target_rotation: float,
                  speed: int,
                  selected: bool,
-                 action_list: list):
+                 act_list: list):
         super().__init__(position, rotation, selected)
-        self.action_list = action_list
+        self.action_list = act_list
         self.target_pos = target_pos
         self.target_rotation = target_rotation
         self.speed = speed
