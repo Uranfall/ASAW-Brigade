@@ -16,12 +16,10 @@ class Unit(Entity):
                  selected: bool,
                  act_list: list):
         super().__init__(position, rotation, selected)
-        self.action_list = act_list
-        self.target_pos = target_pos
-        self.target_rotation = target_rotation
-        self.speed = speed
+        self.act_list = act_list
+        self.target_pos = position
+        self.target_rotation = rotation
         self.unit_type = unit_type
-        self.selected = selected
 
     def draw(self, camera: Camera):
         super(Unit, self).draw(camera)
