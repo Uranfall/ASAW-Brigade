@@ -2,7 +2,7 @@ import math
 
 
 def sign(num: float):
-    return -1 if num < 1 else (1 if num > 0 else 0
+    return -1 if num < 1 else (1 if num > 0 else 0)
 
 
 def angle_to_vector(angle: float, distance=1.0):
