@@ -1,0 +1,25 @@
+from Unit import Unit
+import pygame
+
+
+act_list = list["move", "fire", "interact"]
+
+
+# check what action is the unit doing right now, call the apropriate function
+
+def check_unit_current_action(unit: Unit):
+    current_act = unit.action_queue[0]
+
+    if current_act in act_list:
+        performing_act = getattr(unit, current_act)
+        performing_act()
+    else:
+        unit.idle()
+
+
+# all the functions for the bots to actually do stuff
+
+
+def calc_movement_and_rotation(unit: Unit):
+    ...
+
