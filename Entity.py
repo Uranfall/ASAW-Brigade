@@ -21,6 +21,7 @@ class Entity:
                  position: tuple[int, int],
                  rotation: float,
                  see_through=False,
+                 selected:bool=False,
                  collision=True):
         self.position = position
         self.rotation = rotation
