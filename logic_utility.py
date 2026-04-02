@@ -7,3 +7,6 @@ class NavNode:
     def __init__(self, position: tuple[int,int]):
         ...
 
+def collision_logic():
+    ...
+
