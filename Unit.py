@@ -11,6 +11,12 @@ class Unit(Entity):
                  speed: int, 
                  action_queue: list[] ):
         super().__init__(position, rotation)
+
+    
+    def move():
+    def attack():
+    def interact():
+    def idle():
     
 
 
