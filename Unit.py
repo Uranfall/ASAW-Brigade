@@ -1,6 +1,9 @@
 import math
+
+import pygame
+
 from Entity import Entity
-import Unit_AI
+from graphics_utility import Camera
 
 
 class Unit(Entity):
@@ -20,15 +23,18 @@ class Unit(Entity):
         self.target_pos = position
         self.target_rotation = rotation
         self.unit_type = unit_type
+        self.selected = False
 
     def draw(self, camera: Camera):
-        super(Unit, self).draw(camera)
         if self.selected:
             pygame.draw.circle(camera.screen,
-                               (255, 0, 0),
+                               (255, 150, 50),
                                camera(*self.position),
-                               int(camera(self.__class__.SHAPE_SIZE_ADJUST*max(self.__class__.IMAGE.get_size()))),
+                               math.ceil(camera(self.__class__.SHAPE_SIZE_ADJUST*max(self.__class__.IMAGE.get_size()))),
                                math.ceil(camera(5)))
+        super().draw(camera)
+        print(camera(*self.position), self.selected)
+
 
     def move(self):
         ...
