@@ -14,6 +14,11 @@ def check_unit_current_action(unit: Unit):
   else:
     unit.idle()
 
+
+
+#all the functions for the bots to actually do stuff
+
+
 def calc_movement_and_rotation(unit: Unit):
 ...
 
