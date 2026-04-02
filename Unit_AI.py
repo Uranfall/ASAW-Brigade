@@ -1,4 +1,4 @@
-from Unit import Unit
+import Unit
 import pygame
 
 

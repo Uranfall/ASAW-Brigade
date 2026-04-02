@@ -9,25 +9,24 @@ class Unit(Entity):
     STATIC_ROTATION = False
     
     def __init__(self,
-                 unit_type: str,
-                 position: tuple[int, int], 
-                 target_pos: tuple[int,int],
+                 #unit_type: str,
+                 position: tuple[int, int],
                  rotation: float,
-                 target_rotation: float,
-                 speed: int,
+                 #speed: int,
                  selected: bool,
-                 act_list: list):
+                 act_list:  list = ["idle"]):
         super().__init__(position, rotation, selected)
-        self.act_list = act_list
         self.target_pos = position
         self.target_rotation = rotation
-        self.unit_type = unit_type
+        self.selected = selected
+        #self.speed = 1
+        #self.unit_type = unit_type
 
     def draw(self, camera: Camera):
         super(Unit, self).draw(camera)
         if self.selected:
             pygame.draw.circle(camera.screen,
-                               (255, 0, 0),
+                               (32, 155, 255),
                                camera(*self.position),
                                int(camera(self.__class__.SHAPE_SIZE_ADJUST*max(self.__class__.IMAGE.get_size()))),
                                math.ceil(camera(5)))
