@@ -22,4 +22,6 @@ def check_unit_current_action(unit: Unit):
 
 def calc_movement_and_rotation(unit: Unit):
     ...
+def calc_vision(unit:Unit):
+    ...
 
