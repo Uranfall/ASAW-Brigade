@@ -13,7 +13,7 @@ class Unit(Entity):
                  rotation: float,
                  speed: int,
                  selected: bool,
-                 act_list: list = ["idle"]):
+                 act_list = list["idle"]):
         super().__init__(position, rotation, selected)
         self.target_pos = position
         self.target_rotation = rotation
@@ -39,7 +39,12 @@ class Unit(Entity):
             self.position = (self.position[0], y)
 
 
-
+    def idle(self):
+        ...
+    def attack(self):
+        ...
+    def interact(self):
+        ...
     def draw(self, camera: Camera):
         if self.selected:
             pygame.draw.circle(camera.screen,
