@@ -1,3 +1,4 @@
+import time
 from typing import Sequence
 
 import pygame
@@ -30,6 +31,12 @@ class UIData:
 
         self.selection_box_start = (0, 0)
         self.delta_time = 0
+        self.previous_frame = time.time()
+
+    def new_frame(self, fps=60.0):
+        self.clock.tick(fps)
+        self.delta_time = time.time()-self.previous_frame
+        self.previous_frame = time.time()
 
     def get_selection_box_in_screen(self):
         start, end = self.selection_box_start, self.mouse_pos
@@ -54,7 +61,8 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
     """
     Shows everything that needs to be shown, and outputs commands from user.
     """
-    ui_data.delta_time = 1/ui_data.clock.tick(60)
+
+    ui_data.new_frame(60)
     out = UITickOut()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

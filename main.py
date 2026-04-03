@@ -15,7 +15,7 @@ def main():
                        random.randint(0, 360), False) for _ in range(500)]
     run = True
     while run:
-        entities[0].rotation += 25*ui_data.delta_time
+        entities[0].rotation += 45*ui_data.delta_time
         ui_out = ui_tick(ui_data, entities)
         run = ui_out.run
 
