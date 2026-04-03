@@ -12,3 +12,8 @@ def angle_to_vector(angle: float, distance=1.0):
 def vector_to_angle(vector: list[float, float]):
     return math.degrees(math.atan2(*vector[::-1]))
 
+
+def is_within_box(pos: list[float, float] | tuple[float, float],
+                  box: list[float, float, float, float] | tuple[float, float, float, float]):
+    return box[0] <= pos[0] <= box[2] and box[1] <= pos[1] <= box[3]
+

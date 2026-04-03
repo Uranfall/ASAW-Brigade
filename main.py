@@ -2,10 +2,10 @@ import random
 
 import pygame
 
-from Debug_Entities import DebugRay
+from graphics.Debug_Entities import DebugRay
 from Unit import Unit
 from Entity import Entity
-from graphics_main import UIData, ui_tick
+from graphics.graphics_main import UIData, ui_tick
 
 
 def main():

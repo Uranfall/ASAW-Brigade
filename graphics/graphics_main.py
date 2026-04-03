@@ -5,7 +5,8 @@ import pygame
 
 from Entity import Entity
 from Unit import Unit
-from graphics_utility import Camera
+from graphics.graphics_utility import Camera
+from shared_utility import is_within_box
 
 pygame.init()
 pygame.font.init()
@@ -33,16 +34,31 @@ class UIData:
         self.delta_time = 0
         self.previous_frame = time.time()
 
-    def new_frame(self, fps=60.0):
+    def start_new_frame(self, fps=60.0):
         self.clock.tick(fps)
         self.delta_time = time.time()-self.previous_frame
         self.previous_frame = time.time()
 
+    def end_frame(self):
+        text_surface = FONT.render(str(self.clock.get_fps()), False, (0, 0, 0))
+        self.screen.blit(text_surface, (0, 0))
+        self.camera.render()
+
     def get_selection_box_in_screen(self):
+        """
+        Outputs the coordinates of the selection box on the screen.
+        The first two values are the position of the top-left corner,
+        the other two values are the position of the bottom-right corner.
+        """
         start, end = self.selection_box_start, self.mouse_pos
-        return min(start[0], end[0]), min(start[1], end[1]), *map(lambda vals: max(vals)-min(vals), zip(start, end))
+        return min(start[0], end[0]), min(start[1], end[1]), *map(lambda vals: abs(vals[0]-vals[1]), zip(start, end))
 
     def get_selection_box(self):
+        """
+        Outputs the coordinates of the selection box in the world.
+        The first two values are the position of the top-left corner,
+        the other two values are the position of the bottom-right corner.
+        """
         start, end = self.camera.screen_to_global(*self.selection_box_start),\
                      self.camera.screen_to_global(*self.mouse_pos)
         return min(start[0], end[0]), min(start[1], end[1]), max(start[0], end[0]), max(start[1], end[1])
@@ -57,47 +73,24 @@ class UITickOut:
         self.run = True
 
 
-def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
-    """
-    Shows everything that needs to be shown, and outputs commands from user.
-    """
-
-    ui_data.new_frame(60)
-    out = UITickOut()
+def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             out.run = False
-            return out
         if event.type == pygame.MOUSEWHEEL:
             ui_data.camera.adjust_zoom(event.y, pygame.mouse.get_pos())
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
 
+    # start: Logic responsible for mouse gripping the ground and moving the camera.
     if pygame.mouse.get_pressed()[1]:
         mouse_since_grabbing = pygame.mouse.get_pos()
         ui_data.camera.adjust_position([ui_data.mouse_pos[0] - mouse_since_grabbing[0],
                                         ui_data.mouse_pos[1] - mouse_since_grabbing[1]])
     else:
         ui_data.camera.apply()
-        ui_data.mouse_pos = pygame.mouse.get_pos()
-
-    pygame.draw.circle(ui_data.screen,
-                       (255, 0, 0),
-                       ui_data.camera(250, 0),
-                       int(ui_data.camera(40)),
-                       int(ui_data.camera(5)))
-
-    selection_box = ui_data.get_selection_box()
-    for entity in entities:
-        entity.draw(ui_data.camera)
-        if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
-            if selection_box[0] <= entity.position[0] <= selection_box[2] and \
-                    selection_box[1] <= entity.position[1] <= selection_box[3]:
-                entity.selected = True
-            elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]):
-                entity.selected = False
-    if pygame.mouse.get_pressed()[0]:
-        pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
+    # end: logic responsible for mouse gripping the ground and moving the camera.
+        ui_data.mouse_pos = pygame.mouse.get_pos()  # Note that ui_data.mouse_pos only changes when middle mouse is up.
 
     if pygame.key.get_pressed()[pygame.K_w]:
         ui_data.camera.position[1] += 500*ui_data.delta_time/ui_data.camera.zoom
@@ -107,11 +100,39 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
         ui_data.camera.position[0] += 500*ui_data.delta_time/ui_data.camera.zoom
     if pygame.key.get_pressed()[pygame.K_a]:
         ui_data.camera.position[0] -= 500*ui_data.delta_time/ui_data.camera.zoom
+    return out
 
-    text_surface = FONT.render(str(ui_data.clock.get_fps()), False, (0, 0, 0))
-    ui_data.screen.blit(text_surface, (0, 0))
 
-    pygame.display.update()
-    ui_data.screen.fill((10, 100, 10))
+def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
+
+    selection_box = ui_data.get_selection_box()
+
+    for entity in entities:
+        entity.draw(ui_data.camera)
+
+        if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
+            if is_within_box(entity.position, selection_box):
+                entity.selected = True
+            elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]):
+                entity.selected = False
+
+    if pygame.mouse.get_pressed()[0]:
+        pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
+
+    return out
+
+
+def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
+    """
+    Shows everything that needs to be shown, and outputs commands from user.
+    """
+    out = UITickOut()
+
+    ui_data.start_new_frame(fps=60)
+
+    handle_user_input(ui_data, entities, out)
+    go_over_entities(ui_data, entities, out)
+
+    ui_data.end_frame()
     return out
 

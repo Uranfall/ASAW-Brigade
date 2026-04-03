@@ -3,7 +3,7 @@ from os import PathLike
 
 import pygame
 
-from graphics_utility import Camera
+from graphics.graphics_utility import Camera
 
 
 class Entity:
@@ -40,21 +40,26 @@ class Entity:
     def draw(self, camera: Camera):
         scale = camera(self.__class__.IMAGE_SCALE)
         img = self.__class__.IMAGE
-
         dimensions = (img.get_width()*scale, img.get_height()*scale)
-
         new_pos = camera(self.position[0], self.position[1])
         corner = (new_pos[0] - dimensions[0]/2, new_pos[1] - dimensions[1]/2)
-        if not (-dimensions[0] < corner[0] < camera.screen.get_width()+dimensions[0] and
-                -dimensions[1] < corner[1] < camera.screen.get_height()+dimensions[1]):
-            return
 
+        # start: Check if entity should be visible on screen. If the entity is outside the screen, don't draw.
+        if not (-dimensions[0] < corner[0] < camera.screen.get_width()+dimensions[0] and
+                -dimensions[1] < corner[1] < camera.screen.get_height()+dimensions[1]):  # Can't use is_within_box here.
+            return
+        # end: Check if entity should be visible on screen.
+
+        # start: Check the size of the entity. If the entity is smaller than a certain threshold, draw a circle instead.
         if sum(dimensions) < self.__class__.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
             self.DRAW_SHAPE(camera.screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
             return
+        # end: Check the size of teh entity.
 
+        # start: Apply transformations to image.
         img = pygame.transform.rotozoom(img, self.rotation, scale)
         corner2 = (new_pos[0] - img.get_width() / 2, new_pos[1] - img.get_height() / 2)
         corner2 = img.get_rect(center=img.get_rect(topleft=corner2).center)
+        # end: Apply transformations to image.
 
-        camera.screen.blit(img, corner2)
+        camera.screen.blit(img, corner2)  # Put the image onto the screen.

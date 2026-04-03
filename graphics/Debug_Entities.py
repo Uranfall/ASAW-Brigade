@@ -2,7 +2,7 @@ import pygame.draw
 
 import shared_utility
 from Entity import Entity
-from graphics_utility import Camera
+from graphics.graphics_utility import Camera
 
 
 class DebugEntity(Entity):
@@ -16,7 +16,6 @@ class DebugRay(DebugEntity):
         self.width = width
 
     def draw(self, camera: Camera):
-
         direction = shared_utility.angle_to_vector(self.rotation, distance=self.distance)
         ray_end = (self.position[0]+direction[0], self.position[1]+direction[1])
         new_pos = camera(*self.position)

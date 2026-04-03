@@ -23,7 +23,7 @@ class Camera:
 
     def __call__(self, *args: float):
         """
-        Gets values and adjusts.
+        Converts global coordinates to screen coordinates. If input is shorter than 2, outputs the number*zoom.
         """
         zoom = self.get_zoom()
         if len(args) > 1:
@@ -49,6 +49,9 @@ class Camera:
     def adjust_zoom(self,
                     amount: float,
                     mouse_pos: tuple[float, float] | list[float, float] = None):
+        """
+        Zooms towards/away-from the mouse.
+        """
         if mouse_pos is None:
             global_mouse = self.position
         else:
@@ -75,4 +78,8 @@ class Camera:
         self.position[0] += self.tmp_offset[0]
         self.position[1] += self.tmp_offset[1]
         self.tmp_offset = [0, 0]
+
+    def render(self):
+        pygame.display.update()
+        self.screen.fill((10, 100, 10))
 
