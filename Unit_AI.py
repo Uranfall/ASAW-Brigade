@@ -1,4 +1,4 @@
-from Unit import Unit
+import Unit
 import pygame
 
 
@@ -18,10 +18,11 @@ def check_unit_current_action(unit: Unit):
 
 
 # all the functions for the bots to actually do stuff
-
-
+def calc_path(unit: Unit): #find shortest path from closest node to the closest node at the destination
+    ...
+def find_closest_node(unit: Unit): #finds a nav node closest to the Unit and sets it as target_pos
+    ...
 def calc_movement_and_rotation(unit: Unit):
     ...
 def calc_vision(unit:Unit):
     ...
-
