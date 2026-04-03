@@ -21,6 +21,15 @@ class Unit(Entity):
         self.speed = 1
         #self.unit_type = unit_type
 
+    def get_position(self):
+        return list(self.position)
+    def get_target_pos(self):
+        return list(self.target_pos)
+    def set_position(self, updated_pos):
+        self.position = updated_pos
+    def set_target_pos(self, updated_pos):
+        self.target_pos = updated_pos
+
     def calc_movement_and_rotation(self):
         # finding the function from unit pos to target pos, simple algebra
         change_rate = 1

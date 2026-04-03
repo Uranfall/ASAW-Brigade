@@ -103,7 +103,7 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
     return out
 
 
-def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
+def go_over_entities(ui_data: UIData, entities: Sequence[Entity], units_Selected: list[Unit], out: UITickOut):
 
     selection_box = ui_data.get_selection_box()
 
@@ -113,16 +113,20 @@ def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut
         if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
             if is_within_box(entity.position, selection_box):
                 entity.selected = True
+                if type(entity) == Unit and entity not in units_Selected:
+                    units_Selected.append(entity)
             elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]):
                 entity.selected = False
+                if type(entity) == Unit and entity in units_Selected:
+                    units_Selected.remove(entity)
 
     if pygame.mouse.get_pressed()[0]:
         pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
 
-    return out
+    return units_Selected
 
 
-def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
+def ui_tick(ui_data: UIData, entities: Sequence[Entity], units_Selected: list[Entity]) -> UITickOut:
     """
     Shows everything that needs to be shown, and outputs commands from user.
     """
@@ -131,8 +135,8 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
     ui_data.start_new_frame(fps=60)
 
     handle_user_input(ui_data, entities, out)
-    go_over_entities(ui_data, entities, out)
+    units_Selected = go_over_entities(ui_data, entities, units_Selected, out)
 
     ui_data.end_frame()
-    return out
+    return out, list(units_Selected)
 

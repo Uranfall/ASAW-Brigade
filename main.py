@@ -13,10 +13,13 @@ def main():
     entities = [Unit((0, 0), 0, 1, False)]\
                + [Unit((random.randint(-20000, 20000), random.randint(-10000, 10000)),
                        random.randint(0, 360), 1, False) for _ in range(500)]
+    units_Selected = []
     run = True
     while run:
         entities[0].rotation += 45*ui_data.delta_time
-        ui_out = ui_tick(ui_data, entities)
+        ui_out, units_Selected = ui_tick(ui_data, entities, units_Selected)
+        for unit in units_Selected:
+            unit.set_position( (unit.get_position()[0] + 4, unit.get_position()[1]) )
         run = ui_out.run
 
 
