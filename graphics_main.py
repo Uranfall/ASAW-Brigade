@@ -81,7 +81,6 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
     for entity in entities:
         entity.draw(ui_data.camera)
         if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
-            print(entity.position, selection_box)
             if selection_box[0] <= entity.position[0] <= selection_box[2] and \
                     selection_box[1] <= entity.position[1] <= selection_box[3]:
 
