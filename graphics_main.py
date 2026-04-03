@@ -100,13 +100,13 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
         pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
 
     if pygame.key.get_pressed()[pygame.K_w]:
-        ui_data.camera.position[1] += 100*ui_data.delta_time/ui_data.camera.zoom
+        ui_data.camera.position[1] += 500*ui_data.delta_time/ui_data.camera.zoom
     if pygame.key.get_pressed()[pygame.K_s]:
-        ui_data.camera.position[1] -= 100*ui_data.delta_time/ui_data.camera.zoom
+        ui_data.camera.position[1] -= 500*ui_data.delta_time/ui_data.camera.zoom
     if pygame.key.get_pressed()[pygame.K_d]:
-        ui_data.camera.position[0] += 100*ui_data.delta_time/ui_data.camera.zoom
+        ui_data.camera.position[0] += 500*ui_data.delta_time/ui_data.camera.zoom
     if pygame.key.get_pressed()[pygame.K_a]:
-        ui_data.camera.position[0] -= 100*ui_data.delta_time/ui_data.camera.zoom
+        ui_data.camera.position[0] -= 500*ui_data.delta_time/ui_data.camera.zoom
 
     text_surface = FONT.render(str(ui_data.clock.get_fps()), False, (0, 0, 0))
     ui_data.screen.blit(text_surface, (0, 0))

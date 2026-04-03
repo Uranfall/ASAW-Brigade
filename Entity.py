@@ -53,9 +53,8 @@ class Entity:
             self.DRAW_SHAPE(camera.screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
             return
 
-        img = pygame.transform.scale(img, dimensions)
-        img = pygame.transform.rotate(img, self.rotation)
+        img = pygame.transform.rotozoom(img, self.rotation, scale)
         corner2 = (new_pos[0] - img.get_width() / 2, new_pos[1] - img.get_height() / 2)
-        corner2 = tuple(map(round, img.get_rect(center=img.get_rect(topleft=corner2).center)))
+        corner2 = img.get_rect(center=img.get_rect(topleft=corner2).center)
 
         camera.screen.blit(img, corner2)
