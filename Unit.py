@@ -6,7 +6,6 @@ from graphics_utility import Camera
 
 
 class Unit(Entity):
-    STATIC_ROTATION = False
 
     def __init__(self,
                  # unit_type: str,
