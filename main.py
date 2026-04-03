@@ -3,16 +3,16 @@ import random
 import pygame
 
 from graphics.Debug_Entities import DebugRay
-from Unit import Unit
+from UnitClass import Unit
 from Entity import Entity
 from graphics.graphics_main import UIData, ui_tick
 
 
 def main():
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
-    entities = [Unit((0, 0), 0, False)]\
+    entities = [Unit((0, 0), 0, 1, False)]\
                + [Unit((random.randint(-20000, 20000), random.randint(-10000, 10000)),
-                       random.randint(0, 360), False) for _ in range(500)]
+                       random.randint(0, 360), 1, False) for _ in range(500)]
     run = True
     while run:
         entities[0].rotation += 45*ui_data.delta_time

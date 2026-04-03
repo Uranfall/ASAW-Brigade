@@ -1,7 +1,7 @@
+from __future__ import annotations
 import math
 import pygame
 from Entity import Entity
-import Unit_AI
 from graphics.graphics_utility import Camera
 
 
@@ -11,15 +11,34 @@ class Unit(Entity):
                  # unit_type: str,
                  position: tuple[int, int],
                  rotation: float,
-                 # speed: int,
+                 speed: int,
                  selected: bool,
                  act_list: list = ["idle"]):
         super().__init__(position, rotation, selected)
         self.target_pos = position
         self.target_rotation = rotation
         self.selected = selected
-        #self.speed = 1
+        self.speed = 1
         #self.unit_type = unit_type
+
+    def calc_movement_and_rotation(self):
+        # finding the function from unit pos to target pos, simple algebra
+        change_rate = 1
+        if self.target_pos[0] > self.position[0]:
+            change_rate = change_rate * -1
+
+        if self.target_pos[0] != self.position[0]:
+            m = self.position[1] - self.target_pos[1] / self.position[0] - self.target_pos[0]
+            b = self.position[1] - self.position[0] * m
+            x = self.position[0] + change_rate * self.speed
+            y = m * x + b
+            self.position = (x, y)
+
+        else:
+            y = self.position[1] + change_rate * self.speed
+            self.position = (self.position[0], y)
+
+
 
     def draw(self, camera: Camera):
         if self.selected:
@@ -30,17 +49,6 @@ class Unit(Entity):
                                math.ceil(camera(5)))
         super(Unit, self).draw(camera)
 
-    def move(self):
-        ...
-
-    def fire(self):
-        ...
-
-    def interact(self):
-        ...
-
-    def idle(self):
-        ...
 
 
 

@@ -1,4 +1,4 @@
-import Unit
+from UnitClass import Unit
 import pygame
 
 
@@ -22,7 +22,8 @@ def calc_path(unit: Unit): #find shortest path from closest node to the closest 
     ...
 def find_closest_node(unit: Unit): #finds a nav node closest to the Unit and sets it as target_pos
     ...
-def calc_movement_and_rotation(unit: Unit):
-    ...
+
+
+
 def calc_vision(unit:Unit):
     ...

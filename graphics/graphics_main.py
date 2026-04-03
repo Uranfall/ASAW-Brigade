@@ -4,7 +4,7 @@ from typing import Sequence
 import pygame
 
 from Entity import Entity
-from Unit import Unit
+from UnitClass import Unit
 from graphics.graphics_utility import Camera
 from shared_utility import is_within_box
 
