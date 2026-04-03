@@ -5,6 +5,7 @@ import pygame
 
 from Entity import Entity
 from UnitClass import Unit
+from graphics.UI_Entities import UIEntity, ExpandingCircle
 from graphics.graphics_utility import Camera
 from shared_utility import is_within_box
 
@@ -33,6 +34,10 @@ class UIData:
         self.selection_box_start = (0, 0)
         self.delta_time = 0
         self.previous_frame = time.time()
+
+        self.ui_entities: list[UIEntity] = []
+
+        self.selected_units: list[Unit] = []
 
     def start_new_frame(self, fps=60.0):
         self.clock.tick(fps)
@@ -63,6 +68,12 @@ class UIData:
                      self.camera.screen_to_global(*self.mouse_pos)
         return min(start[0], end[0]), min(start[1], end[1]), max(start[0], end[0]), max(start[1], end[1])
 
+    def update_ui_entities(self):
+        for entity in self.ui_entities[:]:
+            if entity.get_progress() > 1:
+                self.ui_entities.remove(entity)
+            entity.draw(self.camera)
+
 
 class UITickOut:
     """
@@ -81,6 +92,16 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
             ui_data.camera.adjust_zoom(event.y, pygame.mouse.get_pos())
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
+
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
+            if ui_data.selected_units:
+                ui_data.ui_entities += [
+                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), -0.1),
+                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
+                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
+                ]
+            for unit in ui_data.selected_units:
+                unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
 
     # start: Logic responsible for mouse gripping the ground and moving the camera.
     if pygame.mouse.get_pressed()[1]:
@@ -103,7 +124,7 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
     return out
 
 
-def go_over_entities(ui_data: UIData, entities: Sequence[Entity], units_Selected: list[Unit], out: UITickOut):
+def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
 
     selection_box = ui_data.get_selection_box()
 
@@ -113,20 +134,22 @@ def go_over_entities(ui_data: UIData, entities: Sequence[Entity], units_Selected
         if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
             if is_within_box(entity.position, selection_box):
                 entity.selected = True
-                if type(entity) == Unit and entity not in units_Selected:
-                    units_Selected.append(entity)
-            elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]):
+                ui_data.selected_units.append(entity)
+            elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or
+                      pygame.key.get_pressed()[pygame.K_RSHIFT]):
                 entity.selected = False
-                if type(entity) == Unit and entity in units_Selected:
-                    units_Selected.remove(entity)
+                if entity in ui_data.selected_units:
+                    ui_data.selected_units.remove(entity)
+
+    ui_data.update_ui_entities()
 
     if pygame.mouse.get_pressed()[0]:
         pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
 
-    return units_Selected
+    return out
 
 
-def ui_tick(ui_data: UIData, entities: Sequence[Entity], units_Selected: list[Entity]) -> UITickOut:
+def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
     """
     Shows everything that needs to be shown, and outputs commands from user.
     """
@@ -135,8 +158,8 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity], units_Selected: list[En
     ui_data.start_new_frame(fps=60)
 
     handle_user_input(ui_data, entities, out)
-    units_Selected = go_over_entities(ui_data, entities, units_Selected, out)
+    go_over_entities(ui_data, entities, out)
 
     ui_data.end_frame()
-    return out, list(units_Selected)
+    return out
 
