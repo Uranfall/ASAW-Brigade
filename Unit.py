@@ -23,13 +23,13 @@ class Unit(Entity):
         #self.unit_type = unit_type
 
     def draw(self, camera: Camera):
-        super(Unit, self).draw(camera)
         if self.selected:
             pygame.draw.circle(camera.screen,
                                (32, 155, 255),
                                camera(*self.position),
                                int(camera(self.__class__.SHAPE_SIZE_ADJUST * max(self.__class__.IMAGE.get_size()))),
                                math.ceil(camera(5)))
+        super(Unit, self).draw(camera)
 
     def move(self):
         ...
