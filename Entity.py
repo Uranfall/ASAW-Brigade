@@ -42,6 +42,7 @@ class Entity:
         img = self.__class__.IMAGE
 
         dimensions = (img.get_width()*scale, img.get_height()*scale)
+
         new_pos = camera(self.position[0], self.position[1])
         corner = (new_pos[0] - dimensions[0]/2, new_pos[1] - dimensions[1]/2)
         if not (-dimensions[0] < corner[0] < camera.screen.get_width()+dimensions[0] and
@@ -55,6 +56,6 @@ class Entity:
         img = pygame.transform.scale(img, dimensions)
         img = pygame.transform.rotate(img, self.rotation)
         corner2 = (new_pos[0] - img.get_width() / 2, new_pos[1] - img.get_height() / 2)
-        corner2 = img.get_rect(center=img.get_rect(topleft=corner2).center)
+        corner2 = tuple(map(round, img.get_rect(center=img.get_rect(topleft=corner2).center)))
 
         camera.screen.blit(img, corner2)

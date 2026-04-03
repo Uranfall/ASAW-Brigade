@@ -27,8 +27,8 @@ class Camera:
         """
         zoom = self.get_zoom()
         if len(args) > 1:
-            args = args[0]+self.position[0]+self.tmp_offset[0], \
-                   args[1]+self.position[1]+self.tmp_offset[1],\
+            args = args[0]-self.position[0]-self.tmp_offset[0], \
+                   args[1]-self.position[1]-self.tmp_offset[1],\
                    *args[2:]
         size = self.screen.get_size()[0]/2, -self.screen.get_size()[1]/2
         return invert_y(*(args[i]*zoom + (0 if i > 1 else size[i]) for i in range(len(args)))) \
@@ -41,8 +41,8 @@ class Camera:
         args = tuple((args[i] - (0 if i > 1 else size[i]))/zoom for i in range(len(args))) \
             if len(args) != 1 else args[0]/zoom
         if len(args) > 1:
-            args = args[0] - self.position[0] - self.tmp_offset[0], \
-                   args[1] - self.position[1] - self.tmp_offset[1], \
+            args = args[0] + self.position[0] + self.tmp_offset[0], \
+                   args[1] + self.position[1] + self.tmp_offset[1], \
                    *args[2:]
         return args
 
@@ -62,11 +62,11 @@ class Camera:
         else:
             global_mouse2 = self.screen_to_global(mouse_pos[0],
                                                   mouse_pos[1])
-        offset = global_mouse2[0]-global_mouse[0], global_mouse2[1]-global_mouse[1]
+        offset = global_mouse[0]-global_mouse2[0], global_mouse[1]-global_mouse2[1]
         self.position[0] += offset[0]
         self.position[1] += offset[1]
 
-    def adjust_position(self, amount: list[float, float], multiply=-1):
+    def adjust_position(self, amount: list[float, float], multiply=1):
         amount = invert_y(*amount)
         self.tmp_offset[0] = amount[0]*multiply/self.get_zoom()
         self.tmp_offset[1] = amount[1]*multiply/self.get_zoom()
