@@ -14,6 +14,10 @@ pygame.font.init()
 FONT = pygame.font.SysFont('Arial', 30)
 
 
+def get_selected_entities(entities: Sequence[Entity]):
+    return filter(lambda entity: isinstance(entity, Unit) and entity.selected, entities)
+
+
 class UIData:
     def __init__(self,
                  screen: pygame.display,
@@ -36,8 +40,6 @@ class UIData:
         self.previous_frame = time.time()
 
         self.ui_entities: list[UIEntity] = []
-
-        self.selected_units: list[Unit] = []
 
     def start_new_frame(self, fps=60.0):
         self.clock.tick(fps)
@@ -94,13 +96,14 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
             ui_data.selection_box_start = pygame.mouse.get_pos()
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-            if ui_data.selected_units:
+            selected = tuple(get_selected_entities(entities))
+            if tuple(get_selected_entities(entities)):
                 ui_data.ui_entities += [
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), -0.1),
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
                 ]
-            for unit in ui_data.selected_units:
+            for unit in selected:
                 unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
 
     # start: Logic responsible for mouse gripping the ground and moving the camera.
@@ -134,12 +137,9 @@ def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut
         if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
             if is_within_box(entity.position, selection_box):
                 entity.selected = True
-                ui_data.selected_units.append(entity)
             elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or
                       pygame.key.get_pressed()[pygame.K_RSHIFT]):
                 entity.selected = False
-                if entity in ui_data.selected_units:
-                    ui_data.selected_units.remove(entity)
 
     ui_data.update_ui_entities()
 
