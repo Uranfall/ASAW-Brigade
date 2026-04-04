@@ -1,5 +1,5 @@
 import time
-from typing import Sequence
+from typing import Sequence, Iterable
 
 import pygame
 
@@ -15,7 +15,7 @@ pygame.font.init()
 FONT = pygame.font.SysFont('Arial', 30)
 
 
-def get_selected_entities(entities: Sequence[Entity]):
+def get_selected_units(entities: Sequence[Entity]) -> Iterable:
     return filter(lambda entity: isinstance(entity, Unit) and entity.selected, entities)
 
 
@@ -97,8 +97,8 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
             ui_data.selection_box_start = pygame.mouse.get_pos()
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-            selected = tuple(get_selected_entities(entities))
-            if tuple(get_selected_entities(entities)):
+            selected = tuple(get_selected_units(entities))
+            if tuple(get_selected_units(entities)):
                 ui_data.ui_entities += [
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), -0.1),
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
@@ -162,7 +162,7 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
 
     handle_user_input(ui_data, entities, out)
     go_over_entities(ui_data, entities, out)
-    for unit in ui_data.selected_units:
+    for unit in get_selected_units(entities):
         unit.calc_movement_and_rotation()
     ui_data.end_frame()
     return out
