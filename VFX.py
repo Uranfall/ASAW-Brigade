@@ -46,7 +46,7 @@ class Particle(VFX):
 
         direction = shared_utility.angle_to_vector(self.rotation, self.speed * dt)
         self.position = [self.position[0] + direction[0], self.position[1] + direction[1]]
-        self.speed /= 1 + self.__class__.DRAG
+        self.speed /= 1 + self.__class__.DRAG*dt
 
 
 class ParticleHaving(VFX):
