@@ -12,7 +12,7 @@ from shared_utility import ValueCurve
 
 
 class VFX(UIEntity):
-    LIFETIME = 5
+    LIFETIME = 20
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0):
         super().__init__(position, rotation, time_offset)
@@ -32,10 +32,13 @@ class Particle(VFX):
         self.last_update = time.time()
 
     def draw(self, camera: Camera):
-        pygame.draw.circle(camera.screen,
-                           tuple(map(int, self.__class__.COLOR_CURVE(self.get_progress()))),
-                           camera(*self.position),
-                           math.ceil(camera(self.__class__.SCALE_CURVE(self.get_progress()))))
+        size = math.ceil(camera(self.__class__.SCALE_CURVE(self.get_progress())))
+        box = -size, -size, camera.screen.get_width()+size, 500*camera.screen.get_height()+size
+        if shared_utility.is_within_box(camera(*self.position), box):
+            pygame.draw.circle(camera.screen,
+                               tuple(map(int, self.__class__.COLOR_CURVE(self.get_progress()))),
+                               camera(*self.position),
+                               size)
 
     def move(self):
         dt = time.time() - self.last_update
