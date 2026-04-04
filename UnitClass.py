@@ -32,20 +32,38 @@ class Unit(Entity):
 
     def calc_movement_and_rotation(self):
         # finding the function from unit pos to target pos, simple algebra
-        change_rate = 1
-        if self.target_pos[0] > self.position[0]:
-            change_rate = change_rate * -1
+        change_rateX = 1
+        change_rateY = 1
+        currentX = self.position[0]
+        currentY = self.position[1]
+        targetX = self.target_pos[0]
+        targetY = self.target_pos[1]
 
-        if self.target_pos[0] != self.position[0]:
-            m = self.position[1] - self.target_pos[1] / self.position[0] - self.target_pos[0]
-            b = self.position[1] - self.position[0] * m
-            x = self.position[0] + change_rate * self.speed
-            y = m * x + b
+
+        #differnt x and y
+        if targetX != currentX and targetY != currentY:
+            if targetX < currentX:
+                change_rateX = change_rateX * -1
+            if targetY < currentY:
+                change_rateY = change_rateY * -1
+            x = currentX + change_rateX * self.speed
+            y = currentY + change_rateY * self.speed
             self.position = (x, y)
-
+        #different y
+        elif targetX == currentX and targetY != currentY:
+            if targetY < currentY:
+                change_rateY = change_rateY * -1
+            y = currentY + change_rateY * self.speed
+            self.position = (currentX, y)
+        # different x
+        elif targetX != currentX and targetY == currentY:
+            if targetX > currentX:
+                change_rateX = change_rateX * -1
+            x = currentY + change_rateX * self.speed
+            self.position = (x, currentY)
+        #cancel
         else:
-            y = self.position[1] + change_rate * self.speed
-            self.position = (self.position[0], y)
+            return
 
 
     def idle(self):
