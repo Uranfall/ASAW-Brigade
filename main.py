@@ -2,6 +2,7 @@ import random
 
 import pygame
 
+from VFX import Explosion
 from graphics.Debug_Entities import DebugRay
 from UnitClass import Unit
 from Entity import Entity
@@ -19,7 +20,7 @@ def main():
     run = True
     while run:
         entities[0].rotation += 45*ui_data.delta_time
-        ui_out= ui_tick(ui_data, entities)
+        ui_out = ui_tick(ui_data, entities)
         run = ui_out.run
 
 

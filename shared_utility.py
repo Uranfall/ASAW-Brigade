@@ -1,4 +1,5 @@
 import math
+from typing import Sequence, SupportsFloat
 
 
 def sign(num: float):
@@ -16,4 +17,31 @@ def vector_to_angle(vector: list[float, float]):
 def is_within_box(pos: list[float, float] | tuple[float, float],
                   box: list[float, float, float, float] | tuple[float, float, float, float]):
     return box[0] <= pos[0] <= box[2] and box[1] <= pos[1] <= box[3]
+
+
+def lerp(start: float | Sequence[float], end: float | Sequence[float], amount: float):
+    if isinstance(start, SupportsFloat):
+        return float(start) - (float(start) - float(end))*amount
+    return tuple(map(lambda vals: lerp(vals[0], vals[1], amount), zip(start, end)))
+
+
+class ValueCurve:
+    def __init__(self, *points: tuple[float | Sequence[float], float], extrapolate=False):
+        self.points = points
+        self.extrapolate = extrapolate
+
+    def __call__(self, t: float):
+        current_point = 0
+        while current_point < len(self.points) - 2 and self.points[current_point][-1] < t:
+            current_point += 1
+
+        if not self.extrapolate and self.points[current_point + 1][-1] <= t:
+            return self.points[current_point + 1][0]
+
+        max_amount = self.points[current_point][-1] - self.points[current_point + 1][-1]
+        current_amount = self.points[current_point][-1] - t
+        if max_amount == 0:
+            return self.points[current_point][0]
+        return lerp(self.points[current_point][0], self.points[current_point + 1][0], current_amount / max_amount)
+
 
