@@ -8,7 +8,7 @@ from graphics.graphics_utility import Camera
 
 
 class UIEntity(Entity):
-    TIME_TO_LIVE = 5
+    LIFETIME = 5
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)
@@ -18,12 +18,12 @@ class UIEntity(Entity):
         return time.time()-self.creation_time
 
     def get_progress(self):
-        return self.get_age()/self.__class__.TIME_TO_LIVE
+        return self.get_age()/self.__class__.LIFETIME
 
 
 class ExpandingCircle(UIEntity):
     COLOR = (50, 50, 255)
-    TIME_TO_LIVE = 0.25
+    LIFETIME = 0.25
     FINAL_SIZE = 20
 
     def __init__(self, position: tuple[int, int], time_offset=0.0):
