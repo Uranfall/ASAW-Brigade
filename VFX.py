@@ -78,11 +78,16 @@ class Explosion(ParticleHaving):
     BURNING_TIME = 0.15
     PARTICLE_TYPE = ExplosionParticle
 
+    SHOOT_OUT_CHANGE = 0.5
+    SHOOT_OUT_FACTOR = 1.5
+
     def __init__(self, position: tuple[int, int], rotation: float):
         super().__init__(position, rotation)
         self.particles = [self.__class__.PARTICLE_TYPE(self.position,
                                                        random.uniform(self.__class__.MIN_SPEED,
-                                                                      self.__class__.MAX_SPEED))
+                                                                      self.__class__.MAX_SPEED)
+                                                       * (1 if random.random()<self.__class__.SHOOT_OUT_CHANGE
+                                                          else self.__class__.SHOOT_OUT_FACTOR))
                           for _ in range(self.__class__.START_AMOUNT)]
 
     def get_burning_progress(self):
