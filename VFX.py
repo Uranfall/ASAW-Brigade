@@ -21,7 +21,7 @@ class VFX(UIEntity):
 class Particle(VFX):
     COLOR_CURVE = ValueCurve(((0, 0, 0), 0), ((1, 1, 1), 1))
     SCALE_CURVE = ValueCurve((0, 0), (1, 1))
-    DRAG = 0.1
+    DRAG = 5
     LIFETIME = 1
 
     def __init__(self, position: tuple[int, int], speed: float, rotation: float = None):
