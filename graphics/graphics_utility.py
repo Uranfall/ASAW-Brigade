@@ -19,7 +19,7 @@ class Camera:
         self.screen = screen
 
     def get_zoom(self):
-        return self.zoom*min(self.screen.get_size())/self.__class__.default_screen_size
+        return self.zoom*min(self.screen.get_size())/self.default_screen_size
 
     def __call__(self, *args: float):
         """
@@ -58,7 +58,7 @@ class Camera:
             global_mouse = self.screen_to_global(mouse_pos[0],
                                                  mouse_pos[1])
 
-        self.zoom = max(self.__class__.min_zoom, min(self.__class__.max_zoom, self.zoom+self.zoom*0.1*amount))
+        self.zoom = max(self.min_zoom, min(self.max_zoom, self.zoom+self.zoom*0.1*amount))
 
         if mouse_pos is None:
             global_mouse2 = self.position

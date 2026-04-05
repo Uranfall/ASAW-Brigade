@@ -18,7 +18,7 @@ class GroundChunk(Entity):
 
     def __init__(self, position: tuple[int, int]):
         super().__init__(position, 0)
-        self.tiles = [[random.choice(self.__class__.AVAILABLE_TILES) for _ in range(2)] for _ in range(2)]
+        self.tiles = [[random.choice(self.AVAILABLE_TILES) for _ in range(2)] for _ in range(2)]
 
     def draw(self, camera: Camera):
         scale = [camera(300)]*2
