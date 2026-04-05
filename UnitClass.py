@@ -2,8 +2,7 @@ from __future__ import annotations
 import math
 import pygame
 from Entity import Entity
-from shared_utility import *
-
+from graphics.graphics_utility import Camera
 
 
 class Unit(Entity):
@@ -14,11 +13,9 @@ class Unit(Entity):
                  rotation: float,
                  speed: int,
                  selected: bool,
-                 change_rate = [0,0],
                  act_list = list["idle"]):
         super().__init__(position, rotation, selected)
         self.target_pos = position
-        self.change_rate = change_rate
         self.target_rotation = rotation
         self.selected = selected
         self.speed = 1
@@ -48,9 +45,6 @@ class Unit(Entity):
             self.change_rate = [stepx, stepy]
         else:
             self.change_rate = [0,0]
-
-
-
 
 
     def idle(self):

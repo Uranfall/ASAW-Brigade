@@ -1,6 +1,5 @@
 import math
 from typing import Sequence, SupportsFloat
-import pygame
 
 
 def sign(num: float):
@@ -26,6 +25,7 @@ def get_collision_points(pos:tuple[float, float] | tuple[int, int],
     y1 = (pos[1] - dimensions[0] / 2)
     y2 = (pos[1] + dimensions[0] / 2)
     return [x1, y1, x2, y2]
+
 
 def lerp(start: float | Sequence[float], end: float | Sequence[float], factor: float):
     if isinstance(start, SupportsFloat):
