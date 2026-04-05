@@ -2,7 +2,8 @@ from __future__ import annotations
 import math
 import pygame
 from Entity import Entity
-from graphics.graphics_utility import Camera
+from shared_utility import *
+
 
 
 class Unit(Entity):
@@ -13,9 +14,11 @@ class Unit(Entity):
                  rotation: float,
                  speed: int,
                  selected: bool,
+                 change_rate = [0,0],
                  act_list = list["idle"]):
         super().__init__(position, rotation, selected)
         self.target_pos = position
+        self.change_rate = change_rate
         self.target_rotation = rotation
         self.selected = selected
         self.speed = 1
@@ -31,39 +34,23 @@ class Unit(Entity):
         self.target_pos = updated_pos
 
     def calc_movement_and_rotation(self):
-        # finding the function from unit pos to target pos, simple algebra
-        change_rateX = 1
-        change_rateY = 1
+        # y distance and x distance divided by fps
+        #for self: get this shit running at the same velocity
+
         currentX = self.position[0]
         currentY = self.position[1]
         targetX = self.target_pos[0]
         targetY = self.target_pos[1]
-
-
-        #differnt x and y
-        if targetX != currentX and targetY != currentY:
-            if targetX < currentX:
-                change_rateX = change_rateX * -1
-            if targetY < currentY:
-                change_rateY = change_rateY * -1
-            x = currentX + change_rateX * self.speed
-            y = currentY + change_rateY * self.speed
-            self.position = (x, y)
-        #different y
-        elif targetX == currentX and targetY != currentY:
-            if targetY < currentY:
-                change_rateY = change_rateY * -1
-            y = currentY + change_rateY * self.speed
-            self.position = (currentX, y)
-        # different x
-        elif targetX != currentX and targetY == currentY:
-            if targetX > currentX:
-                change_rateX = change_rateX * -1
-            x = currentY + change_rateX * self.speed
-            self.position = (x, currentY)
-        #cancel
+        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (5,5))):
+            dx, dy = (targetX - currentX, targetY - currentY)
+            stepx, stepy = (dx / 60., dy / 60.)
+            self.position = (currentX+self.change_rate[0], currentY+self.change_rate[1])
+            self.change_rate = [stepx, stepy]
         else:
-            return
+            self.change_rate = [0,0]
+
+
+
 
 
     def idle(self):
