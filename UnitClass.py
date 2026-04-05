@@ -77,7 +77,7 @@ class Unit(Entity):
             pygame.draw.circle(camera.screen,
                                (32, 155, 255),
                                camera(*self.position),
-                               int(camera(self.__class__.SHAPE_SIZE_ADJUST * max(self.__class__.IMAGE.get_size()))),
+                               int(camera(max(self.IMAGE.get_size())*self.IMAGE_SCALE)/2),
                                math.ceil(camera(5)))
         super(Unit, self).draw(camera)
 

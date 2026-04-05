@@ -18,7 +18,7 @@ class UIEntity(Entity):
         return time.time()-self.creation_time
 
     def get_progress(self):
-        return self.get_age()/self.__class__.LIFETIME
+        return self.get_age()/self.LIFETIME
 
 
 class ExpandingCircle(UIEntity):
@@ -31,7 +31,7 @@ class ExpandingCircle(UIEntity):
 
     def draw(self, camera: Camera):
         pygame.draw.circle(camera.screen,
-                           self.__class__.COLOR,
+                           self.COLOR,
                            camera(*self.position),
-                           math.ceil(camera(self.__class__.FINAL_SIZE*self.get_progress())),
+                           math.ceil(camera(self.FINAL_SIZE*self.get_progress())),
                            math.ceil(camera(2)))

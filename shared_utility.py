@@ -19,10 +19,10 @@ def is_within_box(pos: list[float, float] | tuple[float, float],
     return box[0] <= pos[0] <= box[2] and box[1] <= pos[1] <= box[3]
 
 
-def lerp(start: float | Sequence[float], end: float | Sequence[float], amount: float):
+def lerp(start: float | Sequence[float], end: float | Sequence[float], factor: float):
     if isinstance(start, SupportsFloat):
-        return float(start) - (float(start) - float(end))*amount
-    return tuple(map(lambda vals: lerp(vals[0], vals[1], amount), zip(start, end)))
+        return float(start) - (float(start) - float(end))*factor
+    return tuple(map(lambda vals: lerp(vals[0], vals[1], factor), zip(start, end)))
 
 
 class ValueCurve:
@@ -32,7 +32,7 @@ class ValueCurve:
 
     def __call__(self, t: float):
         current_point = 0
-        while current_point < len(self.points) - 2 and self.points[current_point][-1] < t:
+        while current_point < len(self.points) - 2 and self.points[current_point+1][-1] < t:
             current_point += 1
 
         if not self.extrapolate and self.points[current_point + 1][-1] <= t:

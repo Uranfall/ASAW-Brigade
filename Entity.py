@@ -8,7 +8,7 @@ from graphics.graphics_utility import Camera
 
 class Entity:
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
-    IMAGE_SCALE = 0.5
+    IMAGE_SCALE = 0.3
     COLOR = (100, 100, 70)
     SIMPLIFY_AT = 25  # Draw a simple shape instead of the image if smaller than.
     DRAW_SHAPE: pygame.draw = pygame.draw.circle
@@ -38,8 +38,8 @@ class Entity:
         pass
 
     def draw(self, camera: Camera):
-        scale = camera(self.__class__.IMAGE_SCALE)
-        img = self.__class__.IMAGE
+        scale = camera(self.IMAGE_SCALE)
+        img = self.IMAGE
         dimensions = (img.get_width()*scale, img.get_height()*scale)
         new_pos = camera(self.position[0], self.position[1])
         corner = (new_pos[0] - dimensions[0]/2, new_pos[1] - dimensions[1]/2)
@@ -51,8 +51,8 @@ class Entity:
         # end: Check if entity should be visible on screen.
 
         # start: Check the size of the entity. If the entity is smaller than a certain threshold, draw a circle instead.
-        if sum(dimensions) < self.__class__.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
-            self.DRAW_SHAPE(camera.screen, self.__class__.COLOR, new_pos, max(dimensions)*self.__class__.SHAPE_SIZE_ADJUST)
+        if sum(dimensions) < self.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
+            self.DRAW_SHAPE(camera.screen, self.COLOR, new_pos, max(dimensions)*self.SHAPE_SIZE_ADJUST)
             return
         # end: Check the size of teh entity.
 
