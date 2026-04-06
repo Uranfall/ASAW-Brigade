@@ -3,7 +3,7 @@ import random
 import pygame
 
 from VFX import Explosion
-from graphics.Debug_Entities import DebugRay
+from graphics.Debug_Entities import DebugRay, DebugLine
 from UnitClass import Unit
 from Entity import Entity
 from graphics.Ground import Ground
