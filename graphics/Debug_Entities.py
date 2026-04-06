@@ -1,3 +1,5 @@
+import math
+
 import pygame.draw
 
 import shared_utility
@@ -22,4 +24,19 @@ class DebugRay(DebugEntity):
         new_end = camera(*ray_end)
         pygame.draw.line(camera.screen, (50, 255, 50), new_pos, new_end, int(camera(self.width)))
 
+
+class DebugLine(DebugEntity):
+    def __init__(self, pos1: tuple[float, float], pos2: tuple[float, float], width=10.0, color=(0, 0, 255)):
+        super().__init__((0, 0), 0)
+        self.pos1 = pos1
+        self.pos2 = pos2
+        self.color = color
+        self.width = width
+
+    def draw(self, camera: Camera):
+        pygame.draw.line(camera.screen,
+                         self.color,
+                         camera(*self.pos1),
+                         camera(*self.pos2),
+                         math.ceil(camera(self.width)))
 

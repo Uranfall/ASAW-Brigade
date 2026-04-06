@@ -67,6 +67,10 @@ class ParticleHaving(VFX):
                 self.particles.remove(particle)
 
 
+class ExplosionCrater(Entity):
+    IMAGE = pygame.image.load('./Sprites/Objects/crater.png')
+
+
 class ExplosionParticle(Particle):
     COLOR_CURVE = ValueCurve(((255, 220, 100), 0), ((255, 200, 50), 0.2), ((255, 100, 0), 1))
     SCALE_CURVE = ValueCurve((50, 0), (10, 0.8), (0, 1))
