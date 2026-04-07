@@ -96,6 +96,7 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
 
+        #this handles moving units
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             selected = tuple(get_selected_units(entities))
             if tuple(get_selected_units(entities)):
@@ -163,7 +164,8 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
     handle_user_input(ui_data, entities, out)
     go_over_entities(ui_data, entities, out)
     for unit in get_selected_units(entities):
-        unit.calc_movement_and_rotation()
+        unit.calc_rotation()
+        unit.calc_movement()
     ui_data.end_frame()
     return out
 
