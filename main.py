@@ -2,6 +2,7 @@ import random
 
 import pygame
 
+from Entities.Units import Mouse
 from VFX import Explosion
 from graphics.Debug_Entities import DebugRay, DebugLine
 from UnitClass import Unit
@@ -13,8 +14,8 @@ from graphics.graphics_main import UIData, ui_tick
 def main():
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
-    entities = [Unit((0, 0), 0, 1, False)]\
-               + [Unit((random.randint(-20000, 20000), random.randint(-10000, 10000)),
+    entities: list[Entity] = [Mouse((0, 0), 0, 1, False)]\
+               + [Mouse((random.randint(-20000, 20000), random.randint(-10000, 10000)),
                        random.randint(0, 360), 1, False) for _ in range(500)]
 
     run = True

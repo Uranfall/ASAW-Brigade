@@ -8,11 +8,13 @@ from graphics.graphics_utility import Camera
 
 class Entity:
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
+    IMAGE_ROTATION = 0.0
     IMAGE_SCALE = 0.3
     COLOR = (100, 100, 70)
     SIMPLIFY_AT = 25  # Draw a simple shape instead of the image if smaller than.
     DRAW_SHAPE: pygame.draw = pygame.draw.circle
     SHAPE_SIZE_ADJUST = 0.25
+
 
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
     #collision - if a unit can go through the object or not
@@ -57,7 +59,7 @@ class Entity:
         # end: Check the size of teh entity.
 
         # start: Apply transformations to image.
-        img = pygame.transform.rotozoom(img, self.rotation, scale)
+        img = pygame.transform.rotozoom(img, self.rotation+self.IMAGE_ROTATION, scale)
         corner2 = (new_pos[0] - img.get_width() / 2, new_pos[1] - img.get_height() / 2)
         corner2 = img.get_rect(center=img.get_rect(topleft=corner2).center)
         # end: Apply transformations to image.
