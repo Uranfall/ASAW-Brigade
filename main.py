@@ -21,7 +21,7 @@ def main():
                        random.randint(0, 360), 1, False) for _ in range(500)]
     units = []
     for entity in entities:
-        if type(entity) is Unit:
+        if isinstance(entity, Unit):
             units.append(entity)
 
     run = True
