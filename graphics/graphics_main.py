@@ -163,9 +163,6 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
 
     handle_user_input(ui_data, entities, out)
     go_over_entities(ui_data, entities, out)
-    for unit in get_selected_units(entities):
-        unit.calc_rotation()
-        unit.calc_movement()
     ui_data.end_frame()
     return out
 

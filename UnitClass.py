@@ -52,7 +52,8 @@ class Unit(Entity):
         currentY = self.position[1]
         targetX = self.target_pos[0]
         targetY = self.target_pos[1]
-        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (5,5))):
+        #create a box around the destination, if Unit enters the box it stops updating
+        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100,100))):
             dx, dy = (targetX - currentX, targetY - currentY)
             stepx, stepy = (dx / 60., dy / 60.)
             self.position = (currentX+self.change_rate[0], currentY+self.change_rate[1])
