@@ -1,6 +1,8 @@
 from __future__ import annotations
 import math
 import pygame
+
+import GlobalVariables
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
@@ -66,12 +68,25 @@ class Unit(Entity):
     def interact(self):
         ...
     def draw(self, camera: Camera):
+
         if self.selected:
             pygame.draw.circle(camera.screen,
                                (32, 155, 255),
                                camera(*self.position),
                                int(camera(max(self.IMAGE.get_size())*self.IMAGE_SCALE)/2),
                                math.ceil(camera(5)))
+
+        scale = camera(self.IMAGE_SCALE)
+        img = self.IMAGE
+        dimensions = (img.get_width()*scale, img.get_height()*scale)
+        new_pos = camera(self.position[0], self.position[1])
+        if sum(dimensions) < self.SIMPLIFY_AT * min(camera.screen.get_size()) / camera.default_screen_size:
+            self.DRAW_SHAPE(camera.screen,
+                            GlobalVariables.TEAM_COLORS[self.team],
+                            new_pos,
+                            max(dimensions) * self.SHAPE_SIZE_ADJUST)
+            return
+
         super(Unit, self).draw(camera)
 
 

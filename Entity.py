@@ -52,11 +52,13 @@ class Entity:
             return
         # end: Check if entity should be visible on screen.
 
-        # start: Check the size of the entity. If the entity is smaller than a certain threshold, draw a circle instead.
-        if sum(dimensions) < self.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
-            self.DRAW_SHAPE(camera.screen, self.COLOR, new_pos, max(dimensions)*self.SHAPE_SIZE_ADJUST)
-            return
-        # end: Check the size of teh entity.
+        if self.COLOR is not None:
+            # start: Check the size of the entity.
+            # If the entity is smaller than a certain threshold, draw a circle instead.
+            if sum(dimensions) < self.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
+                self.DRAW_SHAPE(camera.screen, self.COLOR, new_pos, max(dimensions)*self.SHAPE_SIZE_ADJUST)
+                return
+            # end: Check the size of teh entity.
 
         # start: Apply transformations to image.
         img = pygame.transform.rotozoom(img, self.rotation+self.IMAGE_ROTATION, scale)
