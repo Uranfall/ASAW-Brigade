@@ -10,14 +10,16 @@ def angle_to_vector(angle: float, distance=1.0):
     """
     Input the angle in degrees.
     """
-    return math.cos(math.radians(angle))*distance, math.sin(math.radians(angle))*distance
+    # Added 90 degrees to the angle so it works the same as in pygame.
+    return math.cos(math.radians(angle+90))*distance, math.sin(math.radians(angle+90))*distance
 
 
 def vector_to_angle(vector: list[float, float] | tuple[float, float]):
     """
     Outputs the angle in degrees.
     """
-    return math.degrees(math.atan2(*vector[::-1]))
+    # Removed 90 degrees from the angle so it works the same as in pygame.
+    return math.degrees(math.atan2(*vector[::-1]))-90
 
 
 def rotate_vector(vector: list[float, float] | tuple[float, float], angle: float):
