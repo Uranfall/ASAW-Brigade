@@ -40,12 +40,20 @@ def is_within_box(pos: list[float, float] | tuple[float, float],
                   box: list[float, float, float, float] | tuple[float, float, float, float]):
     return box[0] <= pos[0] <= box[2] and box[1] <= pos[1] <= box[3]
 
+#note to self, fix this shit pls, this is absolute garbage code bro like wtf are you doing lock in
+def boxes_overlap(box1: list[float, float, float, float] | tuple[float, float, float, float],
+                  box2: list[float, float, float, float] | tuple[float, float, float, float]):
+    return (is_within_box([box1[0],box1[1]] , box2) or is_within_box([box1[0],box1[3]] , box2) or
+            is_within_box([box1[2],box1[1]] , box2) or is_within_box([box1[2],box1[3]] , box2))
+
 def get_collision_points(pos:tuple[float, float] | tuple[int, int],
                          dimensions: tuple[float, float] | tuple[int, int]):
+    #width
     x1 = (pos[0] - dimensions[0] / 2)
     x2 = (pos[0] + dimensions[0] / 2)
-    y1 = (pos[1] - dimensions[0] / 2)
-    y2 = (pos[1] + dimensions[0] / 2)
+    #height
+    y1 = (pos[1] - dimensions[1] / 2)
+    y2 = (pos[1] + dimensions[1] / 2)
     return [x1, y1, x2, y2]
 
 

@@ -28,14 +28,12 @@ class Unit(Entity):
         self.speed = 1
         #self.unit_type = unit_type
 
-    def get_position(self):
-        return list(self.position)
-    def get_target_pos(self):
-        return list(self.target_pos)
-    def set_position(self, updated_pos):
-        self.position = updated_pos
-    def set_target_pos(self, updated_pos):
-        self.target_pos = updated_pos
+    def get_collision_points(self):
+        scale = self.IMAGE_SCALE
+        img = self.IMAGE
+        dimensions = (img.get_width() * scale, img.get_height() * scale)
+        return get_collision_points(self.position, dimensions)
+
 
     def calc_rotation(self):
         #for self: when we add unit targeting, check if enemy is in range
@@ -68,6 +66,7 @@ class Unit(Entity):
         ...
     def interact(self):
         ...
+
     def draw(self, camera: Camera):
 
         if self.selected:

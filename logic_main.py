@@ -1,9 +1,11 @@
 import logic_utility
 import pygame
 import time
+from graphics.graphics_utility import Camera
 from UnitClass import Unit
 from Entity import Entity
 from graphics.graphics_main import UIData
+from shared_utility import boxes_overlap
 
 
 #this file is for updating unit actions every tick, independent from any inputs, inputs are handled by logic utility
@@ -28,6 +30,11 @@ def Entity_Handler(entities: list[Entity], units: list[Unit]):
         unit.calc_rotation()
         unit.calc_movement()
 
+def collision_logic(entities: list[Entity],units: list[Unit]):
+    for unit in units:
+        for entity in entities:
+            if entity.collision==True or entity.__init_subclass__().team != unit.team and boxes_overlap(unit.collision_points, entity.collision_points):
+                ...
 
 def logic_tick(entities: list[Entity], units: list[Unit]):
     Entity_Handler(entities, units)

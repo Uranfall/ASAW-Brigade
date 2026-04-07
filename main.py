@@ -20,9 +20,13 @@ def main():
                + [Mouse((random.randint(-20000, 20000), random.randint(-10000, 10000)),
                        random.randint(0, 360), 1, False) for _ in range(500)]
     units = []
+    map_objects = []
+    #seperating units and none units for performance
     for entity in entities:
         if isinstance(entity, Unit):
             units.append(entity)
+        else:
+            map_objects.append(entity)
 
     run = True
     while run:

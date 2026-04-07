@@ -2,7 +2,7 @@ from __future__ import annotations  # So we can reference the class in itself.
 from os import PathLike
 
 import pygame
-
+from shared_utility import *
 from graphics.graphics_utility import Camera
 
 
@@ -26,18 +26,15 @@ class Entity:
                  collision=True):
         self.position = position
         self.rotation = rotation
-        self.collision_points = []
+        self.collision_points = self.set_collision_points()
         self.see_through = see_through
         self.collision = collision
 
-    def is_colliding_with(self, entity: Entity) -> bool:
-        ...
-
-    def does_ray_intersect(self, ray_position, ray_rotation: float) -> bool:
-        ...
-    
-    def game_tick(self, game_state):  # for any object which needs to be updates, checks the game tick and then checks if there were any updates
-        pass
+    def set_collision_points(self):
+        scale = self.IMAGE_SCALE
+        img = self.IMAGE
+        dimensions = (img.get_width() * scale, img.get_height() * scale)
+        return get_collision_points(self.position, dimensions)
 
     def draw(self, camera: Camera):
         scale = camera(self.IMAGE_SCALE)
