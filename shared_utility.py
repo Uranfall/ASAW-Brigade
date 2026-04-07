@@ -7,11 +7,31 @@ def sign(num: float):
 
 
 def angle_to_vector(angle: float, distance=1.0):
-    return math.sin(math.radians(angle))*distance, math.cos(math.radians(angle))*distance
+    """
+    Input the angle in degrees.
+    """
+    return math.cos(math.radians(angle))*distance, math.sin(math.radians(angle))*distance
 
 
-def vector_to_angle(vector: list[float, float]):
+def vector_to_angle(vector: list[float, float] | tuple[float, float]):
+    """
+    Outputs the angle in degrees.
+    """
     return math.degrees(math.atan2(*vector[::-1]))
+
+
+def rotate_vector(vector: list[float, float] | tuple[float, float], angle: float):
+    """
+    Input the angle in degrees.
+    """
+    return angle_to_vector(vector_to_angle(vector)+angle, (vector[0]**2+vector[1]**2)**0.5)
+
+
+def set_distance(vector: list[float, float] | tuple[float, float],
+                 pivot: list[float, float] | tuple[float, float],
+                 distance: float):
+    new_direction = angle_to_vector(vector_to_angle([vector[0]-pivot[0], vector[1]-pivot[1]]), distance)
+    return new_direction[0]+pivot[0], new_direction[1]+pivot[1]
 
 
 def is_within_box(pos: list[float, float] | tuple[float, float],
