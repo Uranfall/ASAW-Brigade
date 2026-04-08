@@ -32,18 +32,24 @@ class Text(UIEntity):
                  text: str,
                  color: tuple[int, int, int] | ValueCurve,
                  size=30.0,
-                 time_offset=0.0):
+                 time_offset=0.0,
+                 font_name='OCR A Extended',
+                 bold=False,
+                 italic=False):
         super().__init__(position, rotation, time_offset)
         self.text = text
         self.color = color
         self.size = size
+        self.font_name = font_name
+        self.bold = bold
+        self.italic = italic
 
     def draw(self, camera: Camera):
         if isinstance(self.color, ValueCurve):
             color = self.color(self.get_progress())
         else:
             color = self.color
-        font = pygame.font.SysFont('Arial', int(camera(self.size)))
+        font = pygame.font.SysFont(self.font_name, int(camera(self.size)), self.bold, self.italic)
         text_surface = font.render(self.text, True, color)
         rect = text_surface.get_rect(center=camera(*self.position))
         camera.screen.blit(text_surface, rect)

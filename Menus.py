@@ -33,13 +33,16 @@ def main_menu():
     camera = Camera([0, 1000], 1, pygame.display.set_mode((500, 500), pygame.RESIZABLE))
 
     menu_items: list[Entity] = [Logo((0, 1000), 0),
-                                Text((0, 200),
+                                Text((0, 190),
                                      0,
                                      'ASAW',
                                      # (255, 100, 50),
                                      TEXT_RED_CURVE,
                                      100,
-                                     time_offset=2),
+                                     time_offset=2,
+                                     font_name='Stencil',
+                                     # font_name='OCR A Extended',
+                                     bold=False, italic=False),
                                 play_button,
                                 exit_button]
 
