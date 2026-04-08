@@ -40,3 +40,18 @@ class DebugLine(DebugEntity):
                          camera(*self.pos2),
                          math.ceil(camera(self.width)))
 
+
+class DebugBox(DebugEntity):
+    def __init__(self, pos1: tuple[float, float], size: tuple[float, float], width=10.0, color=(0, 0, 255)):
+        super().__init__((0, 0), 0)
+        self.pos1 = pos1
+        self.size = size
+        self.color = color
+        self.width = width
+
+    def draw(self, camera: Camera):
+        pygame.draw.rect(camera.screen,
+                         self.color,
+                         camera(*self.pos1, *self.size),
+                         math.ceil(camera(self.width)))
+

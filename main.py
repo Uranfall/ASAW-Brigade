@@ -4,7 +4,7 @@ import pygame
 
 from Entities.Units import Mouse
 from VFX import Explosion
-from graphics.Debug_Entities import DebugRay, DebugLine
+from graphics.Debug_Entities import DebugRay, DebugLine, DebugBox
 from UnitClass import Unit
 from Entity import Entity
 from graphics.Ground import Ground
