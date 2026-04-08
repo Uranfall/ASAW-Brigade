@@ -18,6 +18,15 @@ class Logo(Entity):
 
 
 def main_menu():
+
+    def play_button_action():
+        nonlocal last_update
+        main()
+        last_update = time.time()
+
+    play_button = Button((0, 0), (150, 50), Text((0, 0), 0, 'Play', TEXT_RED_CURVE), play_button_action)
+    exit_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)
+
     start_time = time.time()
 
     run = True
@@ -31,8 +40,8 @@ def main_menu():
                                      TEXT_RED_CURVE,
                                      100,
                                      time_offset=2),
-                                Button((0, 0), (150, 50), Text((0, 0), 0, 'Play', TEXT_RED_CURVE), main),
-                                Button((0, -60), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)]
+                                play_button,
+                                exit_button]
 
     screen_color_curve = ValueCurve(((240, 240, 240), 0.3),
                                     ((100, 100, 100), 0.7),
