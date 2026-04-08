@@ -48,7 +48,7 @@ def main_menu():
                                     ((70, 70, 70), 0.8),
                                     ((50, 70, 50), 1))
 
-    camera_position_curve = ValueCurve(([0, 1000], 0), ([0, 925], 0.1), ([0, 50], 0.9), ([0, 0], 1))
+    camera_position_curve = ValueCurve(([0, 1000], 0), ([0, 1020], 0.15), ([0, -10], 0.85), ([0, 0], 1))
 
     animation_start = 1
     animation_duration = 1

@@ -78,7 +78,8 @@ class Button(UIEntity):
         return True
 
     def draw(self, camera: Camera):
-        if self.update_hover(camera):
+        is_hover = self.update_hover(camera)
+        if is_hover:
             color = self.color((time.time() - self.hovering_time) / self.hover_animation_duration)
         else:
             color = self.color(1 - (time.time() - self.not_hover_time) / self.hover_animation_duration)
@@ -87,13 +88,15 @@ class Button(UIEntity):
                          (*camera(self.position[0]-self.scale[0]/2, self.position[1]+self.scale[1]/2),
                           self.scale[0]*camera.get_zoom(), self.scale[1]*camera.get_zoom()),
                          border_radius=round(camera(10)),)
+
         pygame.draw.rect(camera.screen,
                          self.border_color,
                          (*camera(self.position[0]-self.scale[0]/2, self.position[1]+self.scale[1]/2),
                           self.scale[0]*camera.get_zoom(), self.scale[1]*camera.get_zoom()),
-                         math.ceil(camera(5)),
+                         math.ceil(camera(3 if is_hover and pygame.mouse.get_pressed()[0] else 7)),
                          border_radius=round(camera(10)),)
         self.text.creation_time = self.creation_time
+
         self.text.draw(camera)
 
 
