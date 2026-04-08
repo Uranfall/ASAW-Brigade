@@ -4,7 +4,10 @@ import time
 import pygame.draw
 
 from Entity import Entity
+from GlobalVariables import FONT
 from graphics.graphics_utility import Camera
+from shared_utility import ValueCurve, get_collision_points, is_within_box, lerp
+from typing import Callable
 
 
 class UIEntity(Entity):
@@ -19,6 +22,79 @@ class UIEntity(Entity):
 
     def get_progress(self):
         return self.get_age()/self.LIFETIME
+
+
+class Text(UIEntity):
+    LIFETIME = 1
+
+    def __init__(self, position: tuple[int, int],
+                 rotation: float,
+                 text: str,
+                 color: tuple[int, int, int] | ValueCurve,
+                 size=30.0,
+                 time_offset=0.0):
+        super().__init__(position, rotation, time_offset)
+        self.text = text
+        self.color = color
+        self.size = size
+
+    def draw(self, camera: Camera):
+        if isinstance(self.color, ValueCurve):
+            color = self.color(self.get_progress())
+        else:
+            color = self.color
+        font = pygame.font.SysFont('Arial', int(camera(self.size)))
+        text_surface = font.render(self.text, True, color)
+        rect = text_surface.get_rect(center=camera(*self.position))
+        camera.screen.blit(text_surface, rect)
+
+
+class Button(UIEntity):
+    def __init__(self,
+                 position: tuple[int, int],
+                 scale: tuple[float, float],
+                 text: Text,
+                 action: Callable = None,
+                 border_color=(50, 50, 60),
+                 color=ValueCurve(((30, 30, 30), 0), ((100, 40, 45), 1))):
+        super().__init__(position, 0)
+        self.scale = scale
+        self.text = text
+        self.text.position = (self.text.position[0]+self.position[0], self.text.position[1]+self.position[1])
+        self.color = color
+        self.border_color = border_color
+        self.hovering_time = time.time()
+        self.not_hover_time = time.time()
+        self.hover_animation_duration = 0.5
+        self.action = action
+
+    def update_hover(self, camera: Camera):
+        global_mouse = camera.screen_to_global(*pygame.mouse.get_pos())
+        box = get_collision_points(self.position, self.scale)
+        if not is_within_box(global_mouse, box):
+            self.hovering_time = time.time()
+            return False
+        self.not_hover_time = time.time()
+        return True
+
+    def draw(self, camera: Camera):
+        if self.update_hover(camera):
+            color = self.color((time.time() - self.hovering_time) / self.hover_animation_duration)
+        else:
+            color = self.color(1 - (time.time() - self.not_hover_time) / self.hover_animation_duration)
+        pygame.draw.rect(camera.screen,
+                         color,
+                         (*camera(self.position[0]-self.scale[0]/2, self.position[1]+self.scale[1]/2),
+                          self.scale[0]*camera.get_zoom(), self.scale[1]*camera.get_zoom()),
+                         border_radius=round(camera(10)),)
+        pygame.draw.rect(camera.screen,
+                         self.border_color,
+                         (*camera(self.position[0]-self.scale[0]/2, self.position[1]+self.scale[1]/2),
+                          self.scale[0]*camera.get_zoom(), self.scale[1]*camera.get_zoom()),
+                         math.ceil(camera(5)),
+                         border_radius=round(camera(10)),)
+        self.text.creation_time = self.creation_time
+        self.text.draw(camera)
 
 
 class ExpandingCircle(UIEntity):

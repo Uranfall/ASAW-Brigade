@@ -73,8 +73,10 @@ class ValueCurve:
         while current_point < len(self.points) - 2 and self.points[current_point+1][-1] < t:
             current_point += 1
 
-        if not self.extrapolate and self.points[current_point + 1][-1] <= t:
+        if not self.extrapolate and (self.points[current_point + 1][-1] <= t):
             return self.points[current_point + 1][0]
+        if not self.extrapolate and self.points[current_point][-1] > t:
+            return self.points[0][0]
 
         max_amount = self.points[current_point][-1] - self.points[current_point + 1][-1]
         current_amount = self.points[current_point][-1] - t

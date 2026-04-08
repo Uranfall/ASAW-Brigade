@@ -4,15 +4,12 @@ from typing import Sequence, Iterable
 import pygame
 
 from Entity import Entity
+from GlobalVariables import FONT
 from UnitClass import Unit
 from VFX import Explosion
 from graphics.UI_Entities import UIEntity, ExpandingCircle
 from graphics.graphics_utility import Camera
 from shared_utility import is_within_box
-
-pygame.init()
-pygame.font.init()
-FONT = pygame.font.SysFont('Arial', 30)
 
 
 def get_selected_units(entities: Sequence[Entity]) -> Iterable:
