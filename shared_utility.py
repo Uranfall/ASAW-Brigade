@@ -49,11 +49,11 @@ def boxes_overlap(box1: list[float, float, float, float] | tuple[float, float, f
 def get_collision_points(pos:tuple[float, float] | tuple[int, int],
                          dimensions: tuple[float, float] | tuple[int, int]):
     #width
-    x1 = (pos[0] - dimensions[0] / 2)
-    x2 = (pos[0] + dimensions[0] / 2)
+    x1 = (pos[0] - dimensions[0] / 2)# left
+    x2 = (pos[0] + dimensions[0] / 2)# right
     #height
-    y1 = (pos[1] - dimensions[1] / 2)
-    y2 = (pos[1] + dimensions[1] / 2)
+    y1 = (pos[1] - dimensions[1] / 2)# bottom
+    y2 = (pos[1] + dimensions[1] / 2)# top
     return [x1, y1, x2, y2]
 
 

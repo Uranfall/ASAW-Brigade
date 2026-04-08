@@ -28,6 +28,11 @@ class Unit(Entity):
         self.speed = 1
         #self.unit_type = unit_type
 
+    def set_position(self, position: tuple[int, int]):
+        self.position = position
+    def get_position(self):
+        return list(self.position)
+
     def get_collision_points(self):
         scale = self.IMAGE_SCALE
         img = self.IMAGE
@@ -53,8 +58,10 @@ class Unit(Entity):
         #create a box around the destination, if Unit enters the box it stops updating
         if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100,100))):
             dx, dy = (targetX - currentX, targetY - currentY)
+            #cap the speed of the Unit
+
             stepx, stepy = (dx / 60., dy / 60.)
-            self.position = (currentX+self.change_rate[0], currentY+self.change_rate[1])
+            self.position = (currentX+stepx, currentY+stepy)
             self.change_rate = [stepx, stepy]
         else:
             self.change_rate = [0,0]

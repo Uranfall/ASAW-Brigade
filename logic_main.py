@@ -29,12 +29,32 @@ def Entity_Handler(entities: list[Entity], units: list[Unit]):
     for unit in units:
         unit.calc_rotation()
         unit.calc_movement()
+    collision_logic(entities, units)
+
+
+
+all_act_types = []
+def check_unit_current_action(unit: Unit):
+    current_act = unit.act_list[0]
+
+    if current_act in all_act_types:
+        performing_act = getattr(unit, current_act)
+        performing_act()
+    else:
+        unit.idle()
 
 def collision_logic(entities: list[Entity],units: list[Unit]):
     for unit in units:
         for entity in entities:
-            if entity.collision==True or entity.__init_subclass__().team != unit.team and boxes_overlap(unit.collision_points, entity.collision_points):
-                ...
+            if unit!=entity and entity.collision==True and boxes_overlap(unit.get_collision_points(), entity.collision_points):
+                coords = unit.get_position()
+                box_unit = unit.get_collision_points()
+                box_entity = entity.collision_points
+                print(box_unit, box_entity)
+                #find which one is needed to be offset and where
+
+
+                unit.set_position([coords[0], coords[1]])
 
 def logic_tick(entities: list[Entity], units: list[Unit]):
     Entity_Handler(entities, units)

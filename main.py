@@ -16,9 +16,10 @@ def main():
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
     player_team = 0
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
-    entities: list[Entity] = [Mouse((0, 0), 0, 1, False)]\
+    entities: list[Entity] = [Mouse((0, 0), 0, 1, False),
+                              Entity((10, 10), 0, 1, False), Entity((0, 0), 0, 1, False)]\
                + [Mouse((random.randint(-20000, 20000), random.randint(-10000, 10000)),
-                       random.randint(0, 360), 1, False) for _ in range(500)]
+                       random.randint(0, 360), 1, False) for _ in range(100)]
     units = []
     map_objects = []
     #seperating units and none units for performance

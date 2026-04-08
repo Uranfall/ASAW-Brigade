@@ -13,19 +13,8 @@ class NavNode:
         self.position = position
         self.connections = connections
 
-all_act_types = []
-def check_unit_current_action(unit: Unit):
-    current_act = unit.act_list[0]
-
-    if current_act in all_act_types:
-        performing_act = getattr(unit, current_act)
-        performing_act()
-    else:
-        unit.idle()
-
 
 def path_clear(positionA: tuple(int,int), positionB: tuple(int,int), entities: list[Entity],camera: Camera):
-    if is_within_box(positionB, get_collision_points(positionA, [500,500])):
         for entity in entities:
             scale = camera(entity.IMAGE_SCALE)
             img = entity.IMAGE
@@ -48,4 +37,5 @@ def path_clear(positionA: tuple(int,int), positionB: tuple(int,int), entities: l
                 if positionA[0] <= collision_points[0] <= positionB[0] or positionA[0] >= collision_points[0] >= positionB[0]:
                     return False
                 return True
-    return False
+        return True
+
