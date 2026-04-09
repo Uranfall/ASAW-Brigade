@@ -7,12 +7,23 @@ from shared_utility import *
 
 
 
-class NavNode:
-    def __init__(self, position: tuple[int,int],
-                 connections: list[NavNode]):
-        self.position = position
-        self.connections = connections
+class Node:
+    def __init__(self, x, y, walkable=True):
+        self.x = x
+        self.y = y
+        self.walkable = walkable
+        self.g = 0  # Cost from start
+        self.h = 0  # Heuristic cost
+        self.parent = None
+        self.f = 0  # Total cost
 
+    #check if node is on entity
+    def check_walkable(self, entities: list[Entity]):
+        for entity in entities:
+            if (entity.collision_points[0]<=self.x <= entity.collision_points[2] and
+                    entity.collision_points[1]<=self.y <= entity.collision_points[3] and
+                    entity.collision==True):
+                self.walkable = False
 
 def path_clear(positionA: tuple(int,int), positionB: tuple(int,int), entities: list[Entity],camera: Camera):
         for entity in entities:

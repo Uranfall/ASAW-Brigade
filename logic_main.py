@@ -52,7 +52,7 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 box_entity = entity.collision_points
                 print(box_unit, box_entity)
                 #find which one is needed to be offset and where
-
+                
 
                 unit.set_position([coords[0], coords[1]])
 
