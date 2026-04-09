@@ -1,6 +1,9 @@
+import DebugGlobal
 import logic_utility
 import pygame
 import time
+
+from graphics.Debug_Entities import DebugBox
 from graphics.graphics_utility import Camera
 from UnitClass import Unit
 from Entity import Entity
@@ -55,6 +58,11 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 
 
                 unit.set_position([coords[0], coords[1]])
+
+                #  Example of a debug box:
+                DebugGlobal.ui_data.ui_entities.append(DebugBox(box_unit, stay_alive_for=0.1))
+                DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
+                #  ui_data automatically deletes ui_entities that live too long.
 
 def logic_tick(entities: list[Entity], units: list[Unit]):
     Entity_Handler(entities, units)

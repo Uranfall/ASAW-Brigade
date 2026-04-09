@@ -16,6 +16,7 @@ class UIEntity(Entity):
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)
         self.creation_time = time.time()+time_offset
+        self.collision = False
 
     def get_age(self):
         return time.time()-self.creation_time

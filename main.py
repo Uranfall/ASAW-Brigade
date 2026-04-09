@@ -2,6 +2,7 @@ import random
 
 import pygame
 
+import DebugGlobal
 from Entities.Units import Mouse
 from VFX import Explosion
 from graphics.Debug_Entities import DebugRay, DebugLine
@@ -14,6 +15,7 @@ from logic_main import logic_tick
 
 def main():
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
+    DebugGlobal.ui_data = ui_data
     player_team = 0
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
     entities: list[Entity] = [Mouse((0, 0), 0, 1, False),
