@@ -1,4 +1,5 @@
 import math
+from typing import Sequence
 
 import pygame.draw
 
@@ -74,4 +75,22 @@ class DebugBox(DebugEntity):
                          self.color,
                          camera(*self.pos, *self.size),
                          math.ceil(camera(self.width)))
+
+
+class DebugPoly(DebugEntity):
+    def __init__(self,
+                 points: Sequence[tuple[float, float]] | Sequence[list[float, float]],
+                 width=10.0,
+                 color=(0, 0, 255),
+                 stay_alive_for=float('inf')):
+        super().__init__((0, 0), 0, stay_alive_for)
+        self.points = points
+        self.color = color
+        self.width = width
+
+    def draw(self, camera: Camera):
+        for i in range(len(self.points)):
+            point1 = camera(*self.points[i])
+            point2 = camera(*self.points[(i+1) % len(self.points)])
+            pygame.draw.line(camera.screen, self.color, point1, point2, math.ceil(camera(self.width)))
 
