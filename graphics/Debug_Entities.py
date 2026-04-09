@@ -70,7 +70,6 @@ class DebugBox(DebugEntity):
         self.width = width
 
     def draw(self, camera: Camera):
-        print(camera(*self.pos, *self.size), *self.pos, *self.size)
         pygame.draw.rect(camera.screen,
                          self.color,
                          camera(*self.pos, *self.size),
