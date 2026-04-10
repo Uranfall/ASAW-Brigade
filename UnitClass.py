@@ -21,7 +21,9 @@ class Unit(Entity):
                  act_list = list["idle"]):
         super().__init__(position, rotation, selected)
         self.target_pos = position
+        self.old_position = position
         self.target_rotation = rotation
+        self.change_rate = [0,0]
         self.team = 0
         self.target = None
         self.selected = selected
@@ -59,9 +61,7 @@ class Unit(Entity):
         if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100,100))):
             dx, dy = (targetX - currentX, targetY - currentY)
             #cap the speed of the Unit
-
             stepx, stepy = (dx / 60., dy / 60.)
-            self.position = (currentX+stepx, currentY+stepy)
             self.change_rate = [stepx, stepy]
         else:
             self.change_rate = [0,0]

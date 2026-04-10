@@ -10,10 +10,18 @@ from UnitClass import Unit
 from Entity import Entity
 from graphics.Ground import Ground
 from graphics.graphics_main import UIData, ui_tick
-from logic_main import logic_tick
+from logic_main import logic_tick, create_grid
 
 
 def main():
+    # Constants for grid
+    WIDTH, HEIGHT = 800, 600
+    GRID_SIZE = 20
+    GRID_WIDTH = WIDTH // GRID_SIZE
+    GRID_HEIGHT = HEIGHT // GRID_SIZE
+    grid = create_grid(GRID_WIDTH, GRID_HEIGHT)
+    #path = a_star(start, goal, grid) for when you finish playing deadlock: this is for creating the path
+
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
     DebugGlobal.ui_data = ui_data
     player_team = 0

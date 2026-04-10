@@ -1,5 +1,5 @@
 import DebugGlobal
-import logic_utility
+from logic_utility import *
 import pygame
 import time
 
@@ -27,13 +27,25 @@ class logic_data:
         else:
             self.tick_counter += 1
 
+def create_grid(GRID_HEIGHT, GRID_WIDTH):
+    grid = []
+    for y in range(GRID_HEIGHT):
+        row = []
+        for x in range(GRID_WIDTH):
+            walkable = True
+            # Add some obstacles
+            if (x == 5 and 3 <= y <= 10) or (x == 10 and 3 <= y <= 10):
+                walkable = False
+            row.append(Node(x, y, walkable))
+        grid.append(row)
+    return grid
+
 
 def Entity_Handler(entities: list[Entity], units: list[Unit]):
     for unit in units:
         unit.calc_rotation()
         unit.calc_movement()
     collision_logic(entities, units)
-
 
 
 all_act_types = []
@@ -49,19 +61,22 @@ def check_unit_current_action(unit: Unit):
 def collision_logic(entities: list[Entity],units: list[Unit]):
     for unit in units:
         for entity in entities:
+            old_position = unit.get_position()
+            unit.set_position( (unit.get_position()[0]+unit.change_rate[0],unit.get_position()[1]) )
             if unit!=entity and entity.collision==True and boxes_overlap(unit.get_collision_points(), entity.collision_points):
-                coords = unit.get_position()
-                box_unit = unit.get_collision_points()
-                box_entity = entity.collision_points
-                print(box_unit, box_entity)
-                #find which one is needed to be offset and where
-                
+                print("triggered x" + str(unit.get_position()))
+                unit.set_position(old_position)
 
-                unit.set_position([coords[0], coords[1]])
+            old_position = unit.get_position()
+            unit.set_position((unit.get_position()[0], unit.get_position()[1] + unit.change_rate[1]))
+            if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(), entity.collision_points):
+                print("triggered y" + str(unit.get_position()))
+                unit.set_position(old_position)
+
 
                 #  Example of a debug box:
-                DebugGlobal.ui_data.ui_entities.append(DebugBox(box_unit, stay_alive_for=0.1))
-                DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
+                #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_unit, stay_alive_for=0.1))
+                #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
                 #  ui_data automatically deletes ui_entities that live too long.
 
 def logic_tick(entities: list[Entity], units: list[Unit]):
