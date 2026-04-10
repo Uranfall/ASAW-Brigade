@@ -1,6 +1,6 @@
 import pygame
 
-from shared_utility import sign
+from shared_utility import sign, ValueCurve, lerp
 
 
 def invert_y(*args):
@@ -83,3 +83,22 @@ class Camera:
         pygame.display.update()
         self.screen.fill((10, 100, 10))
 
+
+class CinematicCamera(Camera):
+    def __init__(self,
+                 position: list[float, float],
+                 zoom: float,
+                 screen: pygame.display,
+                 keyframes: ValueCurve = None):
+        super().__init__(position, zoom, screen)
+        self.target_position = position.copy()
+        self.target_zoom = zoom
+        self.keyframes = keyframes
+        self.progress = 0
+
+    def animate(self, dt: float):
+        if self.keyframes is None:
+            self.position = lerp(self.position, self.target_position, min(dt*10, 1))
+        else:
+            self.keyframes(self.progress, overwrite_object=True)
+            self.progress += dt

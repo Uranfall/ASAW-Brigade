@@ -1,3 +1,4 @@
+import copy
 import math
 from typing import Sequence, SupportsFloat
 
@@ -57,18 +58,45 @@ def get_collision_points(pos:tuple[float, float] | tuple[int, int],
     return [x1, y1, x2, y2]
 
 
-def lerp(start: float | Sequence[float], end: float | Sequence[float], factor: float):
+def lerp(start: float | Sequence[float] | bool | object,
+         end: float | Sequence[float] | bool | object,
+         factor: float,
+         overwrite_object=False):
     if isinstance(start, SupportsFloat):
         return float(start) - (float(start) - float(end))*factor
-    return tuple(map(lambda vals: lerp(vals[0], vals[1], factor), zip(start, end)))
+    if isinstance(start, Sequence):
+        return tuple(map(
+            lambda vals: lerp(vals[0], vals[1], factor, overwrite_object=overwrite_object),
+            zip(start, end)))
+    if isinstance(start, bool):
+        return start if factor < 0.5 else end
+
+    # If the object is not anything above, just go and set every attribute.
+    if overwrite_object:
+        out = start
+    else:
+        out = copy.deepcopy(start)
+    for key, val in dir(end):
+        out.__setattr__(key, lerp(val, end.__getattribute__(key), factor))
+    return out
+
+
+def stepped_interpolation(start: float | Sequence[float],
+                          end: float | Sequence[float],
+                          factor: float,
+                          overwrite_object=False):
+    if factor < 0.5:
+        return lerp(start, end, 0, overwrite_object=overwrite_object)
+    return lerp(start, end, 1, overwrite_object=overwrite_object)
 
 
 class ValueCurve:
-    def __init__(self, *points: tuple[float | Sequence[float], float], extrapolate=False):
+    def __init__(self, *points: tuple[float | Sequence[float], float], extrapolate=False, interpolation=lerp):
         self.points = points
         self.extrapolate = extrapolate
+        self.interpolation = interpolation
 
-    def __call__(self, t: float):
+    def __call__(self, t: float, overwrite_object=False):
         current_point = 0
         while current_point < len(self.points) - 2 and self.points[current_point+1][-1] < t:
             current_point += 1
@@ -82,6 +110,7 @@ class ValueCurve:
         current_amount = self.points[current_point][-1] - t
         if max_amount == 0:
             return self.points[current_point][0]
-        return lerp(self.points[current_point][0], self.points[current_point + 1][0], current_amount / max_amount)
-
-
+        return self.interpolation(self.points[current_point][0],
+                                  self.points[current_point + 1][0],
+                                  current_amount / max_amount,
+                                  overwrite_object=overwrite_object)
