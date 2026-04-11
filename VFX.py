@@ -13,6 +13,7 @@ from shared_utility import ValueCurve, lerp
 
 class VFX(UIEntity):
     LIFETIME = 20
+    RENDER_LAYER = 9
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0):
         super().__init__(position, rotation, time_offset)

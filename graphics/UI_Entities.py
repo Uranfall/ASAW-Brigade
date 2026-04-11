@@ -12,6 +12,7 @@ from typing import Callable
 
 class UIEntity(Entity):
     LIFETIME = 5
+    RENDER_LAYER = 10
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)

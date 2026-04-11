@@ -10,6 +10,7 @@ class Mouse(Unit):
     IMAGE = pygame.image.load('Sprites/Units/mouse_no_tail.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.75
+    RENDER_LAYER = 4
 
     def __init__(self, position: tuple[int, int], rotation: float, speed: int, selected: bool):
         super().__init__(position, rotation, speed, selected)

@@ -14,6 +14,7 @@ from graphics.Ground import Ground
 from graphics.graphics_main import UIData, ui_tick
 from logic_main import logic_tick, create_grid, get_current_node
 from map import map_info
+from GameData import GameDataLocal
 
 
 def main():
@@ -33,10 +34,12 @@ def main():
     for unit in units:
         unit.current_node = get_current_node(unit.get_position(), grid)
 
+    game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
+
     run = True
     while run:
         entities[0].rotation += 45*ui_data.delta_time
-        ui_out = ui_tick(ui_data, entities, units, grid, GRID_SIZE)
+        ui_out = ui_tick(ui_data, game_data)
         logic_tick(entities, units, grid)
         run = ui_out.run
 

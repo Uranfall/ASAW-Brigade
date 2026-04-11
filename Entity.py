@@ -17,6 +17,7 @@ class Entity:
     SIMPLIFY_AT = 25  # Draw a simple shape instead of the image if smaller than.
     DRAW_SHAPE: pygame.draw = pygame.draw.circle
     SHAPE_SIZE_ADJUST = 0.25
+    RENDER_LAYER = 3
 
 
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic

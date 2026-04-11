@@ -4,6 +4,7 @@ from typing import Sequence, Iterable
 import pygame
 
 from Entity import Entity
+from GameData import GameData
 from GlobalVariables import FONT
 from Protocol.Command import Command
 from UnitClass import Unit
@@ -87,7 +88,8 @@ class UITickOut:
         self.commands: list[Command] = []
 
 
-def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
+def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
+    entities = game_data.get_entities()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             out.run = False
@@ -134,18 +136,19 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
     return out
 
 
-def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
+def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
     selection_box = ui_data.get_selection_box()
 
-    for entity in entities:
-        entity.draw(ui_data.camera)
+    for layer in game_data.get_layers():
+        for entity in layer:
+            entity.draw(ui_data.camera)
 
-        if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
-            if is_within_box(entity.position, selection_box):
-                entity.selected = True
-            elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or
-                      pygame.key.get_pressed()[pygame.K_RSHIFT]):
-                entity.selected = False
+            if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
+                if is_within_box(entity.position, selection_box):
+                    entity.selected = True
+                elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or
+                          pygame.key.get_pressed()[pygame.K_RSHIFT]):
+                    entity.selected = False
 
     ui_data.update_ui_entities()
 
@@ -155,7 +158,7 @@ def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut
     return out
 
 
-def ui_tick(ui_data: UIData, entities: Sequence[Entity], units: list[Unit], grid: list, GRID_SIZE) -> UITickOut:
+def ui_tick(ui_data: UIData, game_data: GameData) -> UITickOut:
     """
     Shows everything that needs to be shown, and outputs commands from user.
     """
@@ -163,8 +166,9 @@ def ui_tick(ui_data: UIData, entities: Sequence[Entity], units: list[Unit], grid
 
     ui_data.start_new_frame(fps=60)
 
-    handle_user_input(ui_data, entities, out)
-    go_over_entities(ui_data, entities, out)
+    entities = game_data.get_entities()
+    handle_user_input(ui_data, game_data, out)
+    go_over_entities(ui_data, game_data, out)
     ui_data.end_frame()
     return out
 

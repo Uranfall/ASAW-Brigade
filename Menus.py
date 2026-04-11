@@ -7,9 +7,9 @@ import pygame
 from Entity import Entity
 from GlobalVariables import TEXT_RED_CURVE
 from graphics.UI_Entities import Text, UIEntity, Button
-from graphics.graphics_utility import Camera
+from graphics.graphics_utility import Camera, CinematicCamera
 from main import main
-from shared_utility import ValueCurve
+from shared_utility import ValueCurve, stepped_interpolation
 
 
 class Logo(Entity):
@@ -30,7 +30,7 @@ def main_menu():
     start_time = time.time()
 
     run = True
-    camera = Camera([0, 1000], 1, pygame.display.set_mode((500, 500), pygame.RESIZABLE))
+    camera = CinematicCamera([0, 1000], 1, pygame.display.set_mode((500, 500), pygame.RESIZABLE))
 
     menu_items: list[Entity] = [Logo((0, 1000), 0),
                                 Text((0, 190),
@@ -46,12 +46,19 @@ def main_menu():
                                 play_button,
                                 exit_button]
 
-    screen_color_curve = ValueCurve(((240, 240, 240), 0.3),
-                                    ((100, 100, 100), 0.7),
-                                    ((70, 70, 70), 0.8),
-                                    ((50, 70, 50), 1))
+    # screen_color_curve = ValueCurve(((240, 240, 240), 0.3),
+    #                                 ((100, 100, 100), 0.7),
+    #                                 ((70, 70, 70), 0.8),
+    #                                 ((50, 70, 50), 1))
 
-    camera_position_curve = ValueCurve(([0, 1000], 0), ([0, 1020], 0.15), ([0, -10], 0.85), ([0, 0], 1))
+    screen_color_curve = ValueCurve(((240, 240, 240), 0.3),
+                                    ((100, 100, 100), 0.4),
+                                    ((70, 70, 70), 0.5),
+                                    ((50, 70, 50), 0.7))
+
+    # camera_position_curve = ValueCurve(([0, 1000], 0), ([0, 1020], 0.15), ([0, -10], 0.85), ([0, 0], 1))
+    camera_position_curve = ValueCurve(([0, 1000], 0), ([0, 1020], 0.15), ([0, -10], 0.3), ([0, 0], 0.8),
+                                       interpolation=stepped_interpolation)
 
     animation_start = 1
     animation_duration = 1
@@ -63,7 +70,8 @@ def main_menu():
         last_update = time.time()
 
         animation_progress = (time.time()-start_time-animation_start)/animation_duration
-        camera.position = camera_position_curve(animation_progress)
+        camera.target_position = camera_position_curve(animation_progress)
+        camera.animate(dt)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
