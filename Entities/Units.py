@@ -18,3 +18,10 @@ class Mouse(Unit):
     def draw(self, camera: Camera):
         self.tail.draw(camera)
         super().draw(camera)
+
+
+class Soldier(Unit):
+    IMAGE = pygame.image.load('Sprites/Units/soldier.png')
+    IMAGE_ROTATION = 90
+    IMAGE_SCALE = 0.3
+

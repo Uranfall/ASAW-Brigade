@@ -1,4 +1,7 @@
 from __future__ import annotations  # So we can reference the class in itself.
+
+import random
+import time
 from os import PathLike
 
 import pygame
@@ -23,12 +26,17 @@ class Entity:
                  rotation: float,
                  see_through=False,
                  selected=False,
-                 collision=True):
+                 collision=True,
+                 unique_id: int = None):
         self.position = position
         self.rotation = rotation
         self.collision_points = self.set_collision_points()
         self.see_through = see_through
         self.collision = collision
+        if unique_id is None:
+            self.id = id(self)
+        else:
+            self.id = unique_id
 
     def set_collision_points(self):
         scale = self.IMAGE_SCALE

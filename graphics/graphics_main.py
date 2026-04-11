@@ -5,6 +5,7 @@ import pygame
 
 from Entity import Entity
 from GlobalVariables import FONT
+from Protocol.Command import Command
 from UnitClass import Unit
 from VFX import Explosion
 from graphics.UI_Entities import UIEntity, ExpandingCircle
@@ -82,6 +83,7 @@ class UITickOut:
     """
     def __init__(self):
         self.run = True
+        self.commands: list[Command] = []
 
 
 def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
@@ -102,8 +104,11 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
                     ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
                 ]
+                pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
                 for unit in selected:
-                    unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                    # unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                    command = Command(Command.GO_TO, str(pos), unit.id)
+                    out.commands.append(command)
             else:
                 ui_data.ui_entities.append(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
 
