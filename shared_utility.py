@@ -58,45 +58,57 @@ def get_collision_points(pos:tuple[float, float] | tuple[int, int],
     return [x1, y1, x2, y2]
 
 
-def lerp(start: float | Sequence[float] | bool | object,
-         end: float | Sequence[float] | bool | object,
+LERP_CASES = {SupportsFloat: (lambda s, e, f, o: float(s) - (float(s) - float(e))*f),
+              str: lambda s, e, f, o: s if f < 1 else e,
+              Sequence: lambda s, e, f, o:
+              s.__class__(map(lambda vals: lerp(vals[0], vals[1], f, overwrite_object=o),
+                        zip(s, e))),
+              bool: lambda s, e, f, o: s if f < 1 else e}
+
+
+def lerp(start: any,
+         end: any,
          factor: float,
          overwrite_object=False):
-    if isinstance(start, SupportsFloat):
-        return float(start) - (float(start) - float(end))*factor
-    if isinstance(start, Sequence):
-        return tuple(map(
-            lambda vals: lerp(vals[0], vals[1], factor, overwrite_object=overwrite_object),
-            zip(start, end)))
-    if isinstance(start, bool):
-        return start if factor < 0.5 else end
 
-    # If the object is not anything above, just go and set every attribute.
+    # Sorry for the code looking so bad. I just wanted this function to work with most objects.
+    # Just realized that the only line that does the lerping is not even in this function.
+
+    if start is None or end is None:
+        return LERP_CASES[bool](start, end, factor, overwrite_object)
+
+    for t, func in LERP_CASES.items():
+        if isinstance(start, t):
+            return func(start, end, factor, overwrite_object)
+
+    # If the object is something strange:
     if overwrite_object:
         out = start
     else:
         out = copy.deepcopy(start)
-    for key, val in dir(end):
-        out.__setattr__(key, lerp(val, end.__getattribute__(key), factor))
+    out_dict = out if isinstance(out, dict) else out.__dict__
+    end_dict = end if isinstance(end, dict) else end.__dict__
+    for key, val in end_dict.items():
+        out_dict[key] = lerp(out_dict[key], val, factor)
     return out
 
 
-def stepped_interpolation(start: float | Sequence[float],
-                          end: float | Sequence[float],
+def stepped_interpolation(start,
+                          end,
                           factor: float,
                           overwrite_object=False):
-    if factor < 0.5:
+    if factor < 1:
         return lerp(start, end, 0, overwrite_object=overwrite_object)
     return lerp(start, end, 1, overwrite_object=overwrite_object)
 
 
 class ValueCurve:
-    def __init__(self, *points: tuple[float | Sequence[float], float], extrapolate=False, interpolation=lerp):
+    def __init__(self, *points: tuple[any, float], extrapolate=False, interpolation=lerp):
         self.points = points
         self.extrapolate = extrapolate
         self.interpolation = interpolation
 
-    def __call__(self, t: float, overwrite_object=False):
+    def __call__(self, t: float):
         current_point = 0
         while current_point < len(self.points) - 2 and self.points[current_point+1][-1] < t:
             current_point += 1
@@ -112,5 +124,4 @@ class ValueCurve:
             return self.points[current_point][0]
         return self.interpolation(self.points[current_point][0],
                                   self.points[current_point + 1][0],
-                                  current_amount / max_amount,
-                                  overwrite_object=overwrite_object)
+                                  current_amount / max_amount)

@@ -91,14 +91,14 @@ class CinematicCamera(Camera):
                  screen: pygame.display,
                  keyframes: ValueCurve = None):
         super().__init__(position, zoom, screen)
-        self.target_position = position.copy()
+        self.target_position = None
         self.target_zoom = zoom
         self.keyframes = keyframes
         self.progress = 0
 
     def animate(self, dt: float):
-        if self.keyframes is None:
+        if self.target_position is not None:
             self.position = lerp(self.position, self.target_position, min(dt*10, 1))
-        else:
-            self.keyframes(self.progress, overwrite_object=True)
+        if self.keyframes is not None:
+            lerp(self, self.keyframes(self.progress), 1, overwrite_object=True)
             self.progress += dt
