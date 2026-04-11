@@ -85,7 +85,6 @@ class UITickOut:
     """
     def __init__(self):
         self.run = True
-        self.commands: list[Command] = []
 
 
 def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
@@ -111,7 +110,7 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                 for unit in selected:
                     # unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
                     command = Command(Command.GO_TO, str(pos), unit.id)
-                    out.commands.append(command)
+                    game_data.add_command(command)
             else:
                 ui_data.ui_entities.append(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
 

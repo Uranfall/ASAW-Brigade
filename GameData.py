@@ -1,6 +1,7 @@
 import copy
 
 from Entity import Entity
+from Protocol.Command import Command
 from UnitClass import Unit
 from logic_utility import Node
 import threading
@@ -25,6 +26,12 @@ class GameData:
     def get_grid(self) -> list[list[Node]]:
         pass
 
+    def add_command(self, command: Command):
+        pass
+
+    def get_commands(self) -> list[Command]:
+        pass
+
     def connect(self):
         pass
 
@@ -43,6 +50,7 @@ class GameDataLocal(GameData):
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
         self.grid_size = grid_size
+        self.commands = []
 
     def get_layers(self):
         layers = []
@@ -60,6 +68,12 @@ class GameDataLocal(GameData):
 
     def get_grid(self) -> list[list[Node]]:
         return copy.deepcopy(self.grid)
+
+    def add_command(self, command: Command):
+        self.commands.append(command)
+
+    def get_commands(self) -> list[Command]:
+        return self.commands
 
 
 class GameDataServer(GameData):
