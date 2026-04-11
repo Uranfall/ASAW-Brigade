@@ -69,7 +69,7 @@ You first have to create the curve.
 curve = ValueCurve((0, 0), (1, 0.5), (0, 1))  # This curve will go from 0 to 1 and then to 0 again.
 curve2d = ValueCurve(((0, 0), 0), ((1, 0), 1), ((1, 1), 2), ((0, 1), 1))  # This curve will go along a 1x1 square.
 ```
-After you create the cruve, you call it and give it the distance you want to advance along it.
+After you create the curve, you call it and give it the distance you want to advance along it.
 ```
 t = 0.25
 output = curve(t)  # the output is 0.5.
