@@ -8,7 +8,7 @@ import shared_utility
 from Entity import Entity
 from graphics.UI_Entities import UIEntity
 from graphics.graphics_utility import Camera
-from shared_utility import ValueCurve
+from shared_utility import ValueCurve, lerp
 
 
 class VFX(UIEntity):
@@ -33,12 +33,15 @@ class Particle(VFX):
         self.speed = speed
         self.last_update = time.time()
 
+    def get_color(self):
+        return tuple(map(int, self.COLOR_CURVE(self.get_progress())))
+
     def draw(self, camera: Camera):
         size = math.ceil(camera(self.SCALE_CURVE(self.get_progress())))
         box = -size, -size, camera.screen.get_width()+size, 500*camera.screen.get_height()+size
         if shared_utility.is_within_box(camera(*self.position), box):
             pygame.draw.circle(camera.screen,
-                               tuple(map(int, self.COLOR_CURVE(self.get_progress()))),
+                               self.get_color(),
                                camera(*self.position),
                                size)
 
@@ -126,3 +129,38 @@ class Explosion(ParticleHaving):
     def draw(self, camera: Camera):
         super().draw(camera)
         self.particles.extend([self.get_new_particle() for _ in range(self.get_new_particle_count())])
+
+
+class ColorfulExplosionParticle(ExplosionParticle):
+    COLOR_CURVE = ValueCurve(((255, 0, 0), 0),
+                             ((255, 255, 0), 60),
+                             ((0, 255, 0), 120),
+                             ((0, 0, 255), 180),
+                             ((0, 0, 255), 250),
+                             ((255, 0, 255), 300),
+                             ((255, 0, 0), 360))
+    SCALE_CURVE = ValueCurve((30, 0), (20, 0.1), (15, 0.5), (10, 0.8), (0, 1))
+
+    def __init__(self, position: tuple[int, int], speed: float):
+        super().__init__(position, speed)
+        self.hue = random.random()*360
+        self.value = 1
+        self.saturation = random.random()
+
+    def get_color(self):
+        color = self.COLOR_CURVE(self.hue)
+        average = lerp(sum(color)//3, self.value*255, 0.5)  # not accurate color calculation.
+        return tuple(map(lambda val: int((lerp(average, val, self.saturation))*self.value), self.COLOR_CURVE(self.hue)))
+
+
+class ColorfulExplosion(Explosion):
+    SMOKE_FACTOR = 0
+    PARTICLE_TYPE = ColorfulExplosionParticle
+    FINAL_AMOUNT = 100
+    MAX_SPEED = 1000
+
+
+class ColorfulFire(ColorfulExplosion):
+    FINAL_AMOUNT = 500
+    BURNING_TIME = 15
+
