@@ -3,7 +3,7 @@ import copy
 from Entity import Entity
 from Protocol.Command import Command
 from UnitClass import Unit
-from logic_utility import Node
+from Node import Node
 import threading
 
 

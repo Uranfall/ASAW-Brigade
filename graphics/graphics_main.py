@@ -8,11 +8,11 @@ from GameData import GameData
 from GlobalVariables import FONT
 from Protocol.Command import Command
 from UnitClass import Unit
-from Unit_AI import a_star
 from VFX import Explosion
 from graphics.UI_Entities import UIEntity, ExpandingCircle
 from graphics.graphics_utility import Camera
-from shared_utility import is_within_box
+from shared_utility import is_within_box, get_closest_node
+from GameData import GameData
 
 
 def get_selected_units(entities: Sequence[Entity]) -> Iterable:
@@ -85,6 +85,7 @@ class UITickOut:
     """
     def __init__(self):
         self.run = True
+        self.commands: list[Command] = []
 
 
 def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
@@ -108,7 +109,8 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                 ]
                 pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
                 for unit in selected:
-                    # unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                    unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                    unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
                     command = Command(Command.GO_TO, str(pos), unit.id)
                     game_data.add_command(command)
             else:

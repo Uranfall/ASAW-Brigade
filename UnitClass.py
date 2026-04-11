@@ -1,9 +1,9 @@
 from __future__ import annotations
-import math
 import pygame
 from logic_utility import *
 import GlobalVariables
 import Unit_AI
+from Node import Node
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
@@ -21,12 +21,11 @@ class Unit(Entity):
                  act_list = list["idle"],
                  ):
         super().__init__(position, rotation, selected)
-        self.current_node = None
-        self.path = None
+        self.current_node = Node
+        self.target_node = self.current_node
+        self.path = []
         self.target_pos = position
-        self.old_position = position
         self.target_rotation = rotation
-        self.change_rate = [0,0]
         self.team = 0
         self.target = None
         self.selected = selected
@@ -47,10 +46,16 @@ class Unit(Entity):
 
     def calc_rotation(self):
         #for self: when we add unit targeting, check if enemy is in range
-        targetX = self.target_pos[0]-self.position[0]
-        targetY = self.target_pos[1]-self.position[1]
+        targetX = self.target_node.x - self.position[0]
+        targetY = self.target_node.y - self.position[1]
         self.rotation = vector_to_angle((targetX, targetY))
 
+    def move(self, targetX,targetY):
+        currentX = self.position[0]
+        currentY = self.position[1]
+        dx, dy = (targetX - currentX, targetY - currentY)
+        stepX, stepY = (dx/60, dy/60)
+        self.position = (currentX+stepX, currentY+stepY)
 
     def calc_movement(self, grid):
         currentX = self.position[0]
@@ -59,9 +64,36 @@ class Unit(Entity):
         targetY = self.target_pos[1]
         # create a box around the destination, if Unit enters the box it stops updating
         if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
-            self.path = Unit_AI.a_star(self.current_node, get_closest_node(self.target_pos, grid), grid)
+            if self.target_node!=self.current_node:
+                print("ddd")
+                if not self.path:
+                    print("aaa")
+                    print("1.", self.current_node.x,self.current_node.y, "2.", get_closest_node(self.target_pos, grid).x,get_closest_node(self.target_pos, grid).y)
+                    self.path = Unit_AI.a_star(self.current_node, get_closest_node(self.target_pos, grid), grid)
+                    for node in self.path:
+                        print(node.x,node.y)
+                    current = self.path[0]
+                    self.target_node = current
+                    self.path.remove(current)
+
+                if currentX != self.target_node and currentY == self.target_node:
+                    print("bbb")
+                    self.move(self.target_node.x, self.target_node.y)
+                else:
+                    print("ccc")
+                    current = self.path[0]
+                    self.target_node = current
+                    self.path.remove(current)
+                    self.path = shift_list_left(self.path)
+            else:
+                self.move(targetX, targetY)
+
+
+
         else:
-            self.target_pos =self.position
+            self.target_pos = self.position
+            self.target_node = self.current_node
+            self.path = []
 
 
 

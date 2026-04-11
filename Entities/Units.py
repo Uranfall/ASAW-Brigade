@@ -1,5 +1,6 @@
 import pygame
-
+from Node import Node
+from shared_utility import get_closest_node
 from EntityProps import MouseTail
 from UnitClass import Unit
 from graphics.graphics_utility import Camera
@@ -14,6 +15,7 @@ class Mouse(Unit):
 
     def __init__(self, position: tuple[int, int], rotation: float, speed: int, selected: bool):
         super().__init__(position, rotation, speed, selected)
+        self.current_node = None
         self.tail = MouseTail((0, -70), 180+rotation, self)
 
     def draw(self, camera: Camera):

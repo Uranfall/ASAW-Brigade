@@ -27,25 +27,28 @@ class logic_data:
         else:
             self.tick_counter += 1
 
-def create_grid(GRID_HEIGHT, GRID_WIDTH):
+def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
     grid = []
-    for y in range(GRID_HEIGHT):
+    for y in range(HEIGHT_START, HEIGHT_END, 50):
         row = []
-        for x in range(GRID_WIDTH):
+        for x in range(WIDTH_START, WIDTH_END, 50):
             walkable = True
             row.append(Node(x, y, walkable))
         grid.append(row)
     return grid
 
 
-def get_current_node(position: list[int,int], grid):
+def get_current_node(unit: Unit, grid):
+    first_node = None
     for row in grid:
         for node in row:
-            if node.x == 0 and node.y == 0:
-                zero_zero_node = node
-            if node.walkable and node.x == position[0] and node.y == position[1]:
+            if first_node is None:
+                first_node = node
+            if node.walkable and is_within_box([node.x, node.y], unit.get_collision_points()):
+                unit.set_position([node.x, node.y])
+                unit.target_position = unit.position
                 return node
-        return zero_zero_node
+    return first_node
 
 def Entity_Handler(entities: list[Entity], units: list[Unit], grid):
     for unit in units:

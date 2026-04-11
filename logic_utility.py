@@ -8,17 +8,10 @@ from shared_utility import *
 #navigation: UNIT -> NavNode -> find a path between them -> stop at closet NavNode from the click that isnt abstracted -> walk towards coordinates
 
 
-
-class Node:
-    def __init__(self, x, y, walkable=True):
-        self.x = x
-        self.y = y
-        self.walkable = walkable
-        self.g = 0  # Cost from start
-        self.h = 0  # Heuristic cost
-        self.parent = None
-        self.f = 0  # Total cost
-
+def shift_list_left(lst: list):
+    for x in range(1,len(lst)-1,1):
+        lst[x-1] = lst[x]
+    return lst
 
 #check if node is on entity
 def check_walkable(node: Node, entities: list[Entity]):
@@ -29,18 +22,6 @@ def check_walkable(node: Node, entities: list[Entity]):
             return False
     return True
 
-def get_closest_node(position: list[float,float],grid) -> Node:
-    min_distance = None
-    closest_node = None
-    for row in grid:
-        for node in row:
-            if min_distance is None:
-                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
-                closest_node = node
-            if min_distance > abs(position[0] - node.x) + abs(position[1] - node.y):
-                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
-                closest_node = node
-    return closest_node
 
 #distance on a 2d grid
 

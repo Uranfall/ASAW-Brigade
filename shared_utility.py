@@ -1,7 +1,7 @@
 import copy
 import math
 from typing import Sequence, SupportsFloat
-
+from Node import Node
 
 def sign(num: float):
     return -1 if num < 1 else (1 if num > 0 else 0)
@@ -14,6 +14,19 @@ def angle_to_vector(angle: float, distance=1.0):
     # Added 90 degrees to the angle so it works the same as in pygame.
     return math.cos(math.radians(angle+90))*distance, math.sin(math.radians(angle+90))*distance
 
+def get_closest_node(position: list,grid) -> Node:
+    min_distance = 9999
+    closest_node = None
+    for row in grid:
+        for node in row:
+            if min_distance == 9999:
+                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
+                closest_node = node
+                print(closest_node.x, closest_node.y)
+            if min_distance > abs(position[0] - node.x) + abs(position[1] - node.y):
+                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
+                closest_node = node
+    return closest_node
 
 def vector_to_angle(vector: list[float, float] | tuple[float, float]):
     """

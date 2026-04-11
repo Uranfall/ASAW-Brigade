@@ -1,7 +1,7 @@
 from html import entities
 import pygame
 import heapq
-from logic_utility import Node
+from Node import Node
 
 #distance on a 2d grid
 def manhattan_distance(node, goal):
@@ -37,18 +37,19 @@ def a_star(start, goal, grid):
                 neighbor.f = neighbor.g + neighbor.h
 
                 if neighbor not in open_list:
+                    #add to open list
                     heapq.heappush(open_list, (neighbor.f, neighbor))
 
     return None  # No path found
 
 #get neighbouring nodes from all 4 directions
 def get_neighbors(node, grid):
-    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4-directional
+    directions = [(0, 50), (50, 0), (0, -50), (-50, 0)]  # 4-directional
     neighbors = []
 
     for dx, dy in directions:
         x, y = node.x + dx, node.y + dy
-        if 0 <= x < len(grid[0]) and 0 <= y < len(grid):
+        if -1*len(grid[0])/2 <= x < len(grid[0])/2 and -1*len(grid)/2 <= y < len(grid)/2:
             neighbors.append(grid[y][x])
 
     return neighbors
@@ -59,4 +60,5 @@ def reconstruct_path(node):
     while node:
         path.append((node.x, node.y))
         node = node.parent
+    print(path[::-1])
     return path[::-1]

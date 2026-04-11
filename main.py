@@ -5,7 +5,7 @@ import pygame
 import DebugGlobal
 from Entities.Units import Mouse
 from Unit_AI import a_star
-from logic_utility import get_closest_node
+from shared_utility import get_closest_node
 from VFX import Explosion
 from graphics.Debug_Entities import DebugRay, DebugLine
 from UnitClass import Unit
@@ -26,13 +26,15 @@ def main():
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
     map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
 
-    units: list[Unit] = [Mouse((0, 0), 0, 1, False),]\
-               + [Mouse((random.randint(-20000, 20000), random.randint(-10000, 10000)),
-                       random.randint(0, 360), 1, False) for _ in range(100)]
+    units: list[Unit] = [Mouse((0, 0), 90, 1, False),]\
+               + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
+                       random.randint(0, 360), 1, False) for _ in range(10)]
     entities: list[Entity] = units + map_objects
 
     for unit in units:
-        unit.current_node = get_current_node(unit.get_position(), grid)
+        unit.current_node = get_current_node(unit, grid)
+        unit.target_node = unit.current_node
+
 
     game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
 
