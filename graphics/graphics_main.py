@@ -6,6 +6,7 @@ import pygame
 from Entity import Entity
 from GlobalVariables import FONT
 from UnitClass import Unit
+from Unit_AI import a_star
 from VFX import Explosion
 from graphics.UI_Entities import UIEntity, ExpandingCircle
 from graphics.graphics_utility import Camera
@@ -129,7 +130,6 @@ def handle_user_input(ui_data: UIData, entities: Sequence[Entity], out: UITickOu
 
 
 def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut):
-
     selection_box = ui_data.get_selection_box()
 
     for entity in entities:
@@ -150,7 +150,7 @@ def go_over_entities(ui_data: UIData, entities: Sequence[Entity], out: UITickOut
     return out
 
 
-def ui_tick(ui_data: UIData, entities: Sequence[Entity]) -> UITickOut:
+def ui_tick(ui_data: UIData, entities: Sequence[Entity], units: list[Unit], grid: list, GRID_SIZE) -> UITickOut:
     """
     Shows everything that needs to be shown, and outputs commands from user.
     """

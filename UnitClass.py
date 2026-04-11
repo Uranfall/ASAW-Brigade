@@ -1,8 +1,9 @@
 from __future__ import annotations
 import math
 import pygame
-
+from logic_utility import *
 import GlobalVariables
+import Unit_AI
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
@@ -16,10 +17,12 @@ class Unit(Entity):
                  rotation: float,
                  speed: int,
                  #team: int,
-
                  selected: bool,
-                 act_list = list["idle"]):
+                 act_list = list["idle"],
+                 ):
         super().__init__(position, rotation, selected)
+        self.current_node = None
+        self.path = None
         self.target_pos = position
         self.old_position = position
         self.target_rotation = rotation
@@ -49,22 +52,17 @@ class Unit(Entity):
         self.rotation = vector_to_angle((targetX, targetY))
 
 
-    def calc_movement(self):
-        # y distance and x distance divided by fps
-        #for self: get this shit running at the same velocity
-
+    def calc_movement(self, grid):
         currentX = self.position[0]
         currentY = self.position[1]
         targetX = self.target_pos[0]
         targetY = self.target_pos[1]
-        #create a box around the destination, if Unit enters the box it stops updating
-        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100,100))):
-            dx, dy = (targetX - currentX, targetY - currentY)
-            #cap the speed of the Unit
-            stepx, stepy = (dx / 60., dy / 60.)
-            self.change_rate = [stepx, stepy]
+        # create a box around the destination, if Unit enters the box it stops updating
+        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
+            self.path = Unit_AI.a_star(self.current_node, get_closest_node(self.target_pos, grid), grid)
         else:
-            self.change_rate = [0,0]
+            self.target_pos =self.position
+
 
 
     def idle(self):

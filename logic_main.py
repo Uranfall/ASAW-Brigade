@@ -33,19 +33,25 @@ def create_grid(GRID_HEIGHT, GRID_WIDTH):
         row = []
         for x in range(GRID_WIDTH):
             walkable = True
-            # Add some obstacles
-            if (x == 5 and 3 <= y <= 10) or (x == 10 and 3 <= y <= 10):
-                walkable = False
             row.append(Node(x, y, walkable))
         grid.append(row)
     return grid
 
 
-def Entity_Handler(entities: list[Entity], units: list[Unit]):
+def get_current_node(position: list[int,int], grid):
+    for row in grid:
+        for node in row:
+            if node.x == 0 and node.y == 0:
+                zero_zero_node = node
+            if node.walkable and node.x == position[0] and node.y == position[1]:
+                return node
+        return zero_zero_node
+
+def Entity_Handler(entities: list[Entity], units: list[Unit], grid):
     for unit in units:
         unit.calc_rotation()
-        unit.calc_movement()
-    collision_logic(entities, units)
+        unit.calc_movement(grid)
+    #collision_logic(entities, units)
 
 
 all_act_types = []
@@ -79,5 +85,5 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
                 #  ui_data automatically deletes ui_entities that live too long.
 
-def logic_tick(entities: list[Entity], units: list[Unit]):
-    Entity_Handler(entities, units)
+def logic_tick(entities: list[Entity], units: list[Unit], grid):
+    Entity_Handler(entities, units, grid)

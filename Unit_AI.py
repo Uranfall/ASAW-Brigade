@@ -1,7 +1,5 @@
 from html import entities
-
 import pygame
-from UnitClass import Unit
 import heapq
 from logic_utility import Node
 
@@ -11,19 +9,21 @@ def manhattan_distance(node, goal):
 
 #path finding logic
 def a_star(start, goal, grid):
-    open_list = []
-    closed_list = set()
+    open_list = [] #nodes to explore
+    closed_list = set() #explored nodes
 
     heapq.heappush(open_list, (0, start))
 
     while open_list:
+        #get from the queue
         current = heapq.heappop(open_list)[1]
-
+        #if we reached the goal
         if current == goal:
             return reconstruct_path(current)
 
+        #send it to the list of checked nodes
         closed_list.add(current)
-
+        #check all neighbouring nodes
         for neighbor in get_neighbors(current, grid):
             if neighbor in closed_list or not neighbor.walkable:
                 continue
@@ -41,7 +41,7 @@ def a_star(start, goal, grid):
 
     return None  # No path found
 
-
+#get neighbouring nodes from all 4 directions
 def get_neighbors(node, grid):
     directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4-directional
     neighbors = []
