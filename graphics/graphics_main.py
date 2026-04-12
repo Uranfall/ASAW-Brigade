@@ -1,3 +1,4 @@
+import math
 import time
 from typing import Sequence, Iterable
 
@@ -41,6 +42,8 @@ class UIData:
         self.previous_frame = time.time()
 
         self.ui_entities: list[UIEntity] = []
+
+        self.new_selected = False
 
     def start_new_frame(self, fps=60.0):
         self.clock.tick(fps)
@@ -97,6 +100,15 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
             ui_data.camera.adjust_zoom(event.y, pygame.mouse.get_pos())
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
+            ui_data.new_selected = False
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            closest: tuple[float, Unit] | None = None
+            mouse_pos = ui_data.camera.screen_to_global(*event.pos)
+            for unit in game_data.get_units():
+                if closest is None or closest[0] > math.dist(mouse_pos, unit.position):
+                    closest = math.dist(mouse_pos, unit.position), unit
+            if closest is not None and closest[0] < closest[1].IMAGE_SCALE*min(closest[1].IMAGE.get_size()):
+                closest[1].selected = True
 
         #this handles moving units
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
