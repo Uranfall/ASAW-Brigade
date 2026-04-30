@@ -4,7 +4,7 @@ import time
 import pygame.draw
 
 from Entity import Entity
-from GlobalVariables import FONT
+from GlobalVariables import FONT, TEXT_RED_CURVE
 from graphics.graphics_utility import Camera
 from shared_utility import ValueCurve, get_collision_points, is_within_box, lerp
 from typing import Callable
@@ -106,6 +106,33 @@ class Button(UIEntity):
         self.text.creation_time = self.creation_time
 
         self.text.draw(camera)
+
+
+class TextBox(Button):
+    def __init__(self, position: tuple[int, int], scale: tuple[float, float], max_length: int, default_text=''):
+        super().__init__(position, scale, Text((0, 0), 0, default_text, TEXT_RED_CURVE))
+        self.max_length = max_length
+        self.selected = False
+        self.action = self.select
+        self.default_text = default_text
+        self.empty = True
+
+    def select(self):
+        self.selected = True
+
+    def key_down(self, key: str):
+        if self.selected:
+            if key == '\x08':
+                if not self.empty:
+                    self.text.text = self.text.text[:-1]
+                    if self.text.text == '':
+                        self.empty = True
+                        self.text.text = self.default_text
+            elif len(self.text.text) < self.max_length:
+                if self.empty:
+                    self.text.text = ''
+                self.empty = False
+                self.text.text += key
 
 
 class ExpandingCircle(UIEntity):
