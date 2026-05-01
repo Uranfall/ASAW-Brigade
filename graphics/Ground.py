@@ -52,6 +52,8 @@ class NonImageChunk(GroundChunk):
 
 
 class Ground(Entity):
+    RENDER_LAYER = 0
+
     def __init__(self, position: tuple[int, int]=(0, 0)):
         super().__init__(position, 0)
         self.tiles: dict[tuple[int, int], GroundChunk] = dict()
