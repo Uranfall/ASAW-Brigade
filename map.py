@@ -1,4 +1,5 @@
 from Entity import Entity
+from graphics.Ground import Ground
 from logic_main import create_grid
 from Node import Node
 from logic_utility import check_walkable
@@ -20,5 +21,6 @@ def map_info():
             print(node.x, node.y)
             node.walkable = check_walkable(node, map_entities)
 
+    map_entities.append(Ground())
 
     return map_entities, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE

@@ -138,3 +138,9 @@ class ValueCurve:
         return self.interpolation(self.points[current_point][0],
                                   self.points[current_point + 1][0],
                                   current_amount / max_amount)
+
+
+def snap_to_grid(point: tuple[int, int], cell_size: int, keep_scale=False):
+    return int(point[0] // cell_size) * (cell_size if keep_scale else 1),\
+           int(point[1] // cell_size) * (cell_size if keep_scale else 1)
+
