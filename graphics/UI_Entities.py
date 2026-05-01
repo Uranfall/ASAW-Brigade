@@ -13,6 +13,7 @@ from typing import Callable
 class UIEntity(Entity):
     LIFETIME = 5
     RENDER_LAYER = 10
+    TRIGGERABLE = True
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)
@@ -133,6 +134,29 @@ class TextBox(Button):
                     self.text.text = ''
                 self.empty = False
                 self.text.text += key
+
+
+class RotatingGear1(UIEntity):
+    IMAGE = pygame.image.load('Sprites/ui/gear_gray.png')
+    IMAGE_SCALE = 1.25
+    LIFETIME = 1
+    TRIGGERABLE = False
+
+    def __init__(self, position: tuple[int, int], rotation: float, torque: float = 1.0):
+        super().__init__(position, rotation)
+        self.torque = torque
+        self.start_rotation = rotation
+
+    def draw(self, camera: Camera):
+        super().draw(camera)
+        before_rotation = self.rotation
+        self.rotation = lerp(self.start_rotation,
+                             self.start_rotation+self.torque,
+                             self.get_progress())
+
+
+class RotatingGear2(RotatingGear1):
+    IMAGE_SCALE = 0.8
 
 
 class ExpandingCircle(UIEntity):

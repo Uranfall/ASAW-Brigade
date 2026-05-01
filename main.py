@@ -17,10 +17,10 @@ from map import map_info
 from GameData import GameDataLocal
 
 
-def main():
+def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     #path = a_star(start, goal, grid) for when you finish playing deadlock: this is for creating the path
 
-    ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
+    ui_data = UIData(screen)
     DebugGlobal.ui_data = ui_data
     player_team = 0
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\

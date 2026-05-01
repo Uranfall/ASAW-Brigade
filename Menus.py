@@ -3,13 +3,15 @@ import random
 import time
 
 import pygame
+import screeninfo
 
 from Entity import Entity
 from GlobalVariables import TEXT_RED_CURVE
-from graphics.UI_Entities import Text, UIEntity, Button, TextBox
+from graphics.UI_Entities import Text, UIEntity, Button, TextBox, RotatingGear1, RotatingGear2
 from graphics.graphics_utility import Camera, CinematicCamera
 from main import main
 from shared_utility import ValueCurve, stepped_interpolation
+from screeninfo import get_monitors
 
 
 class Logo(Entity):
@@ -72,6 +74,26 @@ def main_menu():
         animation_duration = 1
         start_time = time.time()
 
+    def settings():
+        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
+        screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.1), ((55, 55, 55), 0.3))
+        camera_position_curve = ValueCurve((camera.target_position, 0), ([-1000, 0], 0.35))
+        animation_start = 0
+        animation_duration = 1
+        start_time = time.time()
+
+    def set_to_full_screen():
+        camera.screen = pygame.display.set_mode((screeninfo.get_monitors()[0].x, screeninfo.get_monitors()[0].y))
+        pygame.display.toggle_fullscreen()
+        toggle_full.action = reset_display
+        toggle_full.text.text = 'To Windowed'
+
+    def reset_display():
+        pygame.display.toggle_fullscreen()
+        camera.screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+        toggle_full.action = set_to_full_screen
+        toggle_full.text.text = 'To Fullscreen'
+
     play_local = Button((1000, 40), (150, 50), Text((0, 0), 0, 'Local', TEXT_RED_CURVE), start_local)
     play_online = Button((1000, -20), (150, 50), Text((0, 0), 0, 'Online', TEXT_RED_CURVE), online_menu)
     online_start = Button((2000, -20), (150, 50), Text((0, 0), 0, 'Start', TEXT_RED_CURVE), online_loading_screen)
@@ -79,9 +101,12 @@ def main_menu():
                                  color=ValueCurve(((120, 120, 160), 0), ((125, 125, 170), 1)),
                                  border_color=(120, 120, 160))
     back_to_start = Button((1000, -80), (150, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), return_to_start)
+    back_to_start2 = Button((-1000, -200), (150, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), return_to_start)
+    toggle_full = Button((-1000, -140), (270, 50), Text((0, 0), 0, 'To Fullscreen', TEXT_RED_CURVE), set_to_full_screen)
     back_to_play = Button((2000, -80), (150, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), play_button_action)
     play_button = Button((0, 0), (150, 50), Text((0, 0), 0, 'Play', TEXT_RED_CURVE), play_button_action)
-    exit_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)
+    settings_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Settings', TEXT_RED_CURVE), settings)
+    exit_button = Button((0, -120), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)
 
     start_time = time.time()
 
@@ -109,11 +134,18 @@ def main_menu():
                                      (255, 255, 255),
                                      20),
                                 back_to_start,
+                                back_to_start2,
+                                toggle_full,
                                 back_to_play,
                                 # Text((1900, 45), 0, 'Username:', TEXT_RED_CURVE),
                                 TextBox((2000, 60), (200, 50), 10, default_text='Your Name'),
                                 play_button,
-                                exit_button]
+                                settings_button,
+                                exit_button,
+                                RotatingGear1((-1250, 200), 0, 360/10),
+                                RotatingGear2((-1500, 100), 30, -360/10),
+                                RotatingGear2((-980, 275), 10, -360/10),
+                                ]
 
     start_camera_animation()
 
@@ -149,7 +181,8 @@ def main_menu():
 
         for item in menu_items:
             item.draw(camera)
-            if isinstance(item, UIEntity) and item.get_progress() > 1 and random.random() < 0.05*dt:
+            if isinstance(item, UIEntity) and item.TRIGGERABLE and\
+                    item.get_progress() > 1 and random.random() < 0.05*dt:
                 item.creation_time = time.time()
 
         pygame.display.update()
