@@ -7,7 +7,7 @@ from Entity import Entity
 from graphics.graphics_utility import Camera
 from shared_utility import snap_to_grid, lerp
 
-default_tile_distance = 800
+tile_distance = 800
 quality = 200
 
 
@@ -43,8 +43,8 @@ class NonImageChunk(GroundChunk):
                        for _ in range(2)] for _ in range(2)]
 
     def draw(self, camera: Camera):
-        scale = [camera(default_tile_distance / 2)] * 2
-        offset = (default_tile_distance / 2.5)
+        scale = [camera(tile_distance / 2)] * 2
+        offset = (tile_distance / 2.5)
         for x in range(0, 2):
             for y in range(0, 2):
                 new_pos = camera(self.position[0]+x*offset, self.position[1]+y*offset)
@@ -58,12 +58,11 @@ class Ground(Entity):
         super().__init__(position, 0)
         self.tiles: dict[tuple[int, int], GroundChunk] = dict()
         self.collision = False
-        self.tile_distance = default_tile_distance
 
     def draw(self, camera: Camera):
         to_render = []
         min_render_size = min(camera.screen.get_size())/quality
-        render_size = camera(default_tile_distance/2)
+        render_size = camera(tile_distance / 2)
         destroy_ratio = 1/render_size*min_render_size
 
         multiply_x = max(1.0, camera.screen.get_width()/camera.screen.get_height())
@@ -71,16 +70,16 @@ class Ground(Entity):
         if destroy_ratio > 1:
             return
         for row in range(-2,
-                         int(500*multiply_x/self.tile_distance/camera.zoom)+2,
+                         int(500*multiply_x/tile_distance/camera.zoom)+2,
                          1+round(1*destroy_ratio)):
             for y in range(-2,
-                           int(500*multiply_y/self.tile_distance/camera.zoom)+2,
+                           int(500*multiply_y/tile_distance/camera.zoom)+2,
                            1 + round(1 * destroy_ratio)):
-                x, y = camera.screen_to_global(row*self.tile_distance*camera.get_zoom(),
-                                               y*self.tile_distance*camera.get_zoom())
-                x, y = snap_to_grid((x, y), self.tile_distance, keep_scale=False)
+                x, y = camera.screen_to_global(row*tile_distance*camera.get_zoom(),
+                                               y*tile_distance*camera.get_zoom())
+                x, y = snap_to_grid((x, y), tile_distance, keep_scale=False)
                 if self.tiles.get((x, y)) is None:
-                    self.tiles[(x, y)] = NonImageChunk((x*self.tile_distance, y*self.tile_distance))
+                    self.tiles[(x, y)] = NonImageChunk((x*tile_distance, y*tile_distance))
                 to_render.append(self.tiles[(x, y)])
         to_render.sort(key=lambda t: hash(t.position))  # This makes sure the chunks are rendered in random order.
         # for tile in to_render[int(len(to_render)/render_size*min_render_size):]:

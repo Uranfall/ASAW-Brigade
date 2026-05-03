@@ -45,6 +45,12 @@ class UIData:
 
         self.new_selected = False
 
+        self.input_checks = []
+
+    def add_on_screen_entity(self, entity: UIEntity,):
+        self.input_checks.extend(entity.get_checks())
+        self.camera.linked_entities.append(entity)
+
     def start_new_frame(self, fps=60.0):
         self.clock.tick(fps)
         self.delta_time = time.time()-self.previous_frame
@@ -127,6 +133,9 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                     game_data.add_command(command)
             else:
                 ui_data.ui_entities.append(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
+
+        for check in ui_data.input_checks:
+            check(event)
 
     # start: Logic responsible for mouse gripping the ground and moving the camera.
     if pygame.mouse.get_pressed()[1]:

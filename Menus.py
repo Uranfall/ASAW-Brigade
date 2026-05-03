@@ -6,8 +6,12 @@ import pygame
 import screeninfo
 
 from Entity import Entity
+from GameData import GameDataLocal
 from GlobalVariables import TEXT_RED_CURVE
+from graphics.Ground import Ground
+import graphics.Ground as GroundProperties
 from graphics.UI_Entities import Text, UIEntity, Button, TextBox, RotatingGear1, RotatingGear2
+from graphics.graphics_main import UIData, ui_tick
 from graphics.graphics_utility import Camera, CinematicCamera
 from main import main
 from shared_utility import ValueCurve, stepped_interpolation
@@ -17,6 +21,70 @@ from screeninfo import get_monitors
 class Logo(Entity):
     IMAGE = pygame.image.load("Sprites/ui/new_highschool_herliya_logo.png")
     IMAGE_SCALE = 2
+
+
+def ground_properties(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
+    def quit_ground_properties():
+        nonlocal run
+        run = False
+
+    ground = Ground()
+
+    ui_data = UIData(screen)
+    exit_button = Button((0, -200), (100, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), action=quit_ground_properties)
+    exit_button.creation_time = 0
+
+    tile_distance = TextBox((-120, 200),
+                            (225, 50),
+                            max_length=6,
+                            default_text='Resolution')
+    tile_distance.creation_time = 0
+
+    quality = TextBox((-120, 140),
+                      (220, 50),
+                      max_length=6,
+                      default_text='Quality')
+
+    quality.creation_time = 0
+
+    ui_data.add_on_screen_entity(exit_button)
+    ui_data.add_on_screen_entity(tile_distance)
+    ui_data.add_on_screen_entity(quality)
+
+    game_data = GameDataLocal([Logo((0, 0), 0), ground], [], [], None, None, 10)
+
+    run = True
+    while run:
+        update_ground = False
+        if tile_distance.text.text.isnumeric():
+            tmp = int(tile_distance.text.text)
+            if tmp != 0 and tmp != GroundProperties.tile_distance:
+                GroundProperties.tile_distance = tmp
+                update_ground = True
+        else:
+            tmp = 800
+            if tmp != GroundProperties.tile_distance:
+                GroundProperties.tile_distance = tmp
+                update_ground = True
+
+        if quality.text.text.isnumeric():
+            tmp = int(quality.text.text)
+            if tmp != 0 and tmp != GroundProperties.quality:
+                GroundProperties.quality = tmp
+                update_ground = True
+        else:
+            tmp = 200
+            if tmp != GroundProperties.quality:
+                GroundProperties.quality = tmp
+                update_ground = True
+
+        if update_ground:
+            ground.tiles = dict()
+
+        out = ui_tick(ui_data, game_data)
+
+        if not out.run:
+            exit()
 
 
 def main_menu():
@@ -37,6 +105,11 @@ def main_menu():
         animation_duration = 1
         start_time = time.time()
 
+    def reset_animation():
+        nonlocal animation_progress
+        animation_progress = (time.time() - start_time - animation_start) / animation_duration
+        camera.target_position = camera_position_curve(animation_progress)
+
     def return_to_start():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
         screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.25),
@@ -44,11 +117,13 @@ def main_menu():
         camera_position_curve = ValueCurve((camera.target_position, 0), ([0, 0], 0.2))
         animation_duration = 1
         start_time = time.time()
+        reset_animation()
 
     def start_local():
         nonlocal last_update
         main()
         last_update = time.time()
+        reset_animation()
 
     def play_button_action():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -57,6 +132,7 @@ def main_menu():
         animation_start = 0
         animation_duration = 1
         start_time = time.time()
+        reset_animation()
 
     def online_menu():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -65,6 +141,7 @@ def main_menu():
         animation_start = 0
         animation_duration = 1
         start_time = time.time()
+        reset_animation()
 
     def online_loading_screen():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -73,6 +150,7 @@ def main_menu():
         animation_start = 0
         animation_duration = 1
         start_time = time.time()
+        reset_animation()
 
     def settings():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -81,9 +159,11 @@ def main_menu():
         animation_start = 0
         animation_duration = 1
         start_time = time.time()
+        reset_animation()
 
     def set_to_full_screen():
-        camera.screen = pygame.display.set_mode((screeninfo.get_monitors()[0].x, screeninfo.get_monitors()[0].y))
+        camera.screen = pygame.display.set_mode((screeninfo.get_monitors()[0].width,
+                                                 screeninfo.get_monitors()[0].height))
         pygame.display.toggle_fullscreen()
         toggle_full.action = reset_display
         toggle_full.text.text = 'To Windowed'
@@ -105,7 +185,9 @@ def main_menu():
     toggle_full = Button((-1000, -140), (270, 50), Text((0, 0), 0, 'To Fullscreen', TEXT_RED_CURVE), set_to_full_screen)
     back_to_play = Button((2000, -80), (150, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), play_button_action)
     play_button = Button((0, 0), (150, 50), Text((0, 0), 0, 'Play', TEXT_RED_CURVE), play_button_action)
-    settings_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Settings', TEXT_RED_CURVE), settings)
+    settings_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Settings', TEXT_RED_CURVE, size=28), settings)
+    ground_settings = Button((-1000, -80), (320, 50), Text((0, 0), 0, 'Ground Properties', TEXT_RED_CURVE),
+                             ground_properties)
     exit_button = Button((0, -120), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)
 
     start_time = time.time()
@@ -114,6 +196,9 @@ def main_menu():
     camera = CinematicCamera([0, 1000], 1, pygame.display.set_mode((500, 500), pygame.RESIZABLE))
 
     menu_items: list[Entity] = [Logo((0, 1000), 0),
+                                RotatingGear1((-1250, 200), 0, 360 / 10),
+                                RotatingGear2((-1500, 100), 30, -360 / 10),
+                                RotatingGear2((-980, 275), 10, -360 / 10),
                                 Text((0, 190),
                                      0,
                                      'ASAW',
@@ -141,10 +226,8 @@ def main_menu():
                                 TextBox((2000, 60), (200, 50), 10, default_text='Your Name'),
                                 play_button,
                                 settings_button,
+                                ground_settings,
                                 exit_button,
-                                RotatingGear1((-1250, 200), 0, 360/10),
-                                RotatingGear2((-1500, 100), 30, -360/10),
-                                RotatingGear2((-980, 275), 10, -360/10),
                                 ]
 
     start_camera_animation()
@@ -155,34 +238,24 @@ def main_menu():
         dt = time.time() - last_update
         last_update = time.time()
 
-        animation_progress = (time.time()-start_time-animation_start)/animation_duration
+        animation_progress = (time.time() - start_time - animation_start) / animation_duration
         camera.target_position = camera_position_curve(animation_progress)
         camera.animate(dt)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                for item in menu_items:
-                    if isinstance(item, TextBox):
-                        item.selected = False
-                    if isinstance(item, Button):
-                        if item.update_hover(camera):
-                            if item.action is not None:
-                                item.action()
-                animation_progress = (time.time() - start_time - animation_start) / animation_duration
-                camera.target_position = camera_position_curve(animation_progress)
             if event.type == pygame.KEYUP:
                 for item in menu_items:
                     if isinstance(item, TextBox):
-                        item.key_down(event.unicode)
+                        item.pressed_key(event.unicode)
 
-        camera.tmp_offset = [math.sin(time.time()*0.7*2)*0.51, math.cos(time.time()*2)*0.51]
+        camera.tmp_offset = [math.sin(time.time() * 0.7 * 2) * 0.51, math.cos(time.time() * 2) * 0.51]
 
         for item in menu_items:
             item.draw(camera)
-            if isinstance(item, UIEntity) and item.TRIGGERABLE and\
-                    item.get_progress() > 1 and random.random() < 0.05*dt:
+            if isinstance(item, UIEntity) and item.TRIGGERABLE and \
+                    item.get_progress() > 1 and random.random() < 0.05 * dt:
                 item.creation_time = time.time()
 
         pygame.display.update()
