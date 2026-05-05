@@ -4,7 +4,7 @@ import time
 import pygame.draw
 
 from Entity import Entity
-from GlobalVariables import FONT
+from GlobalVariables import FONT, TEXT_RED_CURVE
 from graphics.graphics_utility import Camera
 from shared_utility import ValueCurve, get_collision_points, is_within_box, lerp
 from typing import Callable
@@ -13,6 +13,7 @@ from typing import Callable
 class UIEntity(Entity):
     LIFETIME = 5
     RENDER_LAYER = 10
+    TRIGGERABLE = True
 
     def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)
@@ -24,6 +25,10 @@ class UIEntity(Entity):
 
     def get_progress(self):
         return self.get_age()/self.LIFETIME
+
+    @staticmethod
+    def get_checks() -> list[Callable]:
+        return []
 
 
 class Text(UIEntity):
@@ -58,11 +63,13 @@ class Text(UIEntity):
 
 
 class Button(UIEntity):
+    LIFETIME = math.inf
+
     def __init__(self,
                  position: tuple[int, int],
                  scale: tuple[float, float],
                  text: Text,
-                 action: Callable = None,
+                 action: Callable = lambda: None,
                  border_color=(50, 50, 60),
                  color=ValueCurve(((30, 30, 30), 0), ((100, 40, 45), 1))):
         super().__init__(position, 0)
@@ -75,6 +82,7 @@ class Button(UIEntity):
         self.not_hover_time = time.time()
         self.hover_animation_duration = 0.5
         self.action = action
+        self.mouse_held = False
 
     def update_hover(self, camera: Camera):
         global_mouse = camera.screen_to_global(*pygame.mouse.get_pos())
@@ -87,10 +95,18 @@ class Button(UIEntity):
 
     def draw(self, camera: Camera):
         is_hover = self.update_hover(camera)
+
+        is_click = self.mouse_held and not pygame.mouse.get_pressed()[0]
+
         if is_hover:
             color = self.color((time.time() - self.hovering_time) / self.hover_animation_duration)
+            if is_click:
+                self.action()
         else:
             color = self.color(1 - (time.time() - self.not_hover_time) / self.hover_animation_duration)
+            if is_click:
+                self.outside_click()
+        self.mouse_held = pygame.mouse.get_pressed()[0]
         pygame.draw.rect(camera.screen,
                          color,
                          (*camera(self.position[0]-self.scale[0]/2, self.position[1]+self.scale[1]/2),
@@ -106,6 +122,68 @@ class Button(UIEntity):
         self.text.creation_time = self.creation_time
 
         self.text.draw(camera)
+
+    def outside_click(self):
+        pass
+
+
+class TextBox(Button):
+    def __init__(self, position: tuple[int, int], scale: tuple[float, float], max_length: int, default_text=''):
+        super().__init__(position, scale, Text((0, 0), 0, default_text, TEXT_RED_CURVE))
+        self.max_length = max_length
+        self.selected = False
+        self.action = self.select
+        self.default_text = default_text
+        self.empty = True
+
+    def select(self):
+        self.selected = True
+
+    def outside_click(self):
+        self.selected = False
+
+    def pressed_key(self, key: str):
+        if self.selected:
+            if self.empty:
+                self.text.text = ''
+            if key == '\x08':
+                if not self.empty:
+                    self.text.text = self.text.text[:-1]
+                    if self.text.text == '':
+                        self.empty = True
+                        self.text.text = self.default_text
+            elif len(self.text.text) < self.max_length:
+                self.empty = False
+                self.text.text += key
+
+    def key_press(self, event: pygame.event):
+        if event.type == pygame.KEYUP:
+            self.pressed_key(event.unicode)
+
+    def get_checks(self) -> list[Callable]:
+        return [self.key_press]
+
+
+class RotatingGear1(UIEntity):
+    IMAGE = pygame.image.load('Sprites/ui/gear_gray.png')
+    IMAGE_SCALE = 1.25
+    LIFETIME = 1
+    TRIGGERABLE = False
+
+    def __init__(self, position: tuple[int, int], rotation: float, torque: float = 1.0):
+        super().__init__(position, rotation)
+        self.torque = torque
+        self.start_rotation = rotation
+
+    def draw(self, camera: Camera):
+        super().draw(camera)
+        self.rotation = lerp(self.start_rotation,
+                             self.start_rotation+self.torque,
+                             self.get_progress())
+
+
+class RotatingGear2(RotatingGear1):
+    IMAGE_SCALE = 0.8
 
 
 class ExpandingCircle(UIEntity):

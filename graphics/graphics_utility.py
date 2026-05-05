@@ -17,6 +17,7 @@ class Camera:
         self.position = position
         self.zoom = zoom
         self.screen = screen
+        self.linked_entities = []
 
     def get_zoom(self):
         return self.zoom*min(self.screen.get_size())/self.default_screen_size
@@ -80,6 +81,11 @@ class Camera:
         self.tmp_offset = [0, 0]
 
     def render(self):
+        if self.linked_entities:
+            static_camera = Camera([0, 0], 1, self.screen)
+            for linked_entity in self.linked_entities:
+                linked_entity.draw(static_camera)
+
         pygame.display.update()
         self.screen.fill((10, 100, 10))
 
