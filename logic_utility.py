@@ -26,9 +26,9 @@ def check_walkable(node: Node, entities: list[Entity]):
 #distance on a 2d grid
 
 
-def path_clear(positionA: tuple(int,int), positionB: tuple(int,int), entities: list[Entity],camera: Camera):
+def path_clear(positionA: tuple(int,int), positionB: tuple(int,int), entities: list[Entity]):
         for entity in entities:
-            scale = camera(entity.IMAGE_SCALE)
+            scale = entity.IMAGE_SCALE
             img = entity.IMAGE
             collision_points = get_collision_points(entity.position, [img.get_width()*scale, img.get_height()*scale])
             #make a function and check if the y is the same

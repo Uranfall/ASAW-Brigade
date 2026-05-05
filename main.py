@@ -12,7 +12,7 @@ from UnitClass import Unit
 from Entity import Entity
 from graphics.Ground import Ground
 from graphics.graphics_main import UIData, ui_tick
-from logic_main import logic_tick, create_grid, get_current_node
+from logic_main import logic_tick, create_grid, get_current_node, LOGIC_DATA
 from map import map_info
 from GameData import GameDataLocal
 
@@ -21,6 +21,7 @@ def main():
     #path = a_star(start, goal, grid) for when you finish playing deadlock: this is for creating the path
 
     ui_data = UIData(pygame.display.set_mode((500, 500), pygame.RESIZABLE))
+    logic_data = LOGIC_DATA
     DebugGlobal.ui_data = ui_data
     player_team = 0
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
@@ -42,7 +43,7 @@ def main():
     while run:
         entities[0].rotation += 45*ui_data.delta_time
         ui_out = ui_tick(ui_data, game_data)
-        logic_tick(entities, units, grid)
+        logic_tick(entities, units, grid, logic_data)
         run = ui_out.run
 
 

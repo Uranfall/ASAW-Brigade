@@ -1,4 +1,8 @@
 from __future__ import annotations
+
+import random
+from operator import truediv
+
 import pygame
 from logic_utility import *
 import GlobalVariables
@@ -7,6 +11,14 @@ from Node import Node
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
+
+
+def shot_fired():
+    r1 = random.randint(1,100)
+    if r1>30:
+        return True
+    else:
+        return False
 
 
 class Unit(Entity):
@@ -26,11 +38,15 @@ class Unit(Entity):
         self.path = []
         self.target_pos = position
         self.target_rotation = rotation
+
+        self.hp = 10
+        self.damage = 2
+        self.attackRange = [self.position[0]-100, self.position[1]-100, self.position[0]+100, self.position[1]+100]
         self.team = 0
-        self.target = None
+        self.targetUnit = None
         self.selected = selected
         self.speed = 1
-        #self.unit_type = unit_type
+
 
     def set_position(self, position: tuple[int, int]):
         self.position = position
@@ -54,7 +70,7 @@ class Unit(Entity):
         currentX = self.position[0]
         currentY = self.position[1]
         dx, dy = (targetX - currentX, targetY - currentY)
-        stepX, stepY = (dx/60, dy/60)
+        stepX, stepY = (self.speed*dx/60, self.speed*dy/60)
         self.position = (currentX+stepX, currentY+stepY)
 
     def calc_movement(self, grid):
