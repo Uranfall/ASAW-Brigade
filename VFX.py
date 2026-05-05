@@ -156,6 +156,7 @@ class ColorfulExplosionParticle(ExplosionParticle):
 
 class ColorfulExplosion(Explosion):
     SMOKE_FACTOR = 0
+    COLOR_CURVE = ValueCurve(((255, 220, 100), 0), ((255, 200, 50), 0.3), ((100, 100, 100), 0.6), ((50, 50, 50), 1))
     PARTICLE_TYPE = ColorfulExplosionParticle
     FINAL_AMOUNT = 100
     MAX_SPEED = 1000
@@ -164,4 +165,41 @@ class ColorfulExplosion(Explosion):
 class ColorfulFire(ColorfulExplosion):
     FINAL_AMOUNT = 500
     BURNING_TIME = 15
+
+
+class GunFireParticle(ExplosionParticle):
+    SCALE_CURVE = ValueCurve((8, 0), (6, 0.1), (5, 0.5), (3, 0.8), (0, 1))
+    DRAG = 40
+
+
+class GunFireSmokeParticle(ExplosionSmokeParticle):
+    SCALE_CURVE = ValueCurve((10, 0), (8, 0.1), (6, 0.5), (3, 0.8), (0, 1))
+    LIFETIME = 1
+    DRAG = 40
+
+
+class GunFire(Explosion):
+    MIN_SPEED = 10
+    MAX_SPEED = 500
+    FINAL_AMOUNT = 20
+    START_AMOUNT = 10
+    BURNING_TIME = 0.05
+    PARTICLE_TYPE = GunFireParticle
+    SMOKE_PARTICLE = GunFireSmokeParticle
+
+
+class SmokeTrail(ParticleHaving):
+    PARTICLE_TYPE = GunFireSmokeParticle
+    PARTICLE_DISTANCE = 2.0
+    LIFETIME = 10
+
+    def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
+        super().__init__(position, rotation)
+        pos = list(self.position)
+        direction = shared_utility.angle_to_vector(rotation, self.PARTICLE_DISTANCE)
+        self.particles = []
+        for _ in range(int(distance/self.PARTICLE_DISTANCE)):
+            self.particles.append(self.PARTICLE_TYPE((pos[0], pos[1]), rotation+random.randint(-90, 90)))
+            pos[0] += direction[0]
+            pos[1] += direction[1]
 

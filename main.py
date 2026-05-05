@@ -35,7 +35,6 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         unit.current_node = get_current_node(unit, grid)
         unit.target_node = unit.current_node
 
-
     game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
 
     run = True

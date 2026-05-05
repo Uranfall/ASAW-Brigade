@@ -5,9 +5,11 @@ import time
 import pygame
 import screeninfo
 
+from Entities.Bonus import CatGunner, HandGun
 from Entity import Entity
 from GameData import GameDataLocal
 from GlobalVariables import TEXT_RED_CURVE
+from VFX import GunFire, SmokeTrail
 from graphics.Ground import Ground
 import graphics.Ground as GroundProperties
 from graphics.UI_Entities import Text, UIEntity, Button, TextBox, RotatingGear1, RotatingGear2
@@ -21,6 +23,42 @@ from screeninfo import get_monitors
 class Logo(Entity):
     IMAGE = pygame.image.load("Sprites/ui/new_highschool_herliya_logo.png")
     IMAGE_SCALE = 2
+
+
+def gun_range(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
+    def quit_gun_range():
+        nonlocal run
+        run = False
+
+    def bang_bang():
+        ui_data.ui_entities.append(GunFire((-70, 175), 0))
+
+    def pew_pew():
+        ui_data.ui_entities.append(SmokeTrail((-30, -135), 90, distance=1000))
+
+    ground = Ground()
+
+    ui_data = UIData(screen)
+    exit_button = Button((0, -200), (100, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), action=quit_gun_range)
+    exit_button.creation_time = 0
+
+    ui_data.add_on_screen_entity(exit_button)
+
+    game_data = GameDataLocal([ground,
+                               CatGunner((0, 150), 0),
+                               Button((200, 150), (190, 50), Text((0, 0), 0, 'Bang Bang!', TEXT_RED_CURVE),
+                                      action=bang_bang),
+                               Button((200, -150), (175, 50), Text((0, 0), 0, 'Pew Pew!', TEXT_RED_CURVE),
+                                      action=pew_pew),
+                               HandGun((0, -150), 0)], [], [], None, None, 10)
+
+    run = True
+    while run:
+
+        out = ui_tick(ui_data, game_data)
+
+        if not out.run:
+            exit()
 
 
 def ground_properties(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
@@ -88,6 +126,9 @@ def ground_properties(screen=pygame.display.set_mode((500, 500), pygame.RESIZABL
 
 
 def main_menu():
+    last_time_pressed_enter = 0
+    enter_text = Text((-1000, -3035), 0, 'Not the key you dummy!', TEXT_RED_CURVE)
+
     screen_color_curve: ValueCurve | None = None
     camera_position_curve: ValueCurve | None = None
     animation_start: float | None = None
@@ -174,6 +215,15 @@ def main_menu():
         toggle_full.action = set_to_full_screen
         toggle_full.text.text = 'To Fullscreen'
 
+    def gun_range_dungeon():
+        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
+        screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.1), ((40, 40, 40), 0.8))
+        camera_position_curve = ValueCurve((camera.target_position, 0), ([-1000, -3000], 0.35))
+        animation_start = 0
+        animation_duration = 1
+        start_time = time.time()
+        reset_animation()
+
     play_local = Button((1000, 40), (150, 50), Text((0, 0), 0, 'Local', TEXT_RED_CURVE), start_local)
     play_online = Button((1000, -20), (150, 50), Text((0, 0), 0, 'Online', TEXT_RED_CURVE), online_menu)
     online_start = Button((2000, -20), (150, 50), Text((0, 0), 0, 'Start', TEXT_RED_CURVE), online_loading_screen)
@@ -186,6 +236,9 @@ def main_menu():
     back_to_play = Button((2000, -80), (150, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE), play_button_action)
     play_button = Button((0, 0), (150, 50), Text((0, 0), 0, 'Play', TEXT_RED_CURVE), play_button_action)
     settings_button = Button((0, -60), (150, 50), Text((0, 0), 0, 'Settings', TEXT_RED_CURVE, size=28), settings)
+    settings_button2 = Button((-1000, -3150), (100, 50), Text((0, 0), 0, 'Back', TEXT_RED_CURVE, size=28), settings)
+    gun_range_button = Button((-1000, -20), (200, 50), Text((0, 0), 0, 'Gun Range', TEXT_RED_CURVE), gun_range_dungeon)
+    gun_range_enter = Button((-1000, -3000), (200, 50), Text((0, 0), 0, 'Enter', TEXT_RED_CURVE), gun_range)
     ground_settings = Button((-1000, -80), (320, 50), Text((0, 0), 0, 'Ground Properties', TEXT_RED_CURVE),
                              ground_properties)
     exit_button = Button((0, -120), (150, 50), Text((0, 0), 0, 'Exit', TEXT_RED_CURVE), exit)
@@ -227,6 +280,9 @@ def main_menu():
                                 play_button,
                                 settings_button,
                                 ground_settings,
+                                gun_range_button,
+                                settings_button2,
+                                gun_range_enter,
                                 exit_button,
                                 ]
 
@@ -249,6 +305,11 @@ def main_menu():
                 for item in menu_items:
                     if isinstance(item, TextBox):
                         item.pressed_key(event.unicode)
+                if event.key == pygame.K_RETURN:
+                    last_time_pressed_enter = time.time()
+                    enter_text.creation_time = time.time()
+        if time.time() - last_time_pressed_enter < 5:
+            enter_text.draw(camera)
 
         camera.tmp_offset = [math.sin(time.time() * 0.7 * 2) * 0.51, math.cos(time.time() * 2) * 0.51]
 
