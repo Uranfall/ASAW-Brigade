@@ -24,8 +24,13 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     logic_data = LOGIC_DATA()
     DebugGlobal.ui_data = ui_data
     player_team = 0
+    player0_currency = 0
+    player1_currency = 0
+
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
     map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
+    unit_spawn_points_team0 = [[-500, -500], [0, -500], [500, -500]]
+    unit_spawn_points_team1 = [[-500, 500], [0, 500], [500, 500]]
 
     units: list[Unit] = [Mouse((0, 0), 90, 1, False),]\
                + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
@@ -36,8 +41,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         unit.team = random.randint(0, 1)
         unit.current_node = get_current_node(unit, grid)
         unit.target_node = unit.current_node
-
-    game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
+    game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE, player0_currency, player1_currency)
 
     run = True
     while run:
