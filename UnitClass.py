@@ -41,7 +41,7 @@ class Unit(Entity):
 
         self.hp = 10
         self.damage = 2
-        self.attackRange = [self.position[0]-100, self.position[1]-100, self.position[0]+100, self.position[1]+100]
+        self.attackRange = 100
         self.team = 0
         self.targetUnit = None
         self.selected = selected
@@ -53,6 +53,8 @@ class Unit(Entity):
     def get_position(self):
         return list(self.position)
 
+    def get_attack_box(self):
+        return [self.position[0]-self.attackRange, self.position[1]-self.attackRange, self.position[0]+self.attackRange, self.position[1]+self.attackRange]
     def get_collision_points(self):
         scale = self.IMAGE_SCALE
         img = self.IMAGE
@@ -69,9 +71,10 @@ class Unit(Entity):
     def move(self, targetX,targetY):
         currentX = self.position[0]
         currentY = self.position[1]
-        dx, dy = (targetX - currentX, targetY - currentY)
-        stepX, stepY = (self.speed*dx/60, self.speed*dy/60)
-        self.position = (currentX+stepX, currentY+stepY)
+        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
+            dx, dy = (targetX - currentX, targetY - currentY)
+            stepX, stepY = (self.speed*dx/60, self.speed*dy/60)
+            self.position = (currentX+stepX, currentY+stepY)
 
     def calc_movement(self, grid):
         currentX = self.position[0]

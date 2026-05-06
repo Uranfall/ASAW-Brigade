@@ -33,6 +33,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     entities: list[Entity] = units + map_objects
 
     for unit in units:
+        unit.team = random.randint(0, 1)
         unit.current_node = get_current_node(unit, grid)
         unit.target_node = unit.current_node
 

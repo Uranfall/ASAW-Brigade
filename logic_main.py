@@ -55,23 +55,27 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
     for unit in units:
         unit.calc_rotation()
         unit.move(unit.target_pos[0], unit.target_pos[1])
-        check_unit_current_action(unit, entities, logic_data)
+        if logic_data.tick_counter == 60:
+            check_unit_current_action(unit, entities, logic_data)
     if logic_data.units_to_delete:
         for unit in logic_data.units_to_delete:
             units.remove(unit)
-            logic_data.units_to_delete.remove(unit)
+            entities.remove(unit)
+        logic_data.units_to_delete = []
     #collision_logic(entities, units)
 
 
 
 def check_unit_current_action(unit: Unit, entities: list[Entity], logic_data):
     #has a target, no obstacles, is in range
-    if unit.targetUnit is not None and path_clear(unit.get_position(), unit.targetUnit.get_position(), entities) and is_within_box(unit.targetUnit.position, unit.attackRange):
+    if unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
+        print("target in range")
+        unit.target_pos = unit.position
         if shot_fired():
             unit.targetUnit.hp -= unit.damage
         if unit.targetUnit.hp <= 0:
-            unit.targetUnit = None
             logic_data.units_to_delete.append(unit.targetUnit)
+            unit.targetUnit = None
 
 
 def collision_logic(entities: list[Entity],units: list[Unit]):
@@ -96,4 +100,5 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 #  ui_data automatically deletes ui_entities that live too long.
 
 def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA):
+    logic_data.start_new_frame()
     Entity_Handler(entities, units, grid, logic_data)

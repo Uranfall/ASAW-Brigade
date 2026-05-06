@@ -110,6 +110,7 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
             out.run = False
         if event.type == pygame.MOUSEWHEEL:
             ui_data.camera.adjust_zoom(event.y, pygame.mouse.get_pos())
+        #selecting units
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
@@ -135,8 +136,11 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                         ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
                     ]
                 for unit in selected:
-                    if target is not None:
+                    if target is not None and target.team != unit.team:
+                        unit.targetUnit = target
                         game_data.add_command(Command(Command.ATTACK, str(id(target)), id(unit)))
+                        unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                        unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
                     else:
                         unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
                         unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
