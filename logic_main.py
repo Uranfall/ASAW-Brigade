@@ -39,19 +39,6 @@ def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
         grid.append(row)
     return grid
 
-
-def get_current_node(unit: Unit, grid):
-    first_node = None
-    for row in grid:
-        for node in row:
-            if first_node is None:
-                first_node = node
-            if node.walkable and is_within_box([node.x, node.y], unit.get_collision_points()):
-                unit.set_position([node.x, node.y])
-                unit.target_position = unit.position
-                return node
-    return first_node
-
 def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
     for unit in units:
         unit.calc_rotation()
@@ -108,6 +95,6 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
     logic_data.start_new_frame()
     Entity_Handler(entities, units, grid, logic_data)
     if logic_data.tick_counter == 60:
-        game_data.update_player0_currency(50)
-        game_data.update_player1_currency(50)
-        print(game_data.get_player0_currency(), game_data.get_player1_currency())
+        game_data.update_player_currency(50, 0)
+        game_data.update_player_currency(50, 1)
+        print(game_data.get_player_currency(0),game_data.get_player_currency(1))

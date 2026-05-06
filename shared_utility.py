@@ -19,12 +19,13 @@ def get_closest_node(position: list,grid) -> Node:
     closest_node = None
     for row in grid:
         for node in row:
-            if min_distance == 9999:
-                min_distance = math.dist([node.x,node.y], [position[0],position[1]])
-                closest_node = node
-            if min_distance > math.dist([node.x,node.y], [position[0],position[1]]):
-                min_distance = math.dist([node.x,node.y], [position[0],position[1]])
-                closest_node = node
+            if node.walkable:
+                if min_distance == 9999:
+                    min_distance = math.dist([node.x,node.y], [position[0],position[1]])
+                    closest_node = node
+                if min_distance > math.dist([node.x,node.y], [position[0],position[1]]):
+                    min_distance = math.dist([node.x,node.y], [position[0],position[1]])
+                    closest_node = node
     return closest_node
 
 def vector_to_angle(vector: list[float, float] | tuple[float, float]):

@@ -3,7 +3,7 @@ import random
 import pygame
 
 import DebugGlobal
-from Entities.Units import Mouse
+from Entities.Units import *
 from GlobalVariables import TEXT_RED_CURVE
 from Unit_AI import a_star
 from graphics.UI_Entities import Button, Text
@@ -14,7 +14,8 @@ from UnitClass import Unit
 from Entity import Entity
 from graphics.Ground import Ground
 from graphics.graphics_main import UIData, ui_tick
-from logic_main import logic_tick, create_grid, get_current_node, LOGIC_DATA
+from logic_main import logic_tick, create_grid, LOGIC_DATA
+from shared_utility import get_closest_node
 from map import map_info
 from GameData import GameDataLocal
 
@@ -26,11 +27,38 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         nonlocal run
         run = False
 
+
     def create_mouse():
-        pass
+        spawn_points = game_data.get_player_spawns(player_team)
+        money = game_data.get_player_currency(player_team)
+        if money >= 500:
+            game_data.update_player_currency(-500, player_team)
+            newUnit = Mouse(spawn_points[0], 90, False, player_team)
+            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
+            newUnit.target_node = newUnit.current_node
+            # add unit
+            units.append(newUnit)
+            entities.append(newUnit)
+            # shift list left, set the next spawn as the one the next unit is going to use
+            game_data.shift_player_spawns(player_team)
+
+
+
 
     def create_soldier():
-        pass
+        spawn_points = game_data.get_player_spawns(player_team)
+        money = game_data.get_player_currency(player_team)
+        if money >= 500:
+            game_data.update_player_currency(-500, player_team)
+            newUnit = Soldier(spawn_points[0], 90, False, player_team)
+            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
+            newUnit.target_node = newUnit.current_node
+            # add unit
+            units.append(newUnit)
+            entities.append(newUnit)
+            # shift list left, set the next spawn as the one the next unit is going to use
+            game_data.shift_player_spawns(player_team)
+
 
     def create_uuuhh_idk____oh_wait_tank__right():
         pass
@@ -50,21 +78,19 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
 
     logic_data = LOGIC_DATA()
     DebugGlobal.ui_data = ui_data
-    player_team = 0
+    player_team = 1
 
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
     map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
-    unit_spawn_points_team0 = [[-500, -500], [0, -500], [500, -500]]
-    unit_spawn_points_team1 = [[-500, 500], [0, 500], [500, 500]]
 
-    units: list[Unit] = [Mouse((0, 0), 90, 1, False),]\
+    units: list[Unit] = [Mouse((0, 0), 90, 1, 0),]\
                + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
-                       random.randint(0, 360), 1, False) for _ in range(10)]
+                       random.randint(0, 360), False, random.randint(0, 1)) for _ in range(10)]
     entities: list[Entity] = units + map_objects
 
     for unit in units:
         unit.team = random.randint(0, 1)
-        unit.current_node = get_current_node(unit, grid)
+        unit.current_node = get_closest_node(unit.get_position(), grid)
         unit.target_node = unit.current_node
     game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
 

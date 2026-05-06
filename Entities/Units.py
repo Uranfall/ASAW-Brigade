@@ -13,9 +13,15 @@ class Mouse(Unit):
     IMAGE_SCALE = 0.75
     RENDER_LAYER = 4
 
-    def __init__(self, position: tuple[int, int], rotation: float, speed: int, selected: bool):
-        super().__init__(position, rotation, speed, selected)
+    def __init__(self, position: tuple[int, int], rotation: float, selected: bool, team: int):
+        super().__init__(position, rotation, selected)
         self.current_node = None
+        self.team = team
+        self.speed = 2
+        self.hp = 10
+        self.damage = 3
+        self.attackRange = 100
+        self.attackTickSpeed = 20
         self.tail = MouseTail((0, -70), 180+rotation, self)
 
     def draw(self, camera: Camera):
@@ -27,4 +33,14 @@ class Soldier(Unit):
     IMAGE = pygame.image.load('Sprites/Units/soldier.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.3
+
+    def __init__(self, position: tuple[int, int], rotation: float, selected: bool, team: int):
+        super().__init__(position, rotation, selected)
+        self.current_node = None
+        self.team = team
+        self.speed = 1
+        self.hp = 30
+        self.damage = 2
+        self.attackRange = 500
+        self.attackTickSpeed = 30
 

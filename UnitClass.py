@@ -27,25 +27,23 @@ class Unit(Entity):
                  # unit_type: str,
                  position: tuple[int, int],
                  rotation: float,
-                 speed: int,
-                 #team: int,
-                 selected: bool,
-                 act_list = list["idle"],
+                 team: int,
                  ):
-        super().__init__(position, rotation, selected)
+        super().__init__(position, rotation)
         self.current_node = Node
         self.target_node = self.current_node
         self.path = []
         self.target_pos = position
         self.target_rotation = rotation
+        self.selected = False
 
         self.hp = 10
         self.damage = 2
         self.attackRange = 200
         self.attackTickSpeed = 20
-        self.team = 0
+        self.team = team
         self.targetUnit = None
-        self.selected = selected
+        self.selected = False
         self.speed = 1
 
 

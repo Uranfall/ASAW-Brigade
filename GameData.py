@@ -41,8 +41,8 @@ class GameData:
 
 
 class GameDataLocal(GameData):
-    def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0,
-                 unit_spawn_points_team1, grid_size):
+    def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0: list[tuple[int,int]],
+                 unit_spawn_points_team1: list[tuple[int,int]], grid_size):
         super().__init__()
         self.entities = entities
         self.units = units
@@ -71,17 +71,39 @@ class GameDataLocal(GameData):
     def get_grid(self) -> list[list[Node]]:
         return copy.deepcopy(self.grid)
 
-    def get_player0_currency(self) -> int:
-        return self.player0_currency
 
-    def get_player1_currency(self) -> int:
-        return self.player1_currency
+    def get_player_currency(self, team: int) -> int:
+        if team == 0:
+            return self.player0_currency
+        elif team == 1:
+            return self.player1_currency
 
-    def update_player0_currency(self, update: int):
-        self.player0_currency = self.player0_currency + update
+    def update_player_currency(self, update: int, team: int):
+        if team==0:
+            self.player0_currency = self.player0_currency + update
+        elif team==1:
+            self.player1_currency = self.player1_currency + update
 
-    def update_player1_currency(self, update: int):
-        self.player1_currency = self.player1_currency + update
+
+    def get_player_spawns(self, team: int) -> list[tuple[int,int]]:
+        if team==0:
+            return self.unit_spawn_points_team0
+        elif team==1:
+            return self.unit_spawn_points_team1
+        return self.unit_spawn_points_team0
+
+    def shift_player_spawns(self, team: int):
+        if team==0:
+            point0 = self.unit_spawn_points_team0[0]
+            for x in range(1, len(self.unit_spawn_points_team0) - 1, 1):
+                self.unit_spawn_points_team0[x-1] = self.unit_spawn_points_team0[x]
+            self.unit_spawn_points_team0.append(point0)
+        elif team==1:
+            point0 = self.unit_spawn_points_team1[0]
+            for x in range(1, len(self.unit_spawn_points_team1) - 1, 1):
+                self.unit_spawn_points_team1[x - 1] = self.unit_spawn_points_team1[x]
+            self.unit_spawn_points_team1.append(point0)
+
 
     def add_command(self, command: Command):
         self.commands.append(command)
