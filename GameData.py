@@ -42,7 +42,7 @@ class GameData:
 
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0,
-                 unit_spawn_points_team1, grid_size, player0_currency, player1_currency):
+                 unit_spawn_points_team1, grid_size):
         super().__init__()
         self.entities = entities
         self.units = units
@@ -50,8 +50,8 @@ class GameDataLocal(GameData):
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
         self.grid_size = grid_size
-        self.player0_currency = player0_currency
-        self.player1_currency = player1_currency
+        self.player0_currency = 0
+        self.player1_currency = 0
         self.commands = []
 
     def get_layers(self):
@@ -70,6 +70,18 @@ class GameDataLocal(GameData):
 
     def get_grid(self) -> list[list[Node]]:
         return copy.deepcopy(self.grid)
+
+    def get_player0_currency(self) -> int:
+        return self.player0_currency
+
+    def get_player1_currency(self) -> int:
+        return self.player1_currency
+
+    def update_player0_currency(self, update: int):
+        self.player0_currency = self.player0_currency + update
+
+    def update_player1_currency(self, update: int):
+        self.player1_currency = self.player1_currency + update
 
     def add_command(self, command: Command):
         self.commands.append(command)

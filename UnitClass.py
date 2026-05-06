@@ -41,7 +41,8 @@ class Unit(Entity):
 
         self.hp = 10
         self.damage = 2
-        self.attackRange = 100
+        self.attackRange = 200
+        self.attackTickSpeed = 20
         self.team = 0
         self.targetUnit = None
         self.selected = selected
@@ -68,15 +69,15 @@ class Unit(Entity):
         targetY = self.target_node.y - self.position[1]
         self.rotation = vector_to_angle((targetX, targetY))
 
-    def move(self, targetX,targetY):
+    def move(self, targetX,targetY,deltatime):
         currentX = self.position[0]
         currentY = self.position[1]
-        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
+        if not is_within_box((currentX, currentY),[targetX-100, targetY-100,targetX+100, targetY+100]):
             dx, dy = (targetX - currentX, targetY - currentY)
-            stepX, stepY = (self.speed*dx/60, self.speed*dy/60)
+            stepX, stepY = (self.speed*dx*deltatime, self.speed*dy*deltatime)
             self.position = (currentX+stepX, currentY+stepY)
 
-    def calc_movement(self, grid):
+    def calc_movement(self, grid,deltatime):
         currentX = self.position[0]
         currentY = self.position[1]
         targetX = self.target_pos[0]
@@ -84,10 +85,7 @@ class Unit(Entity):
         # create a box around the destination, if Unit enters the box it stops updating
         if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
             if self.target_node!=self.current_node:
-                print("ddd")
                 if not self.path:
-                    print("aaa")
-                    print("1.", self.current_node.x,self.current_node.y, "2.", get_closest_node(self.target_pos, grid).x,get_closest_node(self.target_pos, grid).y)
                     self.path = Unit_AI.a_star(self.current_node, get_closest_node(self.target_pos, grid), grid)
                     for node in self.path:
                         print(node.x,node.y)
@@ -96,16 +94,14 @@ class Unit(Entity):
                     self.path.remove(current)
 
                 if currentX != self.target_node and currentY == self.target_node:
-                    print("bbb")
-                    self.move(self.target_node.x, self.target_node.y)
+                    self.move(self.target_node.x, self.target_node.y,deltatime)
                 else:
-                    print("ccc")
                     current = self.path[0]
                     self.target_node = current
                     self.path.remove(current)
                     self.path = shift_list_left(self.path)
             else:
-                self.move(targetX, targetY)
+                self.move(targetX, targetY,deltatime)
 
 
 
@@ -114,14 +110,6 @@ class Unit(Entity):
             self.target_node = self.current_node
             self.path = []
 
-
-
-    def idle(self):
-        ...
-    def attack(self):
-        ...
-    def interact(self):
-        ...
 
     def draw(self, camera: Camera):
 

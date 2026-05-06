@@ -9,6 +9,7 @@ from UnitClass import *
 from Entity import Entity
 from graphics.graphics_main import UIData
 from shared_utility import boxes_overlap
+from GameData import GameDataLocal
 
 
 #this file is for updating unit actions every tick, independent from any inputs, inputs are handled by logic utility
@@ -30,9 +31,9 @@ class LOGIC_DATA:
 
 def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
     grid = []
-    for y in range(HEIGHT_START, HEIGHT_END, 50):
+    for y in range(HEIGHT_START, HEIGHT_END, 200):
         row = []
-        for x in range(WIDTH_START, WIDTH_END, 50):
+        for x in range(WIDTH_START, WIDTH_END, 200):
             walkable = True
             row.append(Node(x, y, walkable))
         grid.append(row)
@@ -54,9 +55,9 @@ def get_current_node(unit: Unit, grid):
 def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
     for unit in units:
         unit.calc_rotation()
-        unit.move(unit.target_pos[0], unit.target_pos[1])
-        if logic_data.tick_counter == 60:
-            check_unit_current_action(unit, entities, logic_data)
+        unit.move(unit.target_pos[0], unit.target_pos[1],logic_data.delta_time)
+        if logic_data.tick_counter % unit.attackTickSpeed == 0:
+            check_unit_current_action(unit, units, logic_data)
     if logic_data.units_to_delete:
         for unit in logic_data.units_to_delete:
             units.remove(unit)
@@ -66,15 +67,19 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
 
 
 
-def check_unit_current_action(unit: Unit, entities: list[Entity], logic_data):
+def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
     #has a target, no obstacles, is in range
+    if unit.targetUnit not in units:
+        unit.targetUnit = None
     if unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
         print("target in range")
         unit.target_pos = unit.position
         if shot_fired():
             unit.targetUnit.hp -= unit.damage
-        if unit.targetUnit.hp <= 0:
+        if unit.targetUnit not in logic_data.units_to_delete and unit.targetUnit.hp <= 0:
             logic_data.units_to_delete.append(unit.targetUnit)
+            unit.targetUnit = None
+        elif unit.targetUnit.hp <= 0:
             unit.targetUnit = None
 
 
@@ -99,6 +104,10 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
                 #  ui_data automatically deletes ui_entities that live too long.
 
-def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA):
+def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataLocal):
     logic_data.start_new_frame()
     Entity_Handler(entities, units, grid, logic_data)
+    if logic_data.tick_counter == 60:
+        game_data.update_player0_currency(50)
+        game_data.update_player1_currency(50)
+        print(game_data.get_player0_currency(), game_data.get_player1_currency())

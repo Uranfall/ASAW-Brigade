@@ -20,11 +20,10 @@ def get_closest_node(position: list,grid) -> Node:
     for row in grid:
         for node in row:
             if min_distance == 9999:
-                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
+                min_distance = math.dist([node.x,node.y], [position[0],position[1]])
                 closest_node = node
-                print(closest_node.x, closest_node.y)
-            if min_distance > abs(position[0] - node.x) + abs(position[1] - node.y):
-                min_distance = abs(position[0] - node.x) + abs(position[1] - node.y)
+            if min_distance > math.dist([node.x,node.y], [position[0],position[1]]):
+                min_distance = math.dist([node.x,node.y], [position[0],position[1]])
                 closest_node = node
     return closest_node
 

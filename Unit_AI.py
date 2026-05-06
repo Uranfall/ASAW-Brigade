@@ -11,7 +11,6 @@ def manhattan_distance(node, goal):
 def a_star(start, goal, grid):
     open_list = [] #nodes to explore
     closed_list = set() #explored nodes
-    print(start.x, start.y ,goal.x,goal.y)
     heapq.heappush(open_list, (0, start))
 
     while open_list:
@@ -44,7 +43,7 @@ def a_star(start, goal, grid):
 
 #get neighbouring nodes from all 4 directions
 def get_neighbors(node, grid):
-    directions = [(0, 50), (50, 0), (0, -50), (-50, 0)]  # 4-directional
+    directions = [(0, 200), (200, 0), (0, -200), (-200, 0)]  # 4-directional
     neighbors = []
 
     for dx, dy in directions:
@@ -60,5 +59,4 @@ def reconstruct_path(node):
     while node:
         path.append((node.x, node.y))
         node = node.parent
-    print(path[::-1])
     return path[::-1]
