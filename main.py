@@ -75,7 +75,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         entities[0].rotation += 45*ui_data.delta_time
         ui_out = ui_tick(ui_data, game_data)
         logic_tick(entities, units, grid, logic_data)
-        run = ui_out.run
+        run = run and ui_out.run
 
 
 if __name__ == '__main__':
