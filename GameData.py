@@ -42,7 +42,7 @@ class GameData:
 
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0,
-                 unit_spawn_points_team1, grid_size):
+                 unit_spawn_points_team1, grid_size, player0_currency, player1_currency):
         super().__init__()
         self.entities = entities
         self.units = units
@@ -50,6 +50,8 @@ class GameDataLocal(GameData):
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
         self.grid_size = grid_size
+        self.player0_currency = player0_currency
+        self.player1_currency = player1_currency
         self.commands = []
 
     def get_layers(self):
