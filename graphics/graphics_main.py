@@ -9,8 +9,8 @@ from GameData import GameData
 from GlobalVariables import FONT
 from Protocol.Command import Command
 from UnitClass import Unit
-from VFX import Explosion
-from graphics.UI_Entities import UIEntity, ExpandingCircle
+from VFX import Explosion, ColorfulExplosion
+from graphics.UI_Entities import UIEntity, ExpandingCircle, TargetTriangle
 from graphics.graphics_utility import Camera
 from shared_utility import is_within_box, get_closest_node
 from GameData import GameData
@@ -42,8 +42,6 @@ class UIData:
         self.previous_frame = time.time()
 
         self.ui_entities: list[UIEntity] = []
-
-        self.new_selected = False
 
         self.input_checks = []
 
@@ -97,6 +95,14 @@ class UITickOut:
         self.commands: list[Command] = []
 
 
+def get_closest_entity_to(pos, units):
+    closest: tuple[float, Unit] | None = None
+    for unit in units:
+        if closest is None or closest[0] > math.dist(pos, unit.position):
+            closest = math.dist(pos, unit.position), unit
+    return closest
+
+
 def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
     entities = game_data.get_entities()
     for event in pygame.event.get():
@@ -106,31 +112,36 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
             ui_data.camera.adjust_zoom(event.y, pygame.mouse.get_pos())
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             ui_data.selection_box_start = pygame.mouse.get_pos()
-            ui_data.new_selected = False
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            closest: tuple[float, Unit] | None = None
             mouse_pos = ui_data.camera.screen_to_global(*event.pos)
-            for unit in game_data.get_units():
-                if closest is None or closest[0] > math.dist(mouse_pos, unit.position):
-                    closest = math.dist(mouse_pos, unit.position), unit
+            closest = get_closest_entity_to(mouse_pos, game_data.get_units())
             if closest is not None and closest[0] < closest[1].IMAGE_SCALE*min(closest[1].IMAGE.get_size()):
                 closest[1].selected = True
 
-        #this handles moving units
+        #  this handles unit control
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             selected = tuple(get_selected_units(entities))
             if tuple(get_selected_units(entities)):
-                ui_data.ui_entities += [
-                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), -0.1),
-                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
-                    ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
-                ]
                 pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                target = None
+                closest = get_closest_entity_to(pos, game_data.get_units())
+                if closest is not None and closest[0] < closest[1].IMAGE_SCALE * min(closest[1].IMAGE.get_size()):
+                    target = closest[1]
+                    ui_data.ui_entities.append(TargetTriangle((target.position[0], target.position[1]+100), 0))
+                else:
+                    ui_data.ui_entities += [
+                        ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), -0.1),
+                        ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos())),
+                        ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
+                    ]
                 for unit in selected:
-                    unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
-                    unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
-                    command = Command(Command.GO_TO, str(pos), unit.id)
-                    game_data.add_command(command)
+                    if target is not None:
+                        game_data.add_command(Command(Command.ATTACK, str(id(target)), id(unit)))
+                    else:
+                        unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
+                        unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
+                        command = Command(Command.GO_TO, str(pos), unit.id)
+                        game_data.add_command(command)
             else:
                 ui_data.ui_entities.append(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
 

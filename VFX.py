@@ -190,7 +190,7 @@ class GunFire(Explosion):
 
 class SmokeTrail(ParticleHaving):
     PARTICLE_TYPE = GunFireSmokeParticle
-    PARTICLE_DISTANCE = 2.0
+    PARTICLE_DISTANCE = 5.0
     LIFETIME = 10
 
     def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):

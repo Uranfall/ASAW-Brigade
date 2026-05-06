@@ -200,3 +200,15 @@ class ExpandingCircle(UIEntity):
                            camera(*self.position),
                            math.ceil(camera(self.FINAL_SIZE*self.get_progress())),
                            math.ceil(camera(2)))
+
+
+class TargetTriangle(UIEntity):
+    IMAGE = pygame.image.load('Sprites/ui/target_triangle.png')
+    IMAGE_SCALE = 0.05
+    LIFETIME = 1
+    SIMPLIFY_AT = 0
+
+    def draw(self, camera: Camera):
+        self.position = (self.position[0], self.position[1] + math.sin(time.time()*20)*3)
+        super().draw(camera)
+

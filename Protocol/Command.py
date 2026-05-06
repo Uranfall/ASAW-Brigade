@@ -3,6 +3,7 @@
 class Command:
 
     GO_TO = 'go_to'
+    ATTACK = 'attack'
 
     def __init__(self, name: str, data: str, unit_id: int = -1):
         self.name = name
