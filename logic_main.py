@@ -59,7 +59,6 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
     if unit.targetUnit not in units:
         unit.targetUnit = None
     elif unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
-        print("target in range")
         unit.target_pos = unit.position
         if shot_fired(unit.hitChance):
             unit.targetUnit.hp -= unit.damage
@@ -72,13 +71,13 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
 def collision_x(entity: Entity,unit: Unit):
     old_position = [unit.get_position()[0], unit.get_position()[1] - unit.change_rate[1]]
     if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
-                                                                     entity.collision_points):
+                                                                     entity.get_collision_points()):
         unit.set_position(old_position)
 
 def collision_y(entity: Entity,unit: Unit):
     old_position = [unit.get_position()[0] - unit.change_rate[0], unit.get_position()[1]]
     if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
-                                                                     entity.collision_points):
+                                                                     entity.get_collision_points()):
         unit.set_position(old_position)
 
 def collision_logic(entities: list[Entity],units: list[Unit]):

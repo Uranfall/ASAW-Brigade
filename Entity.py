@@ -44,6 +44,11 @@ class Entity:
         img = self.IMAGE
         dimensions = (img.get_width() * scale, img.get_height() * scale)
         return get_collision_points(self.position, dimensions)
+    def get_collision_points(self):
+        scale = self.IMAGE_SCALE
+        img = self.IMAGE
+        dimensions = (img.get_width() * scale, img.get_height() * scale)
+        return get_collision_points(self.position, dimensions)
 
     def draw(self, camera: Camera):
         scale = camera(self.IMAGE_SCALE)
