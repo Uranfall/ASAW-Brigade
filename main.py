@@ -31,7 +31,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     def create_mouse():
         spawn_points = game_data.get_player_spawns(player_team)
         money = game_data.get_player_currency(player_team)
-        if money >= 500:
+        if money >= 250:
             game_data.update_player_currency(-500, player_team)
             newUnit = Mouse(spawn_points[0], 90, False, player_team)
             newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
@@ -61,7 +61,18 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
 
 
     def create_uuuhh_idk____oh_wait_tank__right():
-        pass
+        spawn_points = game_data.get_player_spawns(player_team)
+        money = game_data.get_player_currency(player_team)
+        if money >= 500:
+            game_data.update_player_currency(-500, player_team)
+            newUnit = Tank(spawn_points[0], 90, False, player_team)
+            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
+            newUnit.target_node = newUnit.current_node
+            # add unit
+            units.append(newUnit)
+            entities.append(newUnit)
+            # shift list left, set the next spawn as the one the next unit is going to use
+            game_data.shift_player_spawns(player_team)
 
     ui_data = UIData(screen)
     exit_button = Button((0, 220), (100, 40), Text((0, 0), 0, 'Quit', TEXT_RED_CURVE), action=quit_main)

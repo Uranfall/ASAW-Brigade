@@ -18,7 +18,7 @@ class Mouse(Unit):
         self.current_node = None
         self.team = team
         self.speed = 2
-        self.hp = 10
+        self.hp = 20
         self.damage = 3
         self.attackRange = 100
         self.attackTickSpeed = 20
@@ -39,8 +39,23 @@ class Soldier(Unit):
         self.current_node = None
         self.team = team
         self.speed = 1
-        self.hp = 30
+        self.hp = 50
         self.damage = 2
-        self.attackRange = 500
-        self.attackTickSpeed = 30
+        self.attackRange = 1000
+        self.attackTickSpeed = 10
+
+class Tank(Unit):
+    IMAGE = pygame.image.load('Sprites/Units/tank merkava.png')
+    IMAGE_ROTATION = 90
+    IMAGE_SCALE = 1
+
+    def __init__(self, position: tuple[int, int], rotation: float, selected: bool, team: int):
+        super().__init__(position, rotation, selected)
+        self.current_node = None
+        self.team = team
+        self.speed = 1
+        self.hp = 150
+        self.damage = 50
+        self.attackRange = 1000
+        self.attackTickSpeed = 60
 

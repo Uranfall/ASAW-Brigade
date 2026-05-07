@@ -58,7 +58,7 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
     #has a target, no obstacles, is in range
     if unit.targetUnit not in units:
         unit.targetUnit = None
-    if unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
+    elif unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
         print("target in range")
         unit.target_pos = unit.position
         if shot_fired():
@@ -68,6 +68,8 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
             unit.targetUnit = None
         elif unit.targetUnit.hp <= 0:
             unit.targetUnit = None
+    else:
+        unit.target_pos = unit.targetUnit.position
 
 
 def collision_logic(entities: list[Entity],units: list[Unit]):
