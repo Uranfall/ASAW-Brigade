@@ -147,7 +147,7 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                         command = Command(Command.GO_TO, str(pos), unit.id)
                         game_data.add_command(command)
             else:
-                ui_data.ui_entities.append(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
+                game_data.add_vfx(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
 
         for check in ui_data.input_checks:
             check(event)
@@ -191,7 +191,7 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
 
     if pygame.mouse.get_pressed()[0]:
         pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
-
+    game_data.cleanup_vfx()
     return out
 
 

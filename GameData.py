@@ -6,6 +6,8 @@ from UnitClass import Unit
 from Node import Node
 import threading
 
+from VFX import VFX
+
 
 class GameData:
     def __init__(self):
@@ -39,6 +41,12 @@ class GameData:
         t = threading.Thread(target=self.connect)
         return t
 
+    def add_vfx(self, vfx: VFX):
+        pass
+
+    def cleanup_vfx(self):
+        pass
+
 
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0: list[tuple[int,int]],
@@ -47,6 +55,7 @@ class GameDataLocal(GameData):
         self.entities = entities
         self.units = units
         self.grid = grid
+        self.vfx = []
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
         self.grid_size = grid_size
@@ -56,7 +65,7 @@ class GameDataLocal(GameData):
 
     def get_layers(self):
         layers = []
-        for entity in self.get_entities():
+        for entity in self.get_entities()+self.vfx:
             if len(layers) <= entity.RENDER_LAYER:
                 layers += [[] for _ in range(entity.RENDER_LAYER-len(layers)+1)]
             layers[entity.RENDER_LAYER].append(entity)
@@ -110,6 +119,14 @@ class GameDataLocal(GameData):
 
     def get_commands(self) -> list[Command]:
         return self.commands
+
+    def add_vfx(self, vfx: VFX):
+        self.vfx.append(vfx)
+
+    def cleanup_vfx(self):
+        for vfx in self.vfx:
+            if vfx.get_progress() > 1:
+                self.vfx.remove(vfx)
 
 
 class GameDataServer(GameData):

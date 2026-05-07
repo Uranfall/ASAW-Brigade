@@ -102,5 +102,6 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
     if logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
+        game_data.cleanup_vfx()
 
         print(game_data.get_player_currency(0),game_data.get_player_currency(1))
