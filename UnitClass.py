@@ -13,9 +13,9 @@ from Entity import Entity
 from graphics.graphics_utility import Camera
 
 
-def shot_fired():
+def shot_fired(hit_chance: int):
     r1 = random.randint(1,100)
-    if r1>30:
+    if r1>hit_chance:
         return True
     else:
         return False
@@ -39,6 +39,7 @@ class Unit(Entity):
 
         self.hp = 10
         self.damage = 2
+        self.hitChance = 20 #out of 100
         self.attackRange = 200
         self.attackTickSpeed = 20
         self.team = team

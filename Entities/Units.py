@@ -17,7 +17,7 @@ class Mouse(Unit):
         super().__init__(position, rotation, selected)
         self.current_node = None
         self.team = team
-        self.speed = 2
+        self.speed = 0.75
         self.hp = 20
         self.damage = 3
         self.attackRange = 100
@@ -38,9 +38,10 @@ class Soldier(Unit):
         super().__init__(position, rotation, selected)
         self.current_node = None
         self.team = team
-        self.speed = 1
+        self.speed = 0.5
         self.hp = 50
         self.damage = 2
+        self.hitChance = 20
         self.attackRange = 1000
         self.attackTickSpeed = 10
 
@@ -53,9 +54,10 @@ class Tank(Unit):
         super().__init__(position, rotation, selected)
         self.current_node = None
         self.team = team
-        self.speed = 1
+        self.speed = 0.25
         self.hp = 150
         self.damage = 50
+        self.hitChance = 60
         self.attackRange = 1000
         self.attackTickSpeed = 60
 

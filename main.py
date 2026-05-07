@@ -63,7 +63,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     def create_uuuhh_idk____oh_wait_tank__right():
         spawn_points = game_data.get_player_spawns(player_team)
         money = game_data.get_player_currency(player_team)
-        if money >= 500:
+        if money >= 1000:
             game_data.update_player_currency(-500, player_team)
             newUnit = Tank(spawn_points[0], 90, False, player_team)
             newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
@@ -74,8 +74,29 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
             # shift list left, set the next spawn as the one the next unit is going to use
             game_data.shift_player_spawns(player_team)
 
+    #Logic related code
+    logic_data = LOGIC_DATA()
+    player_team = 1
+
+    # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
+    map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
+
+    units: list[Unit] = [Mouse((0, 0), 90, 1, 0), ] \
+                        + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
+                                 random.randint(0, 360), False, random.randint(0, 1)) for _ in range(10)]
+    entities: list[Entity] = units + map_objects
+
+    for unit in units:
+        unit.team = random.randint(0, 1)
+        unit.current_node = get_closest_node(unit.get_position(), grid)
+        unit.target_node = unit.current_node
+    game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
+
+    #UI related code
     ui_data = UIData(screen)
+    DebugGlobal.ui_data = ui_data
     exit_button = Button((0, 220), (100, 40), Text((0, 0), 0, 'Quit', TEXT_RED_CURVE), action=quit_main)
+    player_currency = Text((120, 220), 0, str(game_data.get_player_currency(player_team))+"$", TEXT_RED_CURVE)
     exit_button.creation_time = 0
     ui_data.add_on_screen_entity(exit_button)
     c_b1 = Button((-130, -220), (100, 40), Text((0, 0), 0, 'Mouse', TEXT_RED_CURVE, size=30), action=create_mouse)
@@ -86,30 +107,14 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     ui_data.add_on_screen_entity(c_b2)
     ui_data.add_on_screen_entity(c_b3)
     ui_data.add_on_screen_entity(Text((0, -180), 0, 'Creation Menu:', TEXT_RED_CURVE))
-
-    logic_data = LOGIC_DATA()
-    DebugGlobal.ui_data = ui_data
-    player_team = 1
-
-    # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
-    map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
-
-    units: list[Unit] = [Mouse((0, 0), 90, 1, 0),]\
-               + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
-                       random.randint(0, 360), False, random.randint(0, 1)) for _ in range(10)]
-    entities: list[Entity] = units + map_objects
-
-    for unit in units:
-        unit.team = random.randint(0, 1)
-        unit.current_node = get_closest_node(unit.get_position(), grid)
-        unit.target_node = unit.current_node
-    game_data = GameDataLocal(entities, units, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE)
+    ui_data.add_on_screen_entity(player_currency)
 
     run = True
     while run:
         entities[0].rotation += 45*ui_data.delta_time
         ui_out = ui_tick(ui_data, game_data)
         logic_tick(entities, units, grid, logic_data, game_data)
+        player_currency.text = str(game_data.get_player_currency(player_team))+"$"
         run = run and ui_out.run
 
 

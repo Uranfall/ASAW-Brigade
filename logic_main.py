@@ -24,7 +24,7 @@ class LOGIC_DATA:
     def start_new_frame(self):
         self.delta_time = time.time()-self.previous_frame
         self.previous_frame = time.time()
-        if self.tick_counter == 60:
+        if self.tick_counter == 360:
             self.tick_counter = 0
         else:
             self.tick_counter += 1
@@ -61,7 +61,7 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
     elif unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
         print("target in range")
         unit.target_pos = unit.position
-        if shot_fired():
+        if shot_fired(unit.hitChance):
             unit.targetUnit.hp -= unit.damage
         if unit.targetUnit not in logic_data.units_to_delete and unit.targetUnit.hp <= 0:
             logic_data.units_to_delete.append(unit.targetUnit)
@@ -96,7 +96,8 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
 def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataLocal):
     logic_data.start_new_frame()
     Entity_Handler(entities, units, grid, logic_data)
-    if logic_data.tick_counter == 60:
+    if logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
+
         print(game_data.get_player_currency(0),game_data.get_player_currency(1))
