@@ -144,3 +144,7 @@ def snap_to_grid(point: tuple[int, int], cell_size: int, keep_scale=False):
     return int(point[0] // cell_size) * (cell_size if keep_scale else 1),\
            int(point[1] // cell_size) * (cell_size if keep_scale else 1)
 
+def shift_list_left(lst: list):
+    for x in range(1,len(lst)-1,1):
+        lst[x-1] = lst[x]
+    return lst

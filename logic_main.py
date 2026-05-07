@@ -44,7 +44,7 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
         unit.calc_rotation()
         unit.move(unit.target_pos[0], unit.target_pos[1],logic_data.delta_time)
         if logic_data.tick_counter % unit.attackTickSpeed == 0:
-            check_unit_current_action(unit, units, logic_data)
+            check_unit_current_action(unit, entities, units, logic_data)
     if logic_data.units_to_delete:
         for unit in logic_data.units_to_delete:
             units.remove(unit)
@@ -54,11 +54,14 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
 
 
 
-def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
+def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Unit], logic_data):
     #has a target, no obstacles, is in range
     if unit.targetUnit not in units:
         unit.targetUnit = None
-    elif unit.targetUnit is not None and is_within_box(unit.targetUnit.position, unit.get_attack_box()):
+    elif (unit.targetUnit is not None
+          and is_within_box(unit.targetUnit.position, unit.get_attack_box())
+          and path_clear(unit.targetUnit, unit, entities)):
+        print("in range")
         unit.target_pos = unit.position
         if shot_fired(unit.hitChance):
             unit.targetUnit.hp -= unit.damage

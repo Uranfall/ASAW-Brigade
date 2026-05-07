@@ -4,7 +4,6 @@ import random
 from operator import truediv
 
 import pygame
-from logic_utility import *
 import GlobalVariables
 import Unit_AI
 from Node import Node
