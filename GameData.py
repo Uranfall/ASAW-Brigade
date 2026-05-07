@@ -50,8 +50,8 @@ class GameDataLocal(GameData):
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
         self.grid_size = grid_size
-        self.player0_currency = 0
-        self.player1_currency = 0
+        self.player0_currency = 2000
+        self.player1_currency = 2000
         self.commands = []
 
     def get_layers(self):
