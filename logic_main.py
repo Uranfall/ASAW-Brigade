@@ -50,7 +50,7 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
             units.remove(unit)
             entities.remove(unit)
         logic_data.units_to_delete = []
-    #collision_logic(entities, units)
+    collision_logic(entities, units)
 
 
 
@@ -68,24 +68,28 @@ def check_unit_current_action(unit: Unit, units: list[Unit], logic_data):
             unit.targetUnit = None
         elif unit.targetUnit.hp <= 0:
             unit.targetUnit = None
-    else:
-        unit.target_pos = unit.targetUnit.position
 
+def collision_x(entity: Entity,unit: Unit):
+    old_position = [unit.get_position()[0], unit.get_position()[1] - unit.change_rate[1]]
+    if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
+                                                                     entity.collision_points):
+        unit.set_position(old_position)
+
+def collision_y(entity: Entity,unit: Unit):
+    old_position = [unit.get_position()[0] - unit.change_rate[0], unit.get_position()[1]]
+    if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
+                                                                     entity.collision_points):
+        unit.set_position(old_position)
 
 def collision_logic(entities: list[Entity],units: list[Unit]):
     for unit in units:
         for entity in entities:
-            old_position = unit.get_position()
-            unit.set_position( (unit.get_position()[0]+unit.change_rate[0],unit.get_position()[1]) )
-            if unit!=entity and entity.collision==True and boxes_overlap(unit.get_collision_points(), entity.collision_points):
-                print("triggered x" + str(unit.get_position()))
-                unit.set_position(old_position)
-
-            old_position = unit.get_position()
-            unit.set_position((unit.get_position()[0], unit.get_position()[1] + unit.change_rate[1]))
-            if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(), entity.collision_points):
-                print("triggered y" + str(unit.get_position()))
-                unit.set_position(old_position)
+            if unit.change_rate[0]>=unit.change_rate[1]:
+                collision_y(entity, unit)
+                collision_x(entity, unit)
+            if unit.change_rate[1]>=unit.change_rate[0]:
+                collision_x(entity, unit)
+                collision_y(entity, unit)
 
 
                 #  Example of a debug box:

@@ -36,6 +36,7 @@ class Unit(Entity):
         self.target_pos = position
         self.target_rotation = rotation
         self.selected = False
+        self.change_rate = [0,0]
 
         self.hp = 10
         self.damage = 2
@@ -75,6 +76,9 @@ class Unit(Entity):
             dx, dy = (targetX - currentX, targetY - currentY)
             stepX, stepY = (self.speed*dx*deltatime, self.speed*dy*deltatime)
             self.position = (currentX+stepX, currentY+stepY)
+            self.change_rate = [stepX, stepY]
+        else:
+            self.change_rate = [0,0]
 
     def calc_movement(self, grid,deltatime):
         currentX = self.position[0]

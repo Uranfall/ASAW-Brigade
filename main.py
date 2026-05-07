@@ -81,7 +81,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     # entities = [Ground(), Unit((0, 0), 0, 1, False)]\
     map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, GRID_SIZE = map_info()
 
-    units: list[Unit] = [Mouse((0, 0), 90, 1, 0), ] \
+    units: list[Unit] = [Mouse((200, 200), 90, 1, 0), ] \
                         + [Mouse((random.randint(-2000, 2000), random.randint(-2000, 2000)),
                                  random.randint(0, 360), False, random.randint(0, 1)) for _ in range(10)]
     entities: list[Entity] = units + map_objects
