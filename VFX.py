@@ -101,7 +101,7 @@ class Explosion(ParticleHaving):
     PARTICLE_TYPE = ExplosionParticle
     SMOKE_PARTICLE = ExplosionSmokeParticle
 
-    SHOOT_OUT_CHANGE = 0.3
+    SHOOT_OUT_CHANCE = 0.3
     SHOOT_OUT_FACTOR = 1.5
 
     def __init__(self, position: tuple[int, int], rotation: float):
@@ -122,7 +122,7 @@ class Explosion(ParticleHaving):
         if random.random() >= self.SMOKE_FACTOR:
             return self.PARTICLE_TYPE(self.position, random.uniform(self.MIN_SPEED,
                                                                     self.MAX_SPEED)
-                                                * (self.SHOOT_OUT_FACTOR if random.random()<self.SHOOT_OUT_CHANGE
+                                                * (self.SHOOT_OUT_FACTOR if random.random()<self.SHOOT_OUT_CHANCE
                                                    else 1))
 
         return self.SMOKE_PARTICLE(self.position, random.uniform(self.MIN_SPEED, self.MAX_SPEED))
@@ -205,14 +205,19 @@ class SmokeTrail(ParticleHaving):
 
 
 class BloodParticle(Particle):
-    COLOR_CURVE = ValueCurve(((150, 50, 50), 0), ((75, 30, 30), 1))
-    SCALE_CURVE = ValueCurve((30, 0), (25, 0.25), (0, 1))
+    COLOR_CURVE = ValueCurve(((175, 50, 50), 0), ((150, 50, 50), 0.2), ((75, 30, 30), 1))
+    SCALE_CURVE = ValueCurve((20, 0), (15, 0.25), (0, 1))
     LIFETIME = 5
     DRAG = 5
 
 
 class BloodSplatter(Explosion):
     PARTICLE_TYPE = BloodParticle
+    FINAL_AMOUNT = 70
+    START_AMOUNT = 35
     SMOKE_FACTOR = 0.0
-    MAX_SPEED = 400
+    MAX_SPEED = 250
+    BURNING_TIME = 1
+    SHOOT_OUT_FACTOR = 2
+    SHOOT_OUT_CHANCE = 0.4
 

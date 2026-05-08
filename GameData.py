@@ -145,8 +145,8 @@ class GameDataLocal(GameData):
     def get_commands(self) -> list[Command]:
         return self.commands
 
-    def add_vfx(self, vfx: VFX):
-        self.vfx.append(vfx)
+    def add_vfx(self, *vfx: VFX):
+        self.vfx.extend(vfx)
 
     def clean_up_vfx(self):
         for vfx in self.vfx:
