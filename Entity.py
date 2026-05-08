@@ -69,7 +69,7 @@ class Entity:
             if sum(dimensions) < self.SIMPLIFY_AT*min(camera.screen.get_size())/camera.default_screen_size:
                 self.DRAW_SHAPE(camera.screen, self.COLOR, new_pos, max(dimensions)*self.SHAPE_SIZE_ADJUST)
                 return
-            # end: Check the size of teh entity.
+            # end: Check the size of the entity.
 
         # start: Apply transformations to image.
         img = pygame.transform.rotozoom(img, self.rotation+self.IMAGE_ROTATION, scale)
