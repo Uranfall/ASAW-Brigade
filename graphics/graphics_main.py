@@ -138,7 +138,7 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                 for unit in selected:
                     if target is not None and target.team != unit.team:
                         unit.targetUnit = target
-                        game_data.add_command(Command(Command.ATTACK, str(id(target)), id(unit)))
+                        game_data.add_command(Command(Command.ATTACK, target.id, unit.id))
                         unit.target_pos = ui_data.camera.screen_to_global(*pygame.mouse.get_pos())
                         unit.target_node = get_closest_node(unit.target_pos, game_data.get_grid())
                     else:
