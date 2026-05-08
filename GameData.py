@@ -169,7 +169,13 @@ class GameDataServer(GameData):
         self.connected = False
         self.error = None
         try:
-            (client_socket, client_address) = self.socket.accept()
+            client_socket, client_address = None, None
+            while self.running:
+                try:
+                    (client_socket, client_address) = self.socket.accept()
+                    break
+                except socket.timeout:
+                    pass
             self.connected += 1
             print('connected')
 

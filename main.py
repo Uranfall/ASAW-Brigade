@@ -60,7 +60,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
             game_data.shift_player_spawns(player_team)
 
 
-    def create_uuuhh_idk____oh_wait_tank__right():
+    def create_tank():
         spawn_points = game_data.get_player_spawns(player_team)
         money = game_data.get_player_currency(player_team)
         if money >= 1000:
@@ -102,7 +102,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     c_b1 = Button((-130, -220), (100, 40), Text((0, 0), 0, 'Mouse', TEXT_RED_CURVE, size=30), action=create_mouse)
     c_b2 = Button((0, -220), (140, 40), Text((0, 0), 0, 'Soldier', TEXT_RED_CURVE, size=30), action=create_soldier)
     c_b3 = Button((130, -220), (100, 40), Text((0, 0), 0, 'Tank', TEXT_RED_CURVE, size=30),
-                  action=create_uuuhh_idk____oh_wait_tank__right)
+                  action=create_tank)
     ui_data.add_on_screen_entity(c_b1)
     ui_data.add_on_screen_entity(c_b2)
     ui_data.add_on_screen_entity(c_b3)
