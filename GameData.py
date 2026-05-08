@@ -1,7 +1,9 @@
 import copy
+import socket
 
 from Entity import Entity
 from Protocol.Command import Command
+from Protocol.Parameters import PORT
 from UnitClass import Unit
 from Node import Node
 import threading
@@ -11,7 +13,8 @@ from VFX import VFX
 
 class GameData:
     def __init__(self):
-        pass
+        self.threads: list[threading.Thread] = []
+        self.running = False  # Connect must stop as soon as it sees that self.running is false.
 
     def get_layers(self) -> list[list[Entity]]:
         """
@@ -37,14 +40,28 @@ class GameData:
     def connect(self):
         pass
 
-    def async_connect(self) -> threading.Thread:
-        t = threading.Thread(target=self.connect)
-        return t
+    def async_connect(self):
+        self.disconnect()
+        self.running = True
+        self.threads = [threading.Thread(target=self.connect)]
+        for thread in self.threads:
+            thread.start()
+
+    def disconnect(self):
+        self.running = False
+        for thread in self.threads:
+            thread.join(timeout=5)
 
     def add_vfx(self, vfx: VFX):
         pass
 
     def cleanup_vfx(self):
+        pass
+
+    def is_connected(self) -> bool:
+        pass
+
+    def get_error(self) -> str | None:
         pass
 
 
@@ -113,7 +130,6 @@ class GameDataLocal(GameData):
                 self.unit_spawn_points_team1[x - 1] = self.unit_spawn_points_team1[x]
             self.unit_spawn_points_team1.append(point0)
 
-
     def add_command(self, command: Command):
         self.commands.append(command)
 
@@ -130,9 +146,73 @@ class GameDataLocal(GameData):
 
 
 class GameDataServer(GameData):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.connected = 0
+        self.error = None
+        self.socket = socket.socket()
+        self.socket.settimeout(5)
+        self.threads = []
+
+    def connect(self):
+        self.connected = False
+        self.error = None
+        try:
+            self.socket.bind(('0.0.0.0', PORT))
+            (client_socket, client_address) = self.socket.accept()
+            self.connected += 1
+
+            while self.running:
+                pass
+
+        except socket.error as e:
+            self.error = e
+
+    def async_connect(self):
+        self.disconnect()
+        self.running = True
+        self.threads = [threading.Thread(target=self.connect), threading.Thread(target=self.connect)]
+        for thread in self.threads:
+            thread.start()
+
+    def disconnect(self):
+        super().disconnect()
+        self.connected = 0
+
+    def is_connected(self) -> bool:
+        return self.connected >= 2
+
+    def get_error(self):
+        return self.error
 
 
 class GameDataClient(GameData):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.connected = False
+        self.error = None
 
+    def connect(self):
+        self.connected = False
+        self.error = None
+        sock = socket.socket()
+        sock.settimeout(5)
+        try:
+            sock.connect(("127.0.0.1", PORT))
+            self.connected = True
+
+            while self.running:
+                pass
+
+        except socket.error as e:
+            self.error = e
+
+    def disconnect(self):
+        super().disconnect()
+        self.connected = False
+
+    def is_connected(self) -> bool:
+        return self.connected
+
+    def get_error(self):
+        return self.error
