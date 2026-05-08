@@ -64,6 +64,15 @@ class GameData:
     def get_error(self) -> str | None:
         pass
 
+    def get_currency(self):
+        pass
+
+    def get_player_currency(self, team: int) -> int:
+        pass
+
+    def update_player_currency(self, update: int, team: int):
+        pass
+
 
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0: list[tuple[int,int]],
@@ -151,6 +160,8 @@ class GameDataServer(GameData):
         self.connected = 0
         self.error = None
         self.socket = socket.socket()
+        self.socket.bind(('127.0.0.1', PORT))
+        self.socket.listen()
         self.socket.settimeout(5)
         self.threads = []
 
@@ -158,15 +169,18 @@ class GameDataServer(GameData):
         self.connected = False
         self.error = None
         try:
-            self.socket.bind(('0.0.0.0', PORT))
             (client_socket, client_address) = self.socket.accept()
             self.connected += 1
+            print('connected')
 
             while self.running:
-                pass
+                client_socket.send(b'hello!')
+                print(client_socket.recv(1024))
 
         except socket.error as e:
+            print('error!', e)
             self.error = e
+            self.running = False
 
     def async_connect(self):
         self.disconnect()
@@ -200,12 +214,16 @@ class GameDataClient(GameData):
         try:
             sock.connect(("127.0.0.1", PORT))
             self.connected = True
+            print('connected')
 
             while self.running:
-                pass
+                print(sock.recv(1024))
+                sock.send(b'hello!')
 
         except socket.error as e:
+            print('error!', e)
             self.error = e
+            self.running = False
 
     def disconnect(self):
         super().disconnect()
