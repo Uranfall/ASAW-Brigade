@@ -7,7 +7,7 @@ import screeninfo
 
 from Entities.Bonus import CatGunner, HandGun
 from Entity import Entity
-from GameData import GameDataLocal
+from GameData import GameDataLocal, GameDataClient
 from GlobalVariables import TEXT_RED_CURVE
 from VFX import GunFire, SmokeTrail
 from graphics.Ground import Ground
@@ -126,6 +126,9 @@ def ground_properties(screen=pygame.display.set_mode((500, 500), pygame.RESIZABL
 
 
 def main_menu():
+
+    game_data: GameDataClient | None = None
+
     last_time_pressed_enter = 0
     enter_text = Text((-1000, -3035), 0, 'Not the key you dummy!', TEXT_RED_CURVE)
 
@@ -185,13 +188,18 @@ def main_menu():
         reset_animation()
 
     def online_loading_screen():
-        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
+        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time, game_data
         screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.1), ((120, 120, 160), 0.3))
         camera_position_curve = ValueCurve((camera.target_position, 0), ([2000, 2000], 0.35))
         animation_start = 0
         animation_duration = 1
         start_time = time.time()
         reset_animation()
+
+        if game_data is not None:
+            game_data.disconnect()
+        game_data = GameDataClient()
+        game_data.async_connect()
 
     def settings():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -291,6 +299,11 @@ def main_menu():
     last_update = time.time()
 
     while run:
+        if game_data is not None and game_data.is_connected():
+            return
+        if game_data is not None and game_data.get_error() is not None:
+            game_data.async_connect()
+
         dt = time.time() - last_update
         last_update = time.time()
 
