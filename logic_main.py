@@ -39,12 +39,12 @@ def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
         grid.append(row)
     return grid
 
-def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data, game_data):
+def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data):
     for unit in units:
         unit.calc_rotation()
         unit.move(unit.target_pos[0], unit.target_pos[1],logic_data.delta_time)
         if logic_data.tick_counter % unit.attackTickSpeed == 0:
-            check_unit_current_action(unit, entities, units, logic_data, game_data)
+            check_unit_current_action(unit, entities, units, logic_data)
     if logic_data.units_to_delete:
         for unit in logic_data.units_to_delete:
             units.remove(unit)
@@ -54,7 +54,7 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data, 
 
 
 
-def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Unit], logic_data, game_data):
+def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Unit], logic_data):
     #has a target, no obstacles, is in range
     if unit.targetUnit not in units:
         unit.targetUnit = None
@@ -64,15 +64,14 @@ def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Un
         print("in range")
         unit.target_pos = unit.position
         if shot_fired(unit.hitChance):
-            game_data.add_vfx(*unit.get_shooting_effects())
+            # game_data.add_vfx(*unit.get_shooting_effects())
             unit.targetUnit.hp -= unit.damage
         if unit.targetUnit not in logic_data.units_to_delete and unit.targetUnit.hp <= 0:
-            game_data.add_vfx(*unit.targetUnit.get_death_effects())
+            # game_data.add_vfx(*unit.targetUnit.get_death_effects())
             logic_data.units_to_delete.append(unit.targetUnit)
             unit.targetUnit = None
         elif unit.targetUnit.hp <= 0:
-            game_data.add_vfx(*unit.targetUnit.get_death_effects())
-
+            # game_data.add_vfx(*unit.targetUnit.get_death_effects())
             unit.targetUnit = None
 
 def collision_x(entity: Entity,unit: Unit):
@@ -105,7 +104,7 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
 
 def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataLocal):
     logic_data.start_new_frame()
-    Entity_Handler(entities, units, grid, logic_data, game_data)
+    Entity_Handler(entities, units, grid, logic_data)
     if logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
