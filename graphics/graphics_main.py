@@ -191,7 +191,7 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
 
     if pygame.mouse.get_pressed()[0]:
         pygame.draw.rect(ui_data.screen, (20, 20, 255), ui_data.get_selection_box_in_screen(), 2)
-    game_data.cleanup_vfx()
+    game_data.clean_up_vfx()
     return out
 
 

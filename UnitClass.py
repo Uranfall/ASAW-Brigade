@@ -7,6 +7,7 @@ import pygame
 import GlobalVariables
 import Unit_AI
 from Node import Node
+from VFX import GunFire, BloodSplatter
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
@@ -21,6 +22,10 @@ def shot_fired(hit_chance: int):
 
 
 class Unit(Entity):
+
+    SHOOTING_EFFECTS = [GunFire]
+    DEATH_EFFECTS = [BloodSplatter]
+    MUZZLE_DISTANCE = 75
 
     def __init__(self,
                  # unit_type: str,
@@ -135,6 +140,23 @@ class Unit(Entity):
 
         super(Unit, self).draw(camera)
 
+    def get_shooting_effects(self, rotation: float | None = None):
+        if rotation is None:
+            rotation = self.rotation
+        offset = angle_to_vector(rotation, distance=self.MUZZLE_DISTANCE)
+        position = self.position[0]+offset[0], self.position[1]+offset[1]
+        out = []
+        for effect in self.SHOOTING_EFFECTS:
+            out.append(effect(position, rotation))
+        return out
+
+    def get_death_effects(self, rotation: float | None = None):
+        if rotation is None:
+            rotation = self.rotation
+        out = []
+        for effect in self.DEATH_EFFECTS:
+            out.append(effect(self.position, rotation))
+        return out
 
 
 

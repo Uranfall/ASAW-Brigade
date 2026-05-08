@@ -203,3 +203,16 @@ class SmokeTrail(ParticleHaving):
             pos[0] += direction[0]
             pos[1] += direction[1]
 
+
+class BloodParticle(Particle):
+    COLOR_CURVE = ValueCurve(((150, 50, 50), 0), ((75, 30, 30), 1))
+    SCALE_CURVE = ValueCurve((30, 0), (25, 0.25), (0, 1))
+    LIFETIME = 5
+    DRAG = 5
+
+
+class BloodSplatter(Explosion):
+    PARTICLE_TYPE = BloodParticle
+    SMOKE_FACTOR = 0.0
+    MAX_SPEED = 400
+

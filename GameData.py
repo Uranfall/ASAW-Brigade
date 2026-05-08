@@ -55,7 +55,7 @@ class GameData:
     def add_vfx(self, vfx: VFX):
         pass
 
-    def cleanup_vfx(self):
+    def clean_up_vfx(self):
         pass
 
     def is_connected(self) -> bool:
@@ -148,7 +148,7 @@ class GameDataLocal(GameData):
     def add_vfx(self, vfx: VFX):
         self.vfx.append(vfx)
 
-    def cleanup_vfx(self):
+    def clean_up_vfx(self):
         for vfx in self.vfx:
             if vfx.get_progress() > 1:
                 self.vfx.remove(vfx)
