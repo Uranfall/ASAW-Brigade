@@ -284,7 +284,7 @@ class GameDataClient(GameData):
             self.error = e
             self.running = False
 
-    def handle_data(self, data: str, game_data: GameData):
+    def handle_data(self, data: str):
         if self.player_team == -1:
             entities, money, winstate, player = data.split("$")
             self.player_team = player
