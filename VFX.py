@@ -12,6 +12,7 @@ from shared_utility import ValueCurve, lerp
 
 
 class VFX(UIEntity):
+    NAME = 'FX'
     LIFETIME = 20
     RENDER_LAYER = 9
 
@@ -59,6 +60,7 @@ class Particle(VFX):
 
 
 class ParticleHaving(VFX):
+    NAME = 'PH'
     def __init__(self, position: tuple[int, int], rotation: float):
         super().__init__(position, rotation)
         self.particles = []
@@ -72,6 +74,7 @@ class ParticleHaving(VFX):
 
 
 class ExplosionCrater(Entity):
+    NAME = 'CR'
     IMAGE = pygame.image.load('./Sprites/Objects/crater.png')
 
 
@@ -89,6 +92,7 @@ class ExplosionSmokeParticle(Particle):
 
 
 class Explosion(ParticleHaving):
+    NAME = 'EX'
     START_AMOUNT = 100
     FINAL_AMOUNT = 400
     SMOKE_FACTOR = 0.15
@@ -155,6 +159,7 @@ class ColorfulExplosionParticle(ExplosionParticle):
 
 
 class ColorfulExplosion(Explosion):
+    NAME = "CE"
     SMOKE_FACTOR = 0
     COLOR_CURVE = ValueCurve(((255, 220, 100), 0), ((255, 200, 50), 0.3), ((100, 100, 100), 0.6), ((50, 50, 50), 1))
     PARTICLE_TYPE = ColorfulExplosionParticle
@@ -163,6 +168,7 @@ class ColorfulExplosion(Explosion):
 
 
 class ColorfulFire(ColorfulExplosion):
+    NAME = "CF"
     FINAL_AMOUNT = 500
     BURNING_TIME = 15
 
@@ -179,6 +185,8 @@ class GunFireSmokeParticle(ExplosionSmokeParticle):
 
 
 class GunFire(Explosion):
+    NAME = "GF"
+
     MIN_SPEED = 10
     MAX_SPEED = 500
     FINAL_AMOUNT = 20
@@ -189,6 +197,8 @@ class GunFire(Explosion):
 
 
 class SmokeTrail(ParticleHaving):
+    NAME = "ST"
+
     PARTICLE_TYPE = GunFireSmokeParticle
     PARTICLE_DISTANCE = 5.0
     LIFETIME = 10
@@ -212,6 +222,7 @@ class BloodParticle(Particle):
 
 
 class BloodSplatter(Explosion):
+    NAME = "BS"
     RENDER_LAYER = 1
     PARTICLE_TYPE = BloodParticle
     FINAL_AMOUNT = 70

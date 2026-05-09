@@ -10,7 +10,7 @@ from graphics.graphics_utility import Camera
 
 
 class Entity:
-    NAME = 'DefaultEntity'
+    NAME = 'DE'
 
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
     IMAGE_ROTATION = 0.0

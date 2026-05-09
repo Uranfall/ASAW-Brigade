@@ -1,4 +1,5 @@
 import DebugGlobal
+from Entities.Units import Mouse, Tank, Soldier
 from logic_utility import *
 import pygame
 import time
@@ -101,7 +102,9 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
                 #  ui_data automatically deletes ui_entities that live too long.
 
+
 def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataServer):
+
     logic_data.start_new_frame()
     for command in game_data.get_commands():
         if command.name == command.ATTACK:
@@ -111,6 +114,8 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
             print('move')
             game_data.get_unit_by_uid(command.unit_id).target_pos = tuple(map(float, command.data[1:-1].split(',')))
             game_data.get_unit_by_uid(command.unit_id).targetUnit = None
+        if command.name == command.SPAWN:
+            spawn(game_data, command.team, command.data)
     Entity_Handler(entities, units, grid, logic_data, game_data)
     if logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
@@ -118,3 +123,25 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
         game_data.clean_up_vfx()
 
         print(game_data.get_player_currency(0), game_data.get_player_currency(1))
+
+
+units_to_spawn = {Mouse.NAME: [Mouse, 250], Soldier.NAME: [Soldier, 500], Tank.NAME: [Tank, 1000]}
+
+
+def spawn(game_data, player_team, unit: str):
+    if units_to_spawn[unit] is None:
+        return
+    unit = units_to_spawn[unit]
+    spawn_points = game_data.get_player_spawns(player_team)
+    money = game_data.get_player_currency(player_team)
+    if money >= 250:
+        game_data.update_player_currency(-unit[1], player_team)
+        newUnit = unit[0](spawn_points[0], 90, False, player_team)
+        newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
+        newUnit.target_node = newUnit.current_node
+        # add unit
+        game_data.units.append(newUnit)
+        game_data.entities.append(newUnit)
+        # shift list left, set the next spawn as the one the next unit is going to use
+        game_data.shift_player_spawns(player_team)
+

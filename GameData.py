@@ -204,9 +204,12 @@ class GameDataServer(GameData):
             while self.running and not self.is_connected():
                 client_socket.send(str(self.connected).encode())
                 client_socket.recv(1024)
+            client_socket.send(self.get_message(team).encode())
             while self.running:
                 data = client_socket.recv(1024).decode()
-                self.commands.extend(map(Command.from_string, data[1:-1].split(',')))
+                new_commands = list(map(Command.from_string, data[1:-1].split(',')))
+                for command in new_commands:
+                    command.team = team
                 client_socket.send(self.get_message(team).encode())
                 self.set_next_team = team
 

@@ -8,6 +8,7 @@ from graphics.graphics_utility import Camera
 
 
 class Mouse(Unit):
+    NAME = 'MO'
 
     IMAGE = pygame.image.load('Sprites/Units/mouse_no_tail.png')
     IMAGE_ROTATION = 90
@@ -31,6 +32,8 @@ class Mouse(Unit):
 
 
 class Soldier(Unit):
+    NAME = 'SO'
+
     IMAGE = pygame.image.load('Sprites/Units/soldier.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.3
@@ -46,7 +49,10 @@ class Soldier(Unit):
         self.attackRange = 1000
         self.attackTickSpeed = 10
 
+
 class Tank(Unit):
+    NAME = "TA"
+
     IMAGE = pygame.image.load('Sprites/Units/tank merkava.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 1
