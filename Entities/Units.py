@@ -21,7 +21,7 @@ class Mouse(Unit):
         self.speed = 0.75
         self.hp = 20
         self.damage = 3
-        self.attackRange = 100
+        self.attackRange = 150
         self.attackTickSpeed = 20
         self.tail = MouseTail((0, -70), 180+rotation, self)
 

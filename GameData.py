@@ -184,6 +184,7 @@ class GameDataServer(GameData):
         self.socket.listen()
         self.socket.settimeout(5)
         self.threads = []
+        self.set_next_team = 0
 
     def connect(self):
         self.connected = False
@@ -196,16 +197,32 @@ class GameDataServer(GameData):
                     break
                 except socket.timeout:
                     pass
+            team = self.set_next_team
+            self.set_next_team = (self.set_next_team+1)%2
             self.connected += 1
             print('connected')
-
+            while self.running and not self.is_connected():
+                client_socket.send(str(self.connected).encode())
+                client_socket.recv(1024)
             while self.running:
-                client_socket.send(b'hello!')
-                print(client_socket.recv(1024))
+                data = client_socket.recv(1024).decode()
+                self.commands.extend(map(Command.from_string, data[1:-1].split(',')))
+                client_socket.send(self.get_message(team).encode())
+                self.set_next_team = team
 
         except socket.error as e:
             print('error!', e)
             self.error = e
+            self.connected -= 1
+
+    def get_message(self, team: int):
+        return '$'.join([''.join(map(str, self.entities+self.units)), self.get_player_currency(team)])
+
+    def get_player_currency(self, team: int) -> int:
+        if team == 0:
+            return self.player0_currency
+        elif team == 1:
+            return self.player1_currency
 
     def async_connect(self):
         self.disconnect()
@@ -251,7 +268,7 @@ class GameDataClient(GameData):
             print('connected')
 
             while self.running:
-                print(sock.recv(1024))
+                # print(sock.recv(1024))
                 sock.send(b'hello!')
 
         except socket.error as e:

@@ -1,4 +1,5 @@
 import random
+import time
 
 from Entities.Units import Mouse
 from Entity import Entity
@@ -36,8 +37,12 @@ def server(game_data: GameDataServer):
 if __name__ == '__main__':
     data = GameDataServer()
     data.async_connect()
-    while not data.connected:
+    while not data.is_connected():
         # print('still not')
         pass
+    logic_data = LOGIC_DATA()
+    while data.is_connected():
+        logic_tick(data.get_entities(), data.get_units(), data.grid, logic_data, data)
+        time.sleep(0.01)
     # print(data.get_error())
 
