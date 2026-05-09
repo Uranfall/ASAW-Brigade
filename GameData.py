@@ -5,6 +5,7 @@ from typing import Iterator
 from Entity import Entity
 from Protocol.Command import Command
 from Protocol.Parameters import PORT
+from Protocol.converters import string_to_entity
 from UnitClass import Unit
 from Node import Node
 import threading
@@ -259,6 +260,9 @@ class GameDataClient(GameData):
         super().__init__()
         self.connected = False
         self.error = None
+        self.commands = []
+        self.ip: str
+        self.player_team = -1
 
     def connect(self):
         self.connected = False
@@ -269,15 +273,36 @@ class GameDataClient(GameData):
             sock.connect(("127.0.0.1", PORT))
             self.connected = True
             print('connected')
-
+            data = sock.recv(1024)
+            self.handle_data(data)
             while self.running:
-                # print(sock.recv(1024))
-                sock.send(b'hello!')
+                sock.recv(1024)
+                sock.send(str(self.commands).encode())
 
         except socket.error as e:
             print('error!', e)
             self.error = e
             self.running = False
+
+    def handle_data(self, data: str, game_data: GameData):
+        if self.player_team == -1:
+            entities, money, winstate, player = data.split("$")
+            self.player_team = player
+        else:
+            entities, money, winstate = data.split("$")
+
+        entities_to_add = []
+        for entity in entities:
+            entity = string_to_entity(entity)
+            for ent in self.get_entities():
+                if ent.id == entity.id:
+                    ent.position = entity.position
+                    ent.rotation = entity.rotation
+            entities_to_add.append(entity)
+        for ent in entities_to_add:
+            self.get_entities().append(ent)
+
+
 
     def disconnect(self):
         super().disconnect()

@@ -1,5 +1,6 @@
 import pygame
 
+from Protocol.Command import Command
 from Entities.Units import Mouse, Soldier, Tank
 from GameData import GameDataClient
 from GlobalVariables import TEXT_RED_CURVE
@@ -15,48 +16,14 @@ def start(game_data: GameDataClient, screen: pygame.display):
             run = False
 
         def create_mouse():
-            spawn_points = game_data.get_player_spawns(player_team)
-            money = game_data.get_player_currency(player_team)
-            if money >= 250:
-                game_data.update_player_currency(-500, player_team)
-                newUnit = Mouse(spawn_points[0], 90, False, player_team)
-                newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-                newUnit.target_node = newUnit.current_node
-                # add unit
-                units.append(newUnit)
-                entities.append(newUnit)
-                # shift list left, set the next spawn as the one the next unit is going to use
-                game_data.shift_player_spawns(player_team)
+            data.commands.append(Command("spawn","mo").__str__())
 
         def create_soldier():
-            spawn_points = game_data.get_player_spawns(player_team)
-            money = game_data.get_player_currency(player_team)
-            if money >= 500:
-                game_data.update_player_currency(-500, player_team)
-                newUnit = Soldier(spawn_points[0], 90, False, player_team)
-                newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-                newUnit.target_node = newUnit.current_node
-                # add unit
-                units.append(newUnit)
-                entities.append(newUnit)
-                # shift list left, set the next spawn as the one the next unit is going to use
-                game_data.shift_player_spawns(player_team)
+            data.commands.append(Command("spawn","mo").__str__())
 
         def create_tank():
-            spawn_points = game_data.get_player_spawns(player_team)
-            money = game_data.get_player_currency(player_team)
-            if money >= 1000:
-                game_data.update_player_currency(-500, player_team)
-                newUnit = Tank(spawn_points[0], 90, False, player_team)
-                newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-                newUnit.target_node = newUnit.current_node
-                # add unit
-                units.append(newUnit)
-                entities.append(newUnit)
-                # shift list left, set the next spawn as the one the next unit is going to use
-                game_data.shift_player_spawns(player_team)
+            data.commands.append(Command("spawn","mo").__str__())
 
-        player_team = 1
 
         # UI related code
         ui_data = UIData(screen)
@@ -77,7 +44,7 @@ def start(game_data: GameDataClient, screen: pygame.display):
         run = True
         while run:
             ui_out = ui_tick(ui_data, game_data)
-            player_currency.text = str(game_data.get_player_currency(player_team)) + "$"
+            player_currency.text = str(game_data.get_player_currency(data.player_team)) + "$"
             run = run and ui_out.run
 
 
@@ -85,7 +52,7 @@ if __name__ == '__main__':
     data = GameDataClient()
     data.async_connect()
     while not data.connected:
-        # print('still not')
-        pass
+        print('still not')
+
     print(data.get_error())
 
