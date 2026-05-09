@@ -60,7 +60,6 @@ def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Un
         unit.targetUnit = None
     elif (unit.targetUnit is not None
           and is_within_box(unit.targetUnit.position, unit.get_attack_box())):
-        print("in range")
         unit.target_pos = unit.position
         if shot_fired(unit.hitChance):
             game_data.add_vfx(*unit.get_shooting_effects())

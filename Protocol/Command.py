@@ -3,7 +3,11 @@
 class Command:
 
     GO_TO = 'go_to'
+    TARGET = 'target' #sends unit id and unit id for the targeted unit
     ATTACK = 'attack'
+    COLLISION = 'collision' #collision logic, sends unit id and the adjusted position
+    DEATH = 'death' #sends a unit id and tells the client to delete it from the list and display the apropriate vfx
+    SPAWN = 'spawn' #sends a unit id, unit type and position (can call the spawn function in main, needs adjustment)
 
     def __init__(self, name: str, data: str, unit_id: int = -1):
         self.name = name
