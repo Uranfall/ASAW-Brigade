@@ -261,6 +261,7 @@ class GameDataClient(GameData):
         self.connected = False
         self.error = None
         self.commands = []
+        self.entities = []
         self.ip: str
         self.player_team = -1
 
@@ -276,8 +277,10 @@ class GameDataClient(GameData):
             data = sock.recv(1024)
             self.handle_data(data)
             while self.running:
-                sock.recv(1024)
                 sock.send(str(self.commands).encode())
+                commands = []
+                data = sock.recv(1024).decode()
+                self.handle_data(data)
 
         except socket.error as e:
             print('error!', e)
@@ -290,17 +293,17 @@ class GameDataClient(GameData):
             self.player_team = player
         else:
             entities, money, winstate = data.split("$")
-
+        self.update_player_currency(int(money), self.player_team)
         entities_to_add = []
         for entity in entities:
             entity = string_to_entity(entity)
-            for ent in self.get_entities():
+            for ent in self.entities:
                 if ent.id == entity.id:
                     ent.position = entity.position
                     ent.rotation = entity.rotation
             entities_to_add.append(entity)
         for ent in entities_to_add:
-            self.get_entities().append(ent)
+            self.entities.append(ent)
 
 
 
