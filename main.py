@@ -4,6 +4,7 @@ import pygame
 import DebugGlobal
 from Entities.Units import *
 from GlobalVariables import TEXT_RED_CURVE
+from Protocol.Command import Command
 from Unit_AI import a_star
 from graphics.UI_Entities import Button, Text
 from shared_utility import get_closest_node
@@ -28,48 +29,13 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
 
 
     def create_mouse():
-        spawn_points = game_data.get_player_spawns(player_team)
-        money = game_data.get_player_currency(player_team)
-        if money >= 250:
-            game_data.update_player_currency(-500, player_team)
-            newUnit = Mouse(spawn_points[0], 90, False, player_team)
-            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-            newUnit.target_node = newUnit.current_node
-            # add unit
-            units.append(newUnit)
-            entities.append(newUnit)
-            # shift list left, set the next spawn as the one the next unit is going to use
-            game_data.shift_player_spawns(player_team)
-
+        game_data.add_command(Command(Command.SPAWN, Mouse.NAME, team=player_team))
 
     def create_soldier():
-        spawn_points = game_data.get_player_spawns(player_team)
-        money = game_data.get_player_currency(player_team)
-        if money >= 500:
-            game_data.update_player_currency(-500, player_team)
-            newUnit = Soldier(spawn_points[0], 90, False, player_team)
-            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-            newUnit.target_node = newUnit.current_node
-            # add unit
-            units.append(newUnit)
-            entities.append(newUnit)
-            # shift list left, set the next spawn as the one the next unit is going to use
-            game_data.shift_player_spawns(player_team)
-
+        game_data.add_command(Command(Command.SPAWN, Soldier.NAME, team=player_team))
 
     def create_tank():
-        spawn_points = game_data.get_player_spawns(player_team)
-        money = game_data.get_player_currency(player_team)
-        if money >= 1000:
-            game_data.update_player_currency(-500, player_team)
-            newUnit = Tank(spawn_points[0], 90, False, player_team)
-            newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-            newUnit.target_node = newUnit.current_node
-            # add unit
-            units.append(newUnit)
-            entities.append(newUnit)
-            # shift list left, set the next spawn as the one the next unit is going to use
-            game_data.shift_player_spawns(player_team)
+        game_data.add_command(Command(Command.SPAWN, Tank.NAME, team=player_team))
 
     #Logic related code
     logic_data = LOGIC_DATA()
