@@ -1,7 +1,6 @@
 import random
 
 import pygame
-
 import DebugGlobal
 from Entities.Units import *
 from GlobalVariables import TEXT_RED_CURVE
@@ -41,8 +40,6 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
             entities.append(newUnit)
             # shift list left, set the next spawn as the one the next unit is going to use
             game_data.shift_player_spawns(player_team)
-
-
 
 
     def create_soldier():
