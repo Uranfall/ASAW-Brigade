@@ -173,6 +173,13 @@ class ColorfulFire(ColorfulExplosion):
     BURNING_TIME = 15
 
 
+class ShotEffect(VFX):
+    NAME = 'SX'
+
+    def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
+        super().__init__(position, rotation)
+
+
 class GunFireParticle(ExplosionParticle):
     SCALE_CURVE = ValueCurve((8, 0), (6, 0.1), (5, 0.5), (3, 0.8), (0, 1))
     DRAG = 40
@@ -184,7 +191,7 @@ class GunFireSmokeParticle(ExplosionSmokeParticle):
     DRAG = 40
 
 
-class GunFire(Explosion):
+class GunFire(Explosion, ShotEffect):
     NAME = "GF"
 
     MIN_SPEED = 10
@@ -195,8 +202,11 @@ class GunFire(Explosion):
     PARTICLE_TYPE = GunFireParticle
     SMOKE_PARTICLE = GunFireSmokeParticle
 
+    def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
+        super().__init__(position, rotation)
 
-class SmokeTrail(ParticleHaving):
+
+class SmokeTrail(ParticleHaving, ShotEffect):
     NAME = "ST"
 
     PARTICLE_TYPE = GunFireSmokeParticle

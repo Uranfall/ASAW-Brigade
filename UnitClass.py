@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import random
 from operator import truediv
+from typing import Type
 
 import pygame
 import GlobalVariables
 from Node import Node
-from VFX import GunFire, BloodSplatter
+from VFX import GunFire, BloodSplatter, SmokeTrail, ShotEffect
 from shared_utility import *
 from Entity import Entity
 from graphics.graphics_utility import Camera
@@ -23,8 +24,7 @@ def shot_fired(hit_chance: int):
 class Unit(Entity):
     NAME = 'DefaultUnit'
 
-
-    SHOOTING_EFFECTS = [GunFire]
+    SHOOTING_EFFECTS: list[Type[ShotEffect]] = [GunFire]
     DEATH_EFFECTS = [BloodSplatter]
     MUZZLE_DISTANCE = 75
 
@@ -121,7 +121,11 @@ class Unit(Entity):
         position = self.position[0]+offset[0], self.position[1]+offset[1]
         out = []
         for effect in self.SHOOTING_EFFECTS:
-            out.append(effect(position, rotation))
+            print(self.targetUnit.IMAGE_SCALE)
+            out.append(effect(position,
+                              rotation,
+                              math.dist(self.position, self.targetUnit.position)
+                              -self.targetUnit.IMAGE_SCALE*self.targetUnit.IMAGE.get_size()[0]))
         return out
 
     def get_death_effects(self, rotation: float | None = None):

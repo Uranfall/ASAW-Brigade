@@ -1,6 +1,6 @@
 import pygame
 from Node import Node
-from VFX import Explosion
+from VFX import Explosion, GunFire, SmokeTrail
 from shared_utility import get_closest_node
 from EntityProps import MouseTail
 from UnitClass import Unit
@@ -53,10 +53,12 @@ class Soldier(Unit):
 class Tank(Unit):
     NAME = "TA"
 
+    SHOOTING_EFFECTS = [SmokeTrail, GunFire]
     IMAGE = pygame.image.load('Sprites/Units/tank merkava.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 1
     DEATH_EFFECTS = [Explosion]
+    MUZZLE_DISTANCE = 100
 
     def __init__(self, position: tuple[int, int], rotation: float, selected: bool, team: int):
         super().__init__(position, rotation, selected)
