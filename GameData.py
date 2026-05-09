@@ -1,5 +1,6 @@
 import copy
 import socket
+from typing import Iterator
 
 from Entity import Entity
 from Protocol.Command import Command
@@ -9,6 +10,7 @@ from Node import Node
 import threading
 
 from VFX import VFX
+from map import map_info
 
 
 class GameData:
@@ -34,7 +36,7 @@ class GameData:
     def add_command(self, command: Command):
         pass
 
-    def get_commands(self) -> list[Command]:
+    def get_commands(self) -> Iterator[Command]:
         pass
 
     def connect(self):
@@ -142,8 +144,9 @@ class GameDataLocal(GameData):
     def add_command(self, command: Command):
         self.commands.append(command)
 
-    def get_commands(self) -> list[Command]:
-        return self.commands
+    def get_commands(self) -> Iterator[Command]:
+        while self.commands:
+            yield self.commands.pop()
 
     def add_vfx(self, *vfx: VFX):
         self.vfx.extend(vfx)
@@ -153,14 +156,31 @@ class GameDataLocal(GameData):
             if vfx.get_progress() > 1:
                 self.vfx.remove(vfx)
 
+    def get_unit_by_uid(self, uid: int):
+        for unit in self.units:
+            if unit.id == uid:
+                return unit
+
 
 class GameDataServer(GameData):
     def __init__(self):
         super().__init__()
+        map_objects, grid, unit_spawn_points_team0, unit_spawn_points_team1, grid_size = map_info()
+        self.entities = map_objects
+        self.units = []
+        self.grid = grid
+        self.vfx = []
+        self.unit_spawn_points_team0 = unit_spawn_points_team0
+        self.unit_spawn_points_team1 = unit_spawn_points_team1
+        self.grid_size = grid_size
+        self.player0_currency = 2000
+        self.player1_currency = 2000
+        self.commands = []
+
         self.connected = 0
         self.error = None
         self.socket = socket.socket()
-        self.socket.bind(('127.0.0.1', PORT))
+        self.socket.bind(('0.0.0.0', PORT))
         self.socket.listen()
         self.socket.settimeout(5)
         self.threads = []
@@ -186,7 +206,6 @@ class GameDataServer(GameData):
         except socket.error as e:
             print('error!', e)
             self.error = e
-            self.running = False
 
     def async_connect(self):
         self.disconnect()
@@ -204,6 +223,15 @@ class GameDataServer(GameData):
 
     def get_error(self):
         return self.error
+
+    def get_unit_by_uid(self, uid: int):
+        for unit in self.units:
+            if unit.id == uid:
+                return unit
+
+    def get_commands(self) -> Iterator[Command]:
+        while self.commands:
+            yield self.commands.pop()
 
 
 class GameDataClient(GameData):

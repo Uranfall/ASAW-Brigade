@@ -5,7 +5,6 @@ from operator import truediv
 
 import pygame
 import GlobalVariables
-import Unit_AI
 from Node import Node
 from VFX import GunFire, BloodSplatter
 from shared_utility import *
@@ -36,13 +35,10 @@ class Unit(Entity):
                  team: int,
                  ):
         super().__init__(position, rotation)
-        self.current_node = Node
-        self.target_node = self.current_node
-        self.path = []
         self.target_pos = position
         self.target_rotation = rotation
         self.selected = False
-        self.change_rate = [0,0]
+        self.change_rate = [0, 0]
 
         self.hp = 10
         self.damage = 2
@@ -71,8 +67,11 @@ class Unit(Entity):
 
     def calc_rotation(self):
         #for self: when we add unit targeting, check if enemy is in range
-        targetX = self.target_node.x - self.position[0]
-        targetY = self.target_node.y - self.position[1]
+        target = self.target_pos
+        if self.targetUnit is not None:
+            target = self.targetUnit.position
+        targetX = target[0] - self.position[0]
+        targetY = target[1] - self.position[1]
         self.rotation = vector_to_angle((targetX, targetY))
 
     def move(self, targetX,targetY,deltatime):
@@ -86,39 +85,12 @@ class Unit(Entity):
         else:
             self.change_rate = [0,0]
 
-    def calc_movement(self, grid,deltatime):
-        currentX = self.position[0]
-        currentY = self.position[1]
-        targetX = self.target_pos[0]
-        targetY = self.target_pos[1]
+    def calc_movement(self, grid, deltatime):
         # create a box around the destination, if Unit enters the box it stops updating
-        if not is_within_box((currentX, currentY), get_collision_points((targetX, targetY), (100, 100))):
-            if self.target_node!=self.current_node:
-                if not self.path:
-                    self.path = Unit_AI.a_star(self.current_node, get_closest_node(self.target_pos, grid), grid)
-                    for node in self.path:
-                        print(node.x,node.y)
-                    current = self.path[0]
-                    self.target_node = current
-                    self.path.remove(current)
-
-                if currentX != self.target_node and currentY == self.target_node:
-                    self.move(self.target_node.x, self.target_node.y,deltatime)
-                else:
-                    current = self.path[0]
-                    self.target_node = current
-                    self.path.remove(current)
-                    self.path = shift_list_left(self.path)
-            else:
-                self.move(targetX, targetY,deltatime)
-
-
-
+        if not is_within_box(self.position, get_collision_points(self.target_pos, (100, 100))):
+            self.move(*self.target_pos, deltatime)
         else:
             self.target_pos = self.position
-            self.target_node = self.current_node
-            self.path = []
-
 
     def draw(self, camera: Camera):
 

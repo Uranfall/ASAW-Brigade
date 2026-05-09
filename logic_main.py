@@ -9,7 +9,7 @@ from UnitClass import *
 from Entity import Entity
 from graphics.graphics_main import UIData
 from shared_utility import boxes_overlap
-from GameData import GameDataLocal
+from GameData import GameDataLocal, GameDataServer
 
 
 #this file is for updating unit actions every tick, independent from any inputs, inputs are handled by logic utility
@@ -29,17 +29,12 @@ class LOGIC_DATA:
         else:
             self.tick_counter += 1
 
-def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
-    grid = []
-    for y in range(HEIGHT_START, HEIGHT_END, 200):
-        row = []
-        for x in range(WIDTH_START, WIDTH_END, 200):
-            walkable = True
-            row.append(Node(x, y, walkable))
-        grid.append(row)
-    return grid
 
-def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data, game_data: GameDataLocal):
+def Entity_Handler(entities: list[Entity],
+                   units: list[Unit],
+                   grid,
+                   logic_data,
+                   game_data: GameDataServer):
     for unit in units:
         unit.calc_rotation()
         unit.move(unit.target_pos[0], unit.target_pos[1],logic_data.delta_time)
@@ -53,8 +48,11 @@ def Entity_Handler(entities: list[Entity], units: list[Unit], grid, logic_data, 
     collision_logic(entities, units)
 
 
-
-def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Unit], logic_data, game_data: GameDataLocal):
+def check_unit_current_action(unit: Unit,
+                              entities: list[Entity],
+                              units: list[Unit],
+                              logic_data,
+                              game_data: GameDataServer):
     #has a target, no obstacles, is in range
     if unit.targetUnit not in units:
         unit.targetUnit = None
@@ -72,17 +70,20 @@ def check_unit_current_action(unit: Unit, entities: list[Entity], units: list[Un
             game_data.add_vfx(*unit.targetUnit.get_death_effects())
             unit.targetUnit = None
 
+
 def collision_x(entity: Entity,unit: Unit):
     old_position = [unit.get_position()[0], unit.get_position()[1] - unit.change_rate[1]]
     if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
                                                                      entity.get_collision_points()):
         unit.set_position(old_position)
 
+
 def collision_y(entity: Entity,unit: Unit):
     old_position = [unit.get_position()[0] - unit.change_rate[0], unit.get_position()[1]]
     if unit != entity and entity.collision == True and boxes_overlap(unit.get_collision_points(),
                                                                      entity.get_collision_points()):
         unit.set_position(old_position)
+
 
 def collision_logic(entities: list[Entity],units: list[Unit]):
     for unit in units:
@@ -100,12 +101,20 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
                 #DebugGlobal.ui_data.ui_entities.append(DebugBox(box_entity, stay_alive_for=0.1))
                 #  ui_data automatically deletes ui_entities that live too long.
 
-def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataLocal):
+def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataServer):
     logic_data.start_new_frame()
+    for command in game_data.get_commands():
+        if command.name == command.ATTACK:
+            print('attack')
+            game_data.get_unit_by_uid(command.unit_id).targetUnit = game_data.get_unit_by_uid(int(command.data))
+        if command.name == command.GO_TO:
+            print('move')
+            game_data.get_unit_by_uid(command.unit_id).target_pos = tuple(map(float, command.data[1:-1].split(',')))
+            game_data.get_unit_by_uid(command.unit_id).targetUnit = None
     Entity_Handler(entities, units, grid, logic_data, game_data)
     if logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
         game_data.clean_up_vfx()
 
-        print(game_data.get_player_currency(0),game_data.get_player_currency(1))
+        print(game_data.get_player_currency(0), game_data.get_player_currency(1))

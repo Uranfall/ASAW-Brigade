@@ -1,6 +1,6 @@
 from Entity import Entity
 from graphics.Ground import Ground
-from logic_main import create_grid
+from logic_utility import create_grid
 from Node import Node
 from logic_utility import check_walkable
 

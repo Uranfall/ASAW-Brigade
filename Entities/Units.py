@@ -1,5 +1,6 @@
 import pygame
 from Node import Node
+from VFX import Explosion
 from shared_utility import get_closest_node
 from EntityProps import MouseTail
 from UnitClass import Unit
@@ -49,6 +50,7 @@ class Tank(Unit):
     IMAGE = pygame.image.load('Sprites/Units/tank merkava.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 1
+    DEATH_EFFECTS = [Explosion]
 
     def __init__(self, position: tuple[int, int], rotation: float, selected: bool, team: int):
         super().__init__(position, rotation, selected)

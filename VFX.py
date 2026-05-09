@@ -212,6 +212,7 @@ class BloodParticle(Particle):
 
 
 class BloodSplatter(Explosion):
+    RENDER_LAYER = 1
     PARTICLE_TYPE = BloodParticle
     FINAL_AMOUNT = 70
     START_AMOUNT = 35

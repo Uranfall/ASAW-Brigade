@@ -8,6 +8,16 @@ from shared_utility import *
 #navigation: UNIT -> NavNode -> find a path between them -> stop at closet NavNode from the click that isnt abstracted -> walk towards coordinates
 
 
+def create_grid(WIDTH_START, WIDTH_END, HEIGHT_START, HEIGHT_END):
+    grid = []
+    for y in range(HEIGHT_START, HEIGHT_END, 200):
+        row = []
+        for x in range(WIDTH_START, WIDTH_END, 200):
+            walkable = True
+            row.append(Node(x, y, walkable))
+        grid.append(row)
+    return grid
+
 
 #check if node is on entity
 def check_walkable(node: Node, entities: list[Entity]):
