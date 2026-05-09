@@ -10,6 +10,8 @@ from graphics.graphics_utility import Camera
 
 
 class Entity:
+    NAME = 'DefaultEntity'
+
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
     IMAGE_ROTATION = 0.0
     IMAGE_SCALE = 0.3
@@ -78,3 +80,7 @@ class Entity:
         # end: Apply transformations to image.
 
         camera.screen.blit(img, corner2)  # Put the image onto the screen.
+
+    def __str__(self):
+        return f'<cls{type(self).__name__};uid{self.id};' \
+               f'pos{round(self.position[0],2)},{round(self.position[1],2)};rot{self.rotation}>'

@@ -22,6 +22,8 @@ def shot_fired(hit_chance: int):
 
 
 class Unit(Entity):
+    NAME = 'DefaultUnit'
+
 
     SHOOTING_EFFECTS = [GunFire]
     DEATH_EFFECTS = [BloodSplatter]
@@ -157,8 +159,5 @@ class Unit(Entity):
         for effect in self.DEATH_EFFECTS:
             out.append(effect(self.position, rotation))
         return out
-
-
-
 
 
