@@ -262,7 +262,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
-        self.ip = "172.18.252.213"
+        self.ip = "127.0.0.1"
         self.player_team = -1
 
     def connect(self):
@@ -308,7 +308,7 @@ class GameDataClient(GameData):
         for entity in entities:
             entity = string_to_entity(entity)
             for ent in self.entities:
-                if ent.id == entity.id:
+                if ent is not None and ent.id == entity.id:
                     ent.position = entity.position
                     ent.rotation = entity.rotation
             entities_to_add.append(entity)
