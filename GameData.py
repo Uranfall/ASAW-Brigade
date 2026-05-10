@@ -210,6 +210,7 @@ class GameDataServer(GameData):
                 while self.running:
                     data = client_socket.recv(1024).decode()
                     new_commands = list(map(Command.from_string, data[1:-1].split(', '))) if len(data) > 2 else []
+                    print(new_commands, self.units, self.entities)
                     for command in new_commands:
                         command.team = team
                     client_socket.send(self.get_message(team).encode())
@@ -221,7 +222,8 @@ class GameDataServer(GameData):
                 self.connected -= 1
 
     def get_message(self, team: int):
-        return '$'.join([''.join(list(map(str, self.entities+self.units))), str(self.get_player_currency(team)), "0"])
+        return '$'.join(['['+', '.join(map(str, self.entities+self.units))+']',
+                         str(self.get_player_currency(team)), "0"])
 
     def get_player_currency(self, team: int) -> int:
         if team == 0:
@@ -333,6 +335,7 @@ class GameDataClient(GameData):
             self.connected = True
             print('connected')
             data = sock.recv(1024)
+            print(data)
             self.handle_data(data.decode())
             while self.running:
                 sock.send(str(self.commands).encode())

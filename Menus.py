@@ -316,6 +316,8 @@ def main_menu():
     while run:
         if game_data is not None and game_data.is_connected():
             client.start(game_data, camera.screen)
+            game_data.disconnect()
+            online_menu()
         if trying_to_connect and game_data is not None and game_data.get_error() is not None:
             game_data.async_connect()
 

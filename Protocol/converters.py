@@ -1,10 +1,16 @@
 from Entity import Entity
+from graphics.Ground import Ground
 
 
 def string_to_entity(string: str) -> Entity:
-    list_of_stats = string.split(';')
+    list_of_stats = string[1:-1].split(';')
     stats = dict()
     for key, value in map(lambda stat: (stat[:3], stat[3:]), list_of_stats):
         stats.update({key: value})
-    entity = eval(stats['cls']+f'(({stats["pos"]}), {stats["rot"]}, unique_id={stats["uid"]})')
+    try:
+        entity = eval(stats['cls']+f'(({stats["pos"]}), {stats["rot"]})')
+    except TypeError:
+        entity = eval(stats['cls']+f'()')
+    entity.id = int(stats['uid'])
+    print(entity)
     return entity
