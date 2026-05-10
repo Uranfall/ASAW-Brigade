@@ -262,7 +262,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
-        self.ip: str
+        self.ip = "172.18.252.213"
         self.player_team = -1
 
     def connect(self):
@@ -271,11 +271,11 @@ class GameDataClient(GameData):
         sock = socket.socket()
         sock.settimeout(5)
         try:
-            sock.connect(("127.0.0.1", PORT))
+            sock.connect((self.ip, PORT))
             self.connected = True
             print('connected')
             data = sock.recv(1024)
-            self.handle_data(data)
+            self.handle_data(data.decode())
             while self.running:
                 sock.send(str(self.commands).encode())
                 commands = []
@@ -289,11 +289,21 @@ class GameDataClient(GameData):
 
     def handle_data(self, data: str):
         if self.player_team == -1:
-            entities, money, winstate, player = data.split("$")
-            self.player_team = player
+            #entities, money, winstate, player
+            data = data.split("$")
+            entities = data[0]
+            money = data[1]
+            winstate = data[2]
+            player = data[3]
+            self.player_team = int(player)
         else:
-            entities, money, winstate = data.split("$")
+            # entities, money, winstate, player
+            data = data.split("$")
+            entities = data[0]
+            money = data[1]
+            winstate = data[2]
         self.update_player_currency(int(money), self.player_team)
+        entities = entities[1:-1].split(", ")
         entities_to_add = []
         for entity in entities:
             entity = string_to_entity(entity)
