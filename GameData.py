@@ -255,6 +255,60 @@ class GameDataServer(GameData):
         while self.commands:
             yield self.commands.pop()
 
+    def get_layers(self):
+        layers = []
+        for entity in self.get_entities()+self.vfx:
+            if len(layers) <= entity.RENDER_LAYER:
+                layers += [[] for _ in range(entity.RENDER_LAYER-len(layers)+1)]
+            layers[entity.RENDER_LAYER].append(entity)
+        return layers
+
+    def get_entities(self) -> list[Entity]:
+        return self.entities.copy()
+
+    def get_units(self) -> list[Unit]:
+        return self.units.copy()
+
+    def get_grid(self) -> list[list[Node]]:
+        return copy.deepcopy(self.grid)
+
+
+    def update_player_currency(self, update: int, team: int):
+        if team==0:
+            self.player0_currency = self.player0_currency + update
+        elif team==1:
+            self.player1_currency = self.player1_currency + update
+
+    def get_player_spawns(self, team: int) -> list[tuple[int,int]]:
+        if team==0:
+            return self.unit_spawn_points_team0
+        elif team==1:
+            return self.unit_spawn_points_team1
+        return self.unit_spawn_points_team0
+
+    def shift_player_spawns(self, team: int):
+        if team==0:
+            point0 = self.unit_spawn_points_team0[0]
+            for x in range(1, len(self.unit_spawn_points_team0) - 1, 1):
+                self.unit_spawn_points_team0[x-1] = self.unit_spawn_points_team0[x]
+            self.unit_spawn_points_team0.append(point0)
+        elif team==1:
+            point0 = self.unit_spawn_points_team1[0]
+            for x in range(1, len(self.unit_spawn_points_team1) - 1, 1):
+                self.unit_spawn_points_team1[x - 1] = self.unit_spawn_points_team1[x]
+            self.unit_spawn_points_team1.append(point0)
+
+    def add_command(self, command: Command):
+        self.commands.append(command)
+
+    def add_vfx(self, *vfx: VFX):
+        self.vfx.extend(vfx)
+
+    def clean_up_vfx(self):
+        for vfx in self.vfx:
+            if vfx.get_progress() > 1:
+                self.vfx.remove(vfx)
+
 
 class GameDataClient(GameData):
     def __init__(self):
@@ -318,8 +372,6 @@ class GameDataClient(GameData):
         for ent in entities_to_add:
             self.entities.append(ent)
 
-
-
     def disconnect(self):
         super().disconnect()
         self.connected = False
@@ -329,3 +381,29 @@ class GameDataClient(GameData):
 
     def get_error(self):
         return self.error
+
+    def get_layers(self):
+        layers = []
+        for entity in self.get_entities()+self.vfx:
+            if len(layers) <= entity.RENDER_LAYER:
+                layers += [[] for _ in range(entity.RENDER_LAYER-len(layers)+1)]
+            layers[entity.RENDER_LAYER].append(entity)
+        return layers
+
+    def get_entities(self) -> list[Entity]:
+        return self.entities.copy()
+
+    def get_units(self) -> list[Unit]:
+        return self.units.copy()
+
+    def add_command(self, command: Command):
+        self.commands.append(command)
+
+    def get_commands(self) -> Iterator[Command]:
+        while self.commands:
+            yield self.commands.pop()
+
+    def get_unit_by_uid(self, uid: int):
+        for unit in self.units:
+            if unit.id == uid:
+                return unit
