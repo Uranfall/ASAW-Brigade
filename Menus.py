@@ -5,7 +5,6 @@ import time
 import pygame
 import screeninfo
 
-import client
 from Entities.Bonus import CatGunner, HandGun
 from Entity import Entity
 from GameData import GameDataLocal, GameDataClient
@@ -128,16 +127,15 @@ def ground_properties(screen=pygame.display.set_mode((500, 500), pygame.RESIZABL
 
 def main_menu():
 
-    game_data: GameDataClient | None = None
-    trying_to_connect = False
+    game_data: GameDataClient = None
 
     last_time_pressed_enter = 0
     enter_text = Text((-1000, -3035), 0, 'Not the key you dummy!', TEXT_RED_CURVE)
 
-    screen_color_curve: ValueCurve | None = None
-    camera_position_curve: ValueCurve | None = None
-    animation_start: float | None = None
-    animation_duration: float | None = None
+    screen_color_curve = None
+    camera_position_curve = None
+    animation_start = None
+    animation_duration = None
 
     def start_camera_animation():
         nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
@@ -181,13 +179,7 @@ def main_menu():
         reset_animation()
 
     def online_menu():
-        nonlocal screen_color_curve,\
-            camera_position_curve, \
-            animation_start,\
-            animation_duration,\
-            start_time,\
-            trying_to_connect
-        trying_to_connect = False
+        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time
         screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.25), ((50, 50, 60), 0.75))
         camera_position_curve = ValueCurve((camera.target_position, 0), ([2000, 0], 0.2))
         animation_start = 0
@@ -196,14 +188,7 @@ def main_menu():
         reset_animation()
 
     def online_loading_screen():
-        nonlocal screen_color_curve, \
-            camera_position_curve, \
-            animation_start, \
-            animation_duration, \
-            start_time, \
-            game_data, \
-            trying_to_connect
-        trying_to_connect = True
+        nonlocal screen_color_curve, camera_position_curve, animation_start, animation_duration, start_time, game_data
         screen_color_curve = ValueCurve((screen_color_curve(animation_progress), 0.1), ((120, 120, 160), 0.3))
         camera_position_curve = ValueCurve((camera.target_position, 0), ([2000, 2000], 0.35))
         animation_start = 0
@@ -315,8 +300,8 @@ def main_menu():
 
     while run:
         if game_data is not None and game_data.is_connected():
-            client.start(game_data, camera.screen)
-        if trying_to_connect and game_data is not None and game_data.get_error() is not None:
+            return
+        if game_data is not None and game_data.get_error() is not None:
             game_data.async_connect()
 
         dt = time.time() - last_update

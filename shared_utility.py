@@ -28,7 +28,7 @@ def get_closest_node(position: list,grid) -> Node:
                     closest_node = node
     return closest_node
 
-def vector_to_angle(vector: list[float, float] | tuple[float, float]):
+def vector_to_angle(vector):
     """
     Outputs the angle in degrees.
     """
@@ -36,32 +36,32 @@ def vector_to_angle(vector: list[float, float] | tuple[float, float]):
     return math.degrees(math.atan2(*vector[::-1]))-90
 
 
-def rotate_vector(vector: list[float, float] | tuple[float, float], angle: float):
+def rotate_vector(vector, angle: float):
     """
     Input the angle in degrees.
     """
     return angle_to_vector(vector_to_angle(vector)+angle, (vector[0]**2+vector[1]**2)**0.5)
 
 
-def set_distance(vector: list[float, float] | tuple[float, float],
-                 pivot: list[float, float] | tuple[float, float],
+def set_distance(vector,
+                 pivot,
                  distance: float):
     new_direction = angle_to_vector(vector_to_angle([vector[0]-pivot[0], vector[1]-pivot[1]]), distance)
     return new_direction[0]+pivot[0], new_direction[1]+pivot[1]
 
 
-def is_within_box(pos: list[float, float] | tuple[float, float],
-                  box: list[float, float, float, float] | tuple[float, float, float, float]):
+def is_within_box(pos,
+                  box):
     return box[0] <= pos[0] <= box[2] and box[1] <= pos[1] <= box[3]
 
 #note to self, fix this shit pls, this is absolute garbage code bro like wtf are you doing lock in
-def boxes_overlap(box1: list[float, float, float, float] | tuple[float, float, float, float],
-                  box2: list[float, float, float, float] | tuple[float, float, float, float]):
+def boxes_overlap(box1,
+                  box2):
     return (is_within_box([box1[0],box1[1]] , box2) or is_within_box([box1[0],box1[3]] , box2) or
             is_within_box([box1[2],box1[1]] , box2) or is_within_box([box1[2],box1[3]] , box2))
 
-def get_collision_points(pos:tuple[float, float] | tuple[int, int],
-                         dimensions: tuple[float, float] | tuple[int, int]):
+def get_collision_points(pos,
+                         dimensions):
     #width
     x1 = (pos[0] - dimensions[0] / 2)# left
     x2 = (pos[0] + dimensions[0] / 2)# right
