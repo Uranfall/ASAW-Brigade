@@ -79,7 +79,7 @@ class DebugBox(DebugEntity):
 
 class DebugPoly(DebugEntity):
     def __init__(self,
-                 points: Sequence[tuple[float, float]] | Sequence[list[float, float]],
+                 points,
                  width=10.0,
                  color=(0, 0, 255),
                  stay_alive_for=float('inf')):

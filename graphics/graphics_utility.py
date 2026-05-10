@@ -49,7 +49,7 @@ class Camera:
 
     def adjust_zoom(self,
                     amount: float,
-                    mouse_pos: tuple[float, float] | list[float, float] = None):
+                    mouse_pos = None):
         """
         Zooms towards/away-from the mouse.
         """

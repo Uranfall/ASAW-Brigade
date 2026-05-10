@@ -37,7 +37,7 @@ class Text(UIEntity):
     def __init__(self, position: tuple[int, int],
                  rotation: float,
                  text: str,
-                 color: tuple[int, int, int] | ValueCurve,
+                 color,
                  size=30.0,
                  time_offset=0.0,
                  font_name='OCR A Extended',

@@ -94,7 +94,7 @@ class UITickOut:
 
 
 def get_closest_entity_to(pos, units):
-    closest: tuple[float, Unit] | None = None
+    closest = None
     for unit in units:
         if closest is None or closest[0] > math.dist(pos, unit.position):
             closest = math.dist(pos, unit.position), unit

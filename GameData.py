@@ -64,7 +64,7 @@ class GameData:
     def is_connected(self) -> bool:
         pass
 
-    def get_error(self) -> str | None:
+    def get_error(self):
         pass
 
     def get_currency(self):
@@ -202,13 +202,13 @@ class GameDataServer(GameData):
             self.set_next_team = (self.set_next_team+1)%2
             self.connected += 1
             print('connected')
-            # while self.running and not self.is_connected():
-            #     client_socket.send(str(self.connected).encode())
-            #     client_socket.recv(1024)
-            client_socket.send((self.get_message(team)+'$'+str(team)).encode())
+            while self.running and not self.is_connected():
+                client_socket.send(str(self.connected).encode())
+                client_socket.recv(1024)
+            client_socket.send(self.get_message(team).encode())
             while self.running:
                 data = client_socket.recv(1024).decode()
-                new_commands = list(map(Command.from_string, data[1:-1].split(', '))) if len(data) > 2 else []
+                new_commands = list(map(Command.from_string, data[1:-1].split(',')))
                 for command in new_commands:
                     command.team = team
                 client_socket.send(self.get_message(team).encode())
@@ -220,7 +220,7 @@ class GameDataServer(GameData):
             self.connected -= 1
 
     def get_message(self, team: int):
-        return '$'.join([''.join(list(map(str, self.entities+self.units))), str(self.get_player_currency(team)), "0"])
+        return '$'.join([''.join(map(str, self.entities+self.units)), self.get_player_currency(team),"0"])
 
     def get_player_currency(self, team: int) -> int:
         if team == 0:
@@ -262,7 +262,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
-        self.ip: str
+        self.ip = "172.18.252.213"
         self.player_team = -1
 
     def connect(self):
@@ -271,11 +271,11 @@ class GameDataClient(GameData):
         sock = socket.socket()
         sock.settimeout(5)
         try:
-            sock.connect(("127.0.0.1", PORT))
+            sock.connect((self.ip, PORT))
             self.connected = True
             print('connected')
             data = sock.recv(1024)
-            self.handle_data(data)
+            self.handle_data(data.decode())
             while self.running:
                 sock.send(str(self.commands).encode())
                 commands = []
@@ -289,11 +289,21 @@ class GameDataClient(GameData):
 
     def handle_data(self, data: str):
         if self.player_team == -1:
-            entities, money, winstate, player = data.split("$")
-            self.player_team = player
+            #entities, money, winstate, player
+            data = data.split("$")
+            entities = data[0]
+            money = data[1]
+            winstate = data[2]
+            player = data[3]
+            self.player_team = int(player)
         else:
-            entities, money, winstate = data.split("$")
+            # entities, money, winstate, player
+            data = data.split("$")
+            entities = data[0]
+            money = data[1]
+            winstate = data[2]
         self.update_player_currency(int(money), self.player_team)
+        entities = entities[1:-1].split(", ")
         entities_to_add = []
         for entity in entities:
             entity = string_to_entity(entity)
