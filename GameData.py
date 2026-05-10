@@ -317,6 +317,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
+        self.units = []
         self.vfx = []
         self.currency = 0
         self.ip = "127.0.0.1"
@@ -363,19 +364,21 @@ class GameDataClient(GameData):
         self.update_player_currency(int(money), self.player_team)
         entities = entities[1:-1].split(", ")
         entities_to_add = []
+
         for entity in entities:
             isNotIn = False
+            isUnit = False
             entity = string_to_entity(entity)
             for ent in self.entities:
                 if ent is not None and ent.id == entity.id:
                     ent.position = entity.position
                     ent.rotation = entity.rotation
-                    isNotIn = True
+                    self.entities.append(ent)
+                    if issubclass(ent, Unit):
+                        self.units.append(ent)
                     break
-            if isNotIn:
-                entities_to_add.append(entity)
-        for ent in entities_to_add:
-            self.entities.append(ent)
+
+
 
     def disconnect(self):
         super().disconnect()
