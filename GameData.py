@@ -190,34 +190,35 @@ class GameDataServer(GameData):
     def connect(self):
         self.connected = False
         self.error = None
-        try:
-            client_socket, client_address = None, None
-            while self.running:
-                try:
-                    (client_socket, client_address) = self.socket.accept()
-                    break
-                except socket.timeout:
-                    pass
-            team = self.set_next_team
-            self.set_next_team = (self.set_next_team+1)%2
-            self.connected += 1
-            print('connected')
-            # while self.running and not self.is_connected():
-            #     client_socket.send(str(self.connected).encode())
-            #     client_socket.recv(1024)
-            client_socket.send((self.get_message(team)+'$'+str(team)).encode())
-            while self.running:
-                data = client_socket.recv(1024).decode()
-                new_commands = list(map(Command.from_string, data[1:-1].split(', '))) if len(data) > 2 else []
-                for command in new_commands:
-                    command.team = team
-                client_socket.send(self.get_message(team).encode())
-                self.set_next_team = team
+        while self.running:
+            try:
+                client_socket, client_address = None, None
+                while self.running:
+                    try:
+                        (client_socket, client_address) = self.socket.accept()
+                        break
+                    except socket.timeout:
+                        pass
+                team = self.set_next_team
+                self.set_next_team = (self.set_next_team+1)%2
+                self.connected += 1
+                print('connected')
+                # while self.running and not self.is_connected():
+                #     client_socket.send(str(self.connected).encode())
+                #     client_socket.recv(1024)
+                client_socket.send((self.get_message(team)+'$'+str(team)).encode())
+                while self.running:
+                    data = client_socket.recv(1024).decode()
+                    new_commands = list(map(Command.from_string, data[1:-1].split(', '))) if len(data) > 2 else []
+                    for command in new_commands:
+                        command.team = team
+                    client_socket.send(self.get_message(team).encode())
+                    self.set_next_team = team
 
-        except socket.error as e:
-            print('error!', e)
-            self.error = e
-            self.connected -= 1
+            except socket.error as e:
+                print('error!', e)
+                self.error = e
+                self.connected -= 1
 
     def get_message(self, team: int):
         return '$'.join([''.join(list(map(str, self.entities+self.units))), str(self.get_player_currency(team)), "0"])

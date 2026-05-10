@@ -1,4 +1,5 @@
 import random
+import threading
 import time
 
 from Entities.Units import Mouse
@@ -34,8 +35,7 @@ def server(game_data: GameDataServer):
         logic_tick(entities, units, grid, logic_data, game_data)
 
 
-if __name__ == '__main__':
-    data = GameDataServer()
+def start_server(data):
     data.async_connect()
     while not data.is_connected():
         # print('still not')
@@ -44,5 +44,14 @@ if __name__ == '__main__':
     while data.is_connected():
         logic_tick(data.get_entities(), data.get_units(), data.grid, logic_data, data)
         time.sleep(0.01)
+
+
+if __name__ == '__main__':
+    server_data = GameDataServer()
+    t = threading.Thread(target=start_server, args=[server_data])
+    t.start()
+    input('press enter to disconnect...')
+    print('disconnecting, this will take about 5 seconds...')
+    server_data.disconnect()
     # print(data.get_error())
 
