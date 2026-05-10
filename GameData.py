@@ -317,6 +317,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
+        self.vfx = []
         self.currency = 0
         self.ip = "127.0.0.1"
         self.player_team = -1
@@ -363,12 +364,16 @@ class GameDataClient(GameData):
         entities = entities[1:-1].split(", ")
         entities_to_add = []
         for entity in entities:
+            isNotIn = False
             entity = string_to_entity(entity)
             for ent in self.entities:
                 if ent is not None and ent.id == entity.id:
                     ent.position = entity.position
                     ent.rotation = entity.rotation
-            entities_to_add.append(entity)
+                    isNotIn = True
+                    break
+            if isNotIn:
+                entities_to_add.append(entity)
         for ent in entities_to_add:
             self.entities.append(ent)
 
