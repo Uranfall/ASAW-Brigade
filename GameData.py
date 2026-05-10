@@ -263,6 +263,7 @@ class GameDataClient(GameData):
         self.error = None
         self.commands = []
         self.entities = []
+        self.currency = 0
         self.ip = "127.0.0.1"
         self.player_team = -1
 
@@ -302,6 +303,7 @@ class GameDataClient(GameData):
             data = data.split("$")
             entities = data[0]
             money = data[1]
+            self.currency = int(money)
             winstate = data[2]
         self.update_player_currency(int(money), self.player_team)
         entities = entities[1:-1].split(", ")

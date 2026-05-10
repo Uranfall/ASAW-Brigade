@@ -28,7 +28,7 @@ def start(game_data: GameDataClient, screen: pygame.display):
         # UI related code
         ui_data = UIData(screen)
         exit_button = Button((0, 220), (100, 40), Text((0, 0), 0, 'Quit', TEXT_RED_CURVE), action=quit_main)
-        player_currency = Text((120, 220), 0, str(game_data.get_player_currency(player_team)) + "$", TEXT_RED_CURVE)
+        player_currency = Text((120, 220), 0, str(game_data.currency) + "$", TEXT_RED_CURVE)
         exit_button.creation_time = 0
         ui_data.add_on_screen_entity(exit_button)
         c_b1 = Button((-130, -220), (100, 40), Text((0, 0), 0, 'Mouse', TEXT_RED_CURVE, size=30), action=create_mouse)
@@ -44,7 +44,7 @@ def start(game_data: GameDataClient, screen: pygame.display):
         run = True
         while run:
             ui_out = ui_tick(ui_data, game_data)
-            player_currency.text = str(game_data.get_player_currency(data.player_team)) + "$"
+            player_currency.text = str(game_data.currency) + "$"
             run = run and ui_out.run
 
 
