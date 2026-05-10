@@ -344,7 +344,7 @@ def main_menu():
         for item in menu_items:
             item.draw(camera)
             if isinstance(item, UIEntity) and item.TRIGGERABLE and \
-                    item.get_progress() > 1 and random.random() < 0.05 * dt:
+                    (item.get_progress() > 1 or item.LIFETIME == math.inf) and random.random() < 0.025 * dt:
                 item.creation_time = time.time()
 
         pygame.display.update()
