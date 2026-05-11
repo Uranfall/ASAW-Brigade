@@ -87,6 +87,7 @@ def run_test(randomized_test: Callable,
         print('log analysis:')
         most_common_info = None
         significant_data = []
+        total_logged = sum(failure_stats.values())
         for data, count in failure_stats.items():
             if most_common_info is None or count > failure_stats[most_common_info]:
                 most_common_info = data
@@ -94,12 +95,12 @@ def run_test(randomized_test: Callable,
                 significant_data.append(data)
         print(f'The data that appeared most in the log is:\n - {most_common_info}:'
               f' {failure_stats[most_common_info]} times '
-              f'({round(failure_stats[most_common_info]/len(failure_stats)*100, 2)}%).')
+              f'({round(failure_stats[most_common_info]/failure*100, 2)}% of the tests failed).')
         if significant_data:
-            print(f'Full list of data that is more than {print_log_threshold*100}% of the log:')
+            print(f'Full list of data that is more than {print_log_threshold*100}% of the test failed:')
             for data in sorted(significant_data, key=lambda d: failure_stats[d], reverse=True):
                 count = failure_stats[data]
-                print(f' - {data}: {count} ({round(count / errors * 100, 2)})%')
+                print(f' - {data}: {count} ({round(count / failure * 100, 2)}%)')
             if len(failure_stats) > len(significant_data) > 0:
                 print(f'Hid {len(failure_stats)-len(significant_data)} data that did not pass the threshold.')
         else:
@@ -110,7 +111,7 @@ def run_test(randomized_test: Callable,
 
 if __name__ == '__main__':
     # run_test(lambda verbose: random.randint(0, 100), amount=1000000)
-    run_test(test_string_to_entity, 'testing string to entity', amount=1000, verbose=True)
+    run_test(test_string_to_entity, 'testing string to entity', amount=10000, verbose=False)
 
 
 
