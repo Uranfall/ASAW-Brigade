@@ -30,7 +30,7 @@ class Unit(Entity):
 
     def __init__(self,
                  # unit_type: str,
-                 position: tuple[int, int],
+                 position: tuple[float, float],
                  rotation: float,
                  team: int,
                  ):

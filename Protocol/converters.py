@@ -1,5 +1,8 @@
 from Entity import Entity
 from graphics.Ground import Ground
+from Entities.Units import *
+from Entities.Bonus import *
+from VFX import *
 
 
 def string_to_entity(string: str) -> Entity:
@@ -12,5 +15,4 @@ def string_to_entity(string: str) -> Entity:
     except TypeError:
         entity = eval(stats['cls']+f'()')
     entity.id = int(stats['uid'])
-    print(entity)
     return entity

@@ -25,7 +25,7 @@ class Entity:
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
     #collision - if a unit can go through the object or not
     def __init__(self,
-                 position: tuple[int, int],
+                 position: tuple[float, float],
                  rotation: float,
                  see_through=False,
                  selected=False,
@@ -81,6 +81,9 @@ class Entity:
 
         camera.screen.blit(img, corner2)  # Put the image onto the screen.
 
-    def __str__(self):
-        return f'<cls{type(self).__name__};uid{self.id};' \
-               f'pos{round(self.position[0],2)},{round(self.position[1],2)};rot{self.rotation}>'
+    def __str__(self, close=True):
+        insides = f'cls{type(self).__name__};uid{self.id};' \
+               f'pos{round(self.position[0],2)},{round(self.position[1],2)};rot{self.rotation}'
+        if close:
+            return f'<{insides}>'
+        return insides
