@@ -15,4 +15,6 @@ def string_to_entity(string: str) -> Entity:
     except TypeError:
         entity = eval(stats['cls']+f'()')
     entity.id = int(stats['uid'])
+    if isinstance(entity, Unit):
+        entity.team = stats['plr']
     return entity

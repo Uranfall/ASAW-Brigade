@@ -32,7 +32,7 @@ class Unit(Entity):
                  # unit_type: str,
                  position: tuple[float, float],
                  rotation: float,
-                 team: int,
+                 team: int = 0,
                  ):
         super().__init__(position, rotation)
         self.target_pos = position
@@ -136,4 +136,6 @@ class Unit(Entity):
             out.append(effect(self.position, rotation))
         return out
 
+    def __str__(self, close=True):
+        return f'<{super().__str__(close=False)};plr{self.team}>'
 

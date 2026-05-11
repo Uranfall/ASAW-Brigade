@@ -21,14 +21,16 @@ def test_string_to_entity(verbose=False):
         entity = entity()
     elif issubclass(entity, Unit):
         entity = entity((random.uniform(-100000, 100000), random.uniform(-100000, 100000)),
-                        random.uniform(-360, 360), False, random.randint(0, 1))
+                        random.uniform(-360, 360),
+                        team=random.randint(0, 1))
     else:
         entity = entity((random.uniform(-100000, 100000), random.uniform(-100000, 100000)),
                         random.uniform(-360, 360))
     test_log.append(entity)
     new_entity = converters.string_to_entity(str(entity))
     if math.dist(new_entity.position, entity.position) > 0.1 or\
-            abs(new_entity.rotation - entity.rotation) > 0.1 or new_entity.id != entity.id:
+            abs(new_entity.rotation - entity.rotation) > 0.1 or new_entity.id != entity.id or \
+            str(entity) != str(new_entity):
         if verbose:
             print(entity, new_entity)
         return False
@@ -75,7 +77,7 @@ def run_test(randomized_test: Callable,
                 else:
                     failure_stats[str(data)] += 1
         test_log.clear()
-    print('\r')
+    print(f'\r{message} is complete.')
     print(f'ran {amount} tests, {failure} failed.\n'
           f'{round(failure/amount*100, 2)}% failure'
           + ('.' if failure == 0 else f', of them {round(errors/failure*100, 2)}% error.'))
@@ -93,25 +95,26 @@ def run_test(randomized_test: Callable,
                 most_common_info = data
             if count/failure >= print_log_threshold:
                 significant_data.append(data)
-        print(f'The data that appeared most in the log is:\n - {most_common_info}:'
+        print(f'\rThe data that appeared most in the log is:\n - {most_common_info}:'
               f' {failure_stats[most_common_info]} times '
-              f'({round(failure_stats[most_common_info]/failure*100, 2)}% of the tests failed).')
+              f'({round(failure_stats[most_common_info]/failure*100, 2)}% of the amount of tests failed).')
         if significant_data:
-            print(f'Full list of data that is more than {print_log_threshold*100}% of the test failed:')
+            print(f'Full list of data that is more than {print_log_threshold*100}% of the amount of tests failed:')
             for data in sorted(significant_data, key=lambda d: failure_stats[d], reverse=True):
                 count = failure_stats[data]
                 print(f' - {data}: {count} ({round(count / failure * 100, 2)}%)')
             if len(failure_stats) > len(significant_data) > 0:
                 print(f'Hid {len(failure_stats)-len(significant_data)} data that did not pass the threshold.')
         else:
-            print(f'No data is more than {print_log_threshold*100}% of the log.')
+            print(f'No data is more than {print_log_threshold*100}% of the amount of tests failed.')
+            print(f'Hid {len(failure_stats)-len(significant_data)}.')
         print('end of log analysis.')
     return failure/amount
 
 
 if __name__ == '__main__':
     # run_test(lambda verbose: random.randint(0, 100), amount=1000000)
-    run_test(test_string_to_entity, 'testing string to entity', amount=10000, verbose=False)
+    run_test(test_string_to_entity, 'testing string to entity', amount=1000, verbose=True)
 
 
 
