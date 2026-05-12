@@ -2,7 +2,7 @@ import pygame
 from Node import Node
 from VFX import Explosion, GunFire, SmokeTrail
 from shared_utility import get_closest_node
-from EntityProps import MouseTail
+from EntityProps import MouseTail, TankExhaustPoint
 from UnitClass import Unit
 from graphics.graphics_utility import Camera
 
@@ -59,6 +59,7 @@ class Tank(Unit):
     IMAGE_SCALE = 1
     DEATH_EFFECTS = [Explosion]
     MUZZLE_DISTANCE = 100
+    RENDER_LAYER = 5
 
     def __init__(self, position: tuple[int, int], rotation: float, selected: bool = False, team: int = 0):
         super().__init__(position, rotation, selected)
@@ -70,4 +71,9 @@ class Tank(Unit):
         self.hitChance = 60
         self.attackRange = 1000
         self.attackTickSpeed = 60
+        self.exhaust = TankExhaustPoint((-30, -100), 0, self)
+
+    def draw(self, camera: Camera):
+        super().draw(camera)
+        self.exhaust.draw(camera)
 

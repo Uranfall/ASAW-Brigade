@@ -16,7 +16,7 @@ class VFX(UIEntity):
     LIFETIME = 20
     RENDER_LAYER = 9
 
-    def __init__(self, position: tuple[int, int], rotation: float, time_offset=0):
+    def __init__(self, position: tuple[float, float], rotation: float, time_offset=0):
         super().__init__(position, rotation, time_offset)
 
 
@@ -28,7 +28,8 @@ class Particle(VFX):
     ROTATION_WIGGLE = 0.0
     DEFAULT_ACCELERATION = 0.0
 
-    def __init__(self, position: tuple[int, int], speed: float, rotation: float = None):
+
+    def __init__(self, position: tuple[float, float], speed: float, rotation: float = None):
         if rotation is None:
             rotation = random.uniform(0, 360)
         super().__init__(position, rotation)
@@ -61,7 +62,8 @@ class Particle(VFX):
 
 class ParticleHaving(VFX):
     NAME = 'PH'
-    def __init__(self, position: tuple[int, int], rotation: float):
+
+    def __init__(self, position: tuple[float, float], rotation: float):
         super().__init__(position, rotation)
         self.particles = []
 
@@ -146,7 +148,7 @@ class ColorfulExplosionParticle(ExplosionParticle):
                              ((255, 0, 0), 360))
     SCALE_CURVE = ValueCurve((30, 0), (20, 0.1), (15, 0.5), (10, 0.8), (0, 1))
 
-    def __init__(self, position: tuple[int, int], speed: float):
+    def __init__(self, position: tuple[float, float], speed: float):
         super().__init__(position, speed)
         self.hue = random.random()*360
         self.value = 1
@@ -219,7 +221,8 @@ class SmokeTrail(ParticleHaving, ShotEffect):
         direction = shared_utility.angle_to_vector(rotation, self.PARTICLE_DISTANCE)
         self.particles = []
         for _ in range(int(distance/self.PARTICLE_DISTANCE)):
-            self.particles.append(self.PARTICLE_TYPE((pos[0], pos[1]), rotation+random.randint(-90, 90)))
+            self.particles.append(self.PARTICLE_TYPE((pos[0], pos[1]),
+                                                     rotation+random.randint(-90, 90)))
             pos[0] += direction[0]
             pos[1] += direction[1]
 
@@ -243,3 +246,31 @@ class BloodSplatter(Explosion):
     SHOOT_OUT_FACTOR = 2
     SHOOT_OUT_CHANCE = 0.4
 
+
+class TankExhaustParticle(Particle):
+    COLOR_CURVE = ValueCurve(((100, 100, 100), 0), ((200, 200, 200), 1))
+    SCALE_CURVE = ValueCurve((1, 0), (2.5, 0.25), (1, 0.8), (0, 1))
+    LIFETIME = 0.5
+    ROTATION_WIGGLE = 5
+    DEFAULT_ACCELERATION = 1
+
+    def __init__(self, position: tuple[float, float], speed: float, rotation: float = 0):
+        super().__init__(position, speed, rotation)
+
+
+class TankExhaust(ParticleHaving):
+    EMISSION_RATE = 50  # particles per second
+    MIN_SPEED = 50
+    MAX_SPEED = 150
+
+    def __init__(self, position: tuple[float, float], rotation: float):
+        super().__init__(position, rotation)
+        self.last_emission = time.time()
+
+    def check_emit(self):
+        if time.time()-self.last_emission > (1+random.random())/2/self.EMISSION_RATE:
+            self.particles.append(TankExhaustParticle(self.position,
+                                                      random.randint(self.MIN_SPEED, self.MAX_SPEED),
+                                                      self.rotation-180+random.randint(-25, 25),
+                                                      ))
+            self.last_emission = time.time()

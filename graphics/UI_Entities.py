@@ -15,7 +15,7 @@ class UIEntity(Entity):
     RENDER_LAYER = 10
     TRIGGERABLE = True
 
-    def __init__(self, position: tuple[int, int], rotation: float, time_offset=0.0):
+    def __init__(self, position: tuple[float, float], rotation: float, time_offset=0.0):
         super().__init__(position, rotation)
         self.creation_time = time.time()+time_offset
         self.collision = False

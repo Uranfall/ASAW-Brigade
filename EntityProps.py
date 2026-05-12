@@ -4,6 +4,7 @@ import pygame.draw
 
 import shared_utility
 from Entity import Entity
+from VFX import TankExhaust
 from graphics.graphics_utility import Camera
 
 
@@ -98,3 +99,13 @@ class MouseTail(GlobalPosEntityProp):
             self.next.draw(camera)
 
 
+class TankExhaustPoint(EntityProp):
+    def __init__(self, relative_position: tuple[int, int], rotation: float, parent: Entity):
+        super().__init__(relative_position, rotation, parent)
+        self.exhaust = TankExhaust(self.get_real_position(), self.rotation)
+
+    def draw(self, camera: Camera):
+        self.exhaust.position = self.get_real_position()
+        self.exhaust.rotation = self.rotation+self.parent.rotation
+        self.exhaust.check_emit()
+        self.exhaust.draw(camera)
