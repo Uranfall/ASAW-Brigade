@@ -115,9 +115,10 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
             game_data.get_unit_by_uid(command.unit_id).target_pos = tuple(map(float, command.data[1:-1].split(',')))
             game_data.get_unit_by_uid(command.unit_id).targetUnit = None
         if command.name == command.SPAWN:
+            print('spawn')
             spawn(game_data, command.team, command.data)
     Entity_Handler(entities, units, grid, logic_data, game_data)
-    if logic_data.tick_counter % 120 == 0:
+    if time.time()-game_data.get_start_time() < 60*5 and logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
         game_data.clean_up_vfx()

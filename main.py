@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame
 import DebugGlobal
@@ -60,6 +61,8 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     DebugGlobal.ui_data = ui_data
     exit_button = Button((0, 220), (100, 40), Text((0, 0), 0, 'Quit', TEXT_RED_CURVE), action=quit_main)
     player_currency = Text((120, 220), 0, str(game_data.get_player_currency(player_team))+"$", TEXT_RED_CURVE)
+    time_left_indicator = Text((-100, 220), 0, "5:00",
+                     TEXT_RED_CURVE)
     exit_button.creation_time = 0
     ui_data.add_on_screen_entity(exit_button)
     c_b1 = Button((-130, -220), (100, 40), Text((0, 0), 0, 'Mouse', TEXT_RED_CURVE, size=30), action=create_mouse)
@@ -71,13 +74,18 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
     ui_data.add_on_screen_entity(c_b3)
     ui_data.add_on_screen_entity(Text((0, -180), 0, 'Creation Menu:', TEXT_RED_CURVE))
     ui_data.add_on_screen_entity(player_currency)
+    ui_data.add_on_screen_entity(time_left_indicator)
 
     run = True
     while run:
-        entities[0].rotation += 45*ui_data.delta_time
         ui_out = ui_tick(ui_data, game_data)
         logic_tick(entities, units, grid, logic_data, game_data)
         player_currency.text = str(game_data.get_player_currency(player_team))+"$"
+
+        # time_left = time.time()-game_data.get_start_time()
+        # time_left_indicator.text = str(int(5-time_left//60 - int(time_left % 60)/60)) + ":"
+        # seconds_left = str(int(60-time_left % 60)).zfill(2)
+        # time_left_indicator.text += seconds_left if seconds_left != '60' else "00"
         run = run and ui_out.run
 
 

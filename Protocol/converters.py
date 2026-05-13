@@ -16,5 +16,5 @@ def string_to_entity(string: str) -> Entity:
         entity = eval(stats['cls']+f'()')
     entity.id = int(stats['uid'])
     if isinstance(entity, Unit):
-        entity.team = stats['plr']
+        entity.team = int(stats['plr'])
     return entity

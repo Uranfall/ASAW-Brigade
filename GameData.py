@@ -1,5 +1,6 @@
 import copy
 import socket
+import time
 from typing import Iterator
 
 from Entity import Entity
@@ -76,6 +77,9 @@ class GameData:
     def update_player_currency(self, update: int, team: int):
         pass
 
+    def get_start_time(self) -> float:
+        pass
+
 
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0: list[tuple[int,int]],
@@ -91,6 +95,7 @@ class GameDataLocal(GameData):
         self.player0_currency = 2000
         self.player1_currency = 2000
         self.commands = []
+        self.start_time = time.time()
 
     def get_layers(self):
         layers = []
@@ -162,6 +167,9 @@ class GameDataLocal(GameData):
             if unit.id == uid:
                 return unit
 
+    def get_start_time(self) -> float:
+        return self.start_time
+
 
 class GameDataServer(GameData):
     def __init__(self):
@@ -186,6 +194,7 @@ class GameDataServer(GameData):
         self.socket.settimeout(5)
         self.threads = []
         self.set_next_team = 0
+        self.start_time = time.time()
 
     def connect(self):
         self.connected = False
@@ -206,13 +215,16 @@ class GameDataServer(GameData):
                 # while self.running and not self.is_connected():
                 #     client_socket.send(str(self.connected).encode())
                 #     client_socket.recv(1024)
+                self.start_time = time.time()
                 client_socket.send((self.get_message(team)+'$'+str(team)).encode())
                 while self.running:
                     data = client_socket.recv(1024).decode()
-                    new_commands = list(map(Command.from_string, data[1:-1].split(', '))) if len(data) > 2 else []
-                    print(new_commands, self.units, self.entities)
+                    new_commands = list(map(lambda c: Command.from_string(c[1:-1]),
+                                            data[1:-1].split(', '))) if len(data) > 2 else []
+                    # print(new_commands, self.units, self.entities)
                     for command in new_commands:
                         command.team = team
+                        self.commands.append(command)
                     client_socket.send(self.get_message(team).encode())
                     self.set_next_team = team
 
@@ -310,6 +322,9 @@ class GameDataServer(GameData):
         for vfx in self.vfx:
             if vfx.get_progress() > 1:
                 self.vfx.remove(vfx)
+
+    def get_start_time(self) -> float:
+        return self.start_time
 
 
 class GameDataClient(GameData):

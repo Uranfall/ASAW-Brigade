@@ -2,6 +2,7 @@ import random
 from typing import Callable
 from Entity import Entity
 from Protocol import converters
+from Protocol.Command import Command
 from graphics.Ground import Ground
 from Entities.Units import *
 from Entities.Bonus import *
@@ -33,6 +34,20 @@ def test_string_to_entity(verbose=False):
             str(entity) != str(new_entity):
         if verbose:
             print(entity, new_entity)
+        return False
+    return True
+
+
+def test_string_to_command(verbose=False):
+    global test_log
+    command = random.choice([Command.SPAWN, Command.ATTACK, Command.GO_TO])
+    test_log.append(command)
+    command = Command(command,
+                      str(random.randint(-100, 100)),
+                      random.randint(-100, 100))
+    test_log.append(command)
+    new_command = Command.from_string(str(command))
+    if str(new_command) != str(command) or new_command.name != command.name or new_command.unit_id != command.unit_id:
         return False
     return True
 
@@ -115,6 +130,7 @@ def run_test(randomized_test: Callable,
 if __name__ == '__main__':
     # run_test(lambda verbose: random.randint(0, 100), amount=1000000)
     run_test(test_string_to_entity, 'testing string to entity', amount=1000, verbose=True)
+    run_test(test_string_to_command, 'testing string to command', amount=1000, verbose=True)
 
 
 

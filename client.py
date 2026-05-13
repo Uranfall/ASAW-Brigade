@@ -16,13 +16,13 @@ def start(game_data: GameDataClient, screen: pygame.display):
             run = False
 
         def create_mouse():
-            game_data.add_command(Command("spawn","mo").__str__())
+            game_data.add_command(Command("spawn",Mouse.NAME).__str__())
 
         def create_soldier():
-            game_data.add_command(Command("spawn","mo").__str__())
+            game_data.add_command(Command("spawn",Soldier.NAME).__str__())
 
         def create_tank():
-            game_data.add_command(Command("spawn","mo").__str__())
+            game_data.add_command(Command("spawn",Tank.NAME).__str__())
 
 
         # UI related code
