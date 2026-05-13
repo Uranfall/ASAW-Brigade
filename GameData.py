@@ -54,7 +54,10 @@ class GameData:
     def disconnect(self):
         self.running = False
         for thread in self.threads:
-            thread.join(timeout=5)
+            try:
+                thread.join(timeout=5)
+            except Exception as e:
+                print(e)
 
     def add_vfx(self, vfx: VFX):
         pass
@@ -219,8 +222,12 @@ class GameDataServer(GameData):
                 client_socket.send((self.get_message(team)+'$'+str(team)).encode())
                 while self.running:
                     data = client_socket.recv(1024).decode()
-                    new_commands = list(map(lambda c: Command.from_string(c[1:-1]),
-                                            data[1:-1].split(', '))) if len(data) > 2 else []
+                    print(data)
+                    if len(data) > 2:
+                        new_commands = list(map(lambda c: Command.from_string(c),
+                                                data[1:-1].split('+'))) if len(data) > 2 else []
+                    else:
+                        new_commands = []
                     # print(new_commands, self.units, self.entities)
                     for command in new_commands:
                         command.team = team
@@ -352,8 +359,9 @@ class GameDataClient(GameData):
             data = sock.recv(1024)
             self.handle_data(data.decode())
             while self.running:
-                sock.send(str(self.commands).encode())
-                self.commands = []
+                cmds = list(self.get_commands())
+                time.sleep(0.01)
+                sock.send(('['+'+'.join(map(str, cmds))+']').encode())
                 data = sock.recv(1024).decode()
                 self.handle_data(data)
 
