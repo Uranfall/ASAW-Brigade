@@ -68,7 +68,7 @@ class Tank(Unit):
         self.speed = 0.25
         self.hp = 150
         self.damage = 50
-        self.hitChance = 60
+        self.hitChance = 80
         self.attackRange = 1000
         self.attackTickSpeed = 60
         self.exhaust = TankExhaustPoint((-30, -100), 0, self)

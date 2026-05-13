@@ -350,11 +350,10 @@ class GameDataClient(GameData):
             self.connected = True
             print('connected')
             data = sock.recv(1024)
-            print(data)
             self.handle_data(data.decode())
             while self.running:
                 sock.send(str(self.commands).encode())
-                commands = []
+                self.commands = []
                 data = sock.recv(1024).decode()
                 self.handle_data(data)
 
@@ -383,11 +382,11 @@ class GameDataClient(GameData):
         rec_entities = entities[1:-1].split(", ")
 
         entities_to_add = []
-        entities_to_remove = self.entities.copy()
         #get recieved entities
         for rec_ent in rec_entities:
             rec_ent = string_to_entity(rec_ent)
             entities_to_add.append(rec_ent)
+            isUnit = False
             if type(rec_ent) is Unit:
                 isUnit = True
 
@@ -396,8 +395,13 @@ class GameDataClient(GameData):
                 if ent is not None and ent.id == rec_ent.id:
                     ent.position = rec_ent.position
                     ent.rotation = rec_ent.rotation
+                    if isUnit:
+                        ent.hp = rec_ent.hp
+                        if ent.hp <= 0:
+                            self.entities.remove(ent)
+                            self.units.remove(ent)
+                            break
                     entities_to_add.remove(rec_ent)
-                    entities_to_remove.remove(ent)
                     break
         for ent in entities_to_add:
             self.entities.append(ent)
@@ -405,10 +409,6 @@ class GameDataClient(GameData):
                 self.units.append(ent)
             if type(ent) is VFX:
                 self.vfx.append(ent)
-        for ent in entities_to_remove:
-            self.entities.remove(ent)
-            if type(ent) is Unit:
-                self.units.remove(ent)
 
 
 
