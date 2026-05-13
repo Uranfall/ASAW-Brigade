@@ -82,10 +82,10 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         logic_tick(entities, units, grid, logic_data, game_data)
         player_currency.text = str(game_data.get_player_currency(player_team))+"$"
 
-        # time_left = time.time()-game_data.get_start_time()
-        # time_left_indicator.text = str(int(5-time_left//60 - int(time_left % 60)/60)) + ":"
-        # seconds_left = str(int(60-time_left % 60)).zfill(2)
-        # time_left_indicator.text += seconds_left if seconds_left != '60' else "00"
+        time_passed = (time.time()-game_data.get_start_time())
+        time_left_indicator.text = str(int(5-time_passed//60 - time_passed % 60/60)) + ":"
+        seconds_left = str(int(60-time_passed % 60) % 60).zfill(2)
+        time_left_indicator.text += seconds_left
         run = run and ui_out.run
 
 
