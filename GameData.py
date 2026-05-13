@@ -373,7 +373,12 @@ class GameDataClient(GameData):
             self.player_team = int(player)
         else:
             # entities, money, winstate, player
+            print(data)
             data = data.split("$")
+            print(data)
+            if data is None or data == [""]:
+                print("none data")
+                return
             entities = data[0]
             money = data[1]
             self.currency = int(money)
