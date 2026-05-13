@@ -352,7 +352,9 @@ class GameDataClient(GameData):
             data = sock.recv(1024)
             self.handle_data(data.decode())
             while self.running:
-                sock.send(str(self.commands).encode())
+                for command in self.commands:
+                    command = command.__str__()
+                sock.send(str(self.commands.copy()).encode())
                 self.commands = []
                 data = sock.recv(1024).decode()
                 self.handle_data(data)
@@ -373,9 +375,7 @@ class GameDataClient(GameData):
             self.player_team = int(player)
         else:
             # entities, money, winstate, player
-            print(data)
             data = data.split("$")
-            print(data)
             if data is None or data == [""]:
                 print("none data")
                 return
