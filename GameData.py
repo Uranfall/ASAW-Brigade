@@ -212,7 +212,9 @@ class GameDataServer(GameData):
                     except socket.timeout:
                         pass
                 team = self.set_next_team
+                print(team)
                 self.set_next_team = (self.set_next_team+1)%2
+                print(self.set_next_team)
                 self.connected += 1
                 print('connected')
                 # while self.running and not self.is_connected():
@@ -222,7 +224,7 @@ class GameDataServer(GameData):
                 client_socket.send((self.get_message(team)+'$'+str(team)).encode())
                 while self.running:
                     data = client_socket.recv(1024).decode()
-                    print(data)
+                    # print(data)
                     if len(data) > 2:
                         new_commands = list(map(lambda c: Command.from_string(c),
                                                 data[1:-1].split('+'))) if len(data) > 2 else []
