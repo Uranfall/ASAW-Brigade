@@ -365,21 +365,37 @@ class GameDataClient(GameData):
             self.currency = int(money)
             winstate = data[2]
         self.update_player_currency(int(money), self.player_team)
-        entities = entities[1:-1].split(", ")
-        entities_to_add = []
+        rec_entities = entities[1:-1].split(", ")
 
-        for entity in entities:
-            isNotIn = False
-            isUnit = False
-            entity = string_to_entity(entity)
+        entities_to_add = []
+        entities_to_remove = self.entities.copy()
+        #get recieved entities
+        for rec_ent in rec_entities:
+            rec_ent = string_to_entity(rec_ent)
+            entities_to_add.append(rec_ent)
+            if type(rec_ent) is Unit:
+                isUnit = True
+
+            #check if it is equal to an existing entity
             for ent in self.entities:
-                if ent is not None and ent.id == entity.id:
-                    ent.position = entity.position
-                    ent.rotation = entity.rotation
-                    self.entities.append(ent)
-                    if issubclass(ent, Unit):
-                        self.units.append(ent)
+                if ent is not None and ent.id == rec_ent.id:
+                    ent.position = rec_ent.position
+                    ent.rotation = rec_ent.rotation
+                    entities_to_add.remove(rec_ent)
+                    entities_to_remove.remove(ent)
                     break
+        for ent in entities_to_add:
+            self.entities.append(ent)
+            if type(ent) is Unit:
+                self.units.append(ent)
+            if type(ent) is VFX:
+                self.vfx.append(ent)
+        for ent in entities_to_remove:
+            self.entities.remove(ent)
+            if type(ent) is Unit:
+                self.units.remove(ent)
+
+
 
 
 
