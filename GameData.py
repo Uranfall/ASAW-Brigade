@@ -99,6 +99,7 @@ class GameDataLocal(GameData):
         self.player1_currency = 2000
         self.commands = []
         self.start_time = time.time()
+        self.player_team = -1
 
     def get_layers(self):
         layers = []
@@ -406,7 +407,7 @@ class GameDataClient(GameData):
                 ent_rmv = self.matching_id(ent, entities_to_remove)
                 entities_to_remove.remove(ent_rmv)
                 #check if unit
-                if issubclass(type(ent), Entity) and ent is not Entity:
+                if isinstance(rec_ent, Unit):
                     if units_to_remove:
                         ent_rmv = self.matching_id(ent, units_to_remove)
                         units_to_remove.remove(ent_rmv)
@@ -416,21 +417,19 @@ class GameDataClient(GameData):
             else:
                 entities_to_add.append(rec_ent)
                 # check if unit
-                if issubclass(type(rec_ent), Entity) and rec_ent is not Entity:
+                if isinstance(rec_ent, Unit):
                     units_to_add.append(rec_ent)
 
         for ent in entities_to_add:
             self.entities.append(ent)
-            if type(ent) is VFX:
+            if isinstance(ent,VFX):
+                print(ent)
                 self.vfx.append(ent)
         for unit in units_to_add:
-            print(unit.__str__() + " add unit")
             self.units.append(unit)
         for ent in entities_to_remove:
-            print(ent.__str__() + " remove ent")
             self.entities.remove(ent)
         for unit in units_to_remove:
-            print(unit.__str__() + " remove unit")
             self.units.remove(unit)
 
 
@@ -445,10 +444,8 @@ class GameDataClient(GameData):
     def find_ent_and_copy(entity1, lst):
         for entity in lst:
             if entity.id == entity1.id:
-                print(entity.__str__())
                 entity.position = entity1.position
                 entity.rotation = entity1.rotation
-                print(entity.__str__())
 
 
     def disconnect(self):
