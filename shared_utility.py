@@ -71,6 +71,13 @@ def get_collision_points(pos:tuple[float, float] | tuple[int, int],
     return [x1, y1, x2, y2]
 
 
+def scale_box(box: list[int], scale: float):
+    center_x = (box[0]+box[2])/2
+    center_y = (box[1]+box[3])/2
+    return [(box[0]-center_x)*scale+center_x, (box[1]-center_y)*scale+center_y,
+            (box[2]-center_x)*scale+center_x, (box[3]-center_y)*scale+center_y]
+
+
 LERP_CASES = {SupportsFloat: (lambda s, e, f, o: float(s) - (float(s) - float(e))*f),
               str: lambda s, e, f, o: s if f < 1 else e,
               Sequence: lambda s, e, f, o:

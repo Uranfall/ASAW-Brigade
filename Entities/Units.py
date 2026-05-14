@@ -14,6 +14,9 @@ class Mouse(Unit):
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.75
     RENDER_LAYER = 4
+    COLLIDER_SCALE = 0.75
+
+    MELEE = True
 
     def __init__(self, position: tuple[int, int], rotation: float, selected: bool = False, team: int = 0):
         super().__init__(position, rotation, selected)
