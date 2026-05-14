@@ -393,37 +393,62 @@ class GameDataClient(GameData):
         self.update_player_currency(int(money), self.player_team)
         rec_entities = entities[1:-1].split(", ")
 
+        entities_to_remove = self.entities.copy()
         entities_to_add = []
+        units_to_remove = self.units.copy()
+        units_to_add = []
         #get recieved entities
         for rec_ent in rec_entities:
             rec_ent = string_to_entity(rec_ent)
-            entities_to_add.append(rec_ent)
-            isUnit = False
-            if type(rec_ent) is Unit:
-                isUnit = True
+            ent = self.matching_id(rec_ent, self.entities)
+            #if is in the existing entity list: update
+            if ent is not None:
+                ent_rmv = self.matching_id(ent, entities_to_remove)
+                entities_to_remove.remove(ent_rmv)
+                #check if unit
+                if issubclass(type(ent), Entity) and ent is not Entity:
+                    if units_to_remove:
+                        ent_rmv = self.matching_id(ent, units_to_remove)
+                        units_to_remove.remove(ent_rmv)
+                    self.find_ent_and_copy(rec_ent, self.units)
+                self.find_ent_and_copy(ent, self.entities)
+            # if isn't in the existing entity list: add
+            else:
+                entities_to_add.append(rec_ent)
+                # check if unit
+                if issubclass(type(rec_ent), Entity) and rec_ent is not Entity:
+                    units_to_add.append(rec_ent)
 
-            #check if it is equal to an existing entity
-            for ent in self.entities:
-                if ent is not None and ent.id == rec_ent.id:
-                    ent.position = rec_ent.position
-                    ent.rotation = rec_ent.rotation
-                    if isUnit:
-                        ent.hp = rec_ent.hp
-                        if ent.hp <= 0:
-                            self.entities.remove(ent)
-                            self.units.remove(ent)
-                            break
-                    entities_to_add.remove(rec_ent)
-                    break
         for ent in entities_to_add:
             self.entities.append(ent)
-            if type(ent) is Unit:
-                self.units.append(ent)
             if type(ent) is VFX:
                 self.vfx.append(ent)
+        for unit in units_to_add:
+            print(unit.__str__() + " add unit")
+            self.units.append(unit)
+        for ent in entities_to_remove:
+            print(ent.__str__() + " remove ent")
+            self.entities.remove(ent)
+        for unit in units_to_remove:
+            print(unit.__str__() + " remove unit")
+            self.units.remove(unit)
 
 
+    @staticmethod
+    def matching_id(entity1: Entity, lst: list[Entity]):
+        for entity in lst:
+            if entity.id == entity1.id:
+                return entity
+        return None
 
+    @staticmethod
+    def find_ent_and_copy(entity1, lst):
+        for entity in lst:
+            if entity.id == entity1.id:
+                print(entity.__str__())
+                entity.position = entity1.position
+                entity.rotation = entity1.rotation
+                print(entity.__str__())
 
 
     def disconnect(self):
