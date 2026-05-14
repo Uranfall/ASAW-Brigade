@@ -73,6 +73,12 @@ def check_unit_current_action(unit: Unit,
             unit.targetUnit = None
     elif unit.MELEE and unit.targetUnit is not None:
         unit.target_pos = unit.targetUnit.position
+    if unit.targetUnit is None:
+        for potential_target in game_data.get_units():
+            if potential_target.team != unit.team and \
+                    is_within_box(potential_target.position, scale_box(unit.get_attack_box(), 0.9)):
+                game_data.commands.append(Command(Command.ATTACK, str(id(potential_target)), id(unit)))
+                break
 
 
 def collision_x(entity: Entity,unit: Unit):
