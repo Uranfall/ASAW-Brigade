@@ -196,7 +196,7 @@ class GameDataServer(GameData):
         self.socket.listen()
         self.socket.settimeout(5)
         self.threads = []
-        self.set_next_team = 0
+        self.next_team = 0
         self.start_time = time.time()
 
     def connect(self):
@@ -211,10 +211,10 @@ class GameDataServer(GameData):
                         break
                     except socket.timeout:
                         pass
-                team = self.set_next_team
+                team = self.next_team
                 print(team)
-                self.set_next_team = (self.set_next_team+1)%2
-                print(self.set_next_team)
+                self.next_team = (self.next_team + 1) % 2
+                print(self.next_team)
                 self.connected += 1
                 print('connected')
                 # while self.running and not self.is_connected():
@@ -235,7 +235,6 @@ class GameDataServer(GameData):
                         command.team = team
                         self.commands.append(command)
                     client_socket.send(self.get_message(team).encode())
-                    self.set_next_team = team
 
             except socket.error as e:
                 print('error!', e)

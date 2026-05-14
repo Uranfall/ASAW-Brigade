@@ -83,7 +83,7 @@ class Entity:
 
     def __str__(self, close=True):
         insides = f'cls{type(self).__name__};uid{self.id};' \
-               f'pos{round(self.position[0],2)},{round(self.position[1],2)};rot{self.rotation}'
+               f'pos{round(self.position[0],4)},{round(self.position[1],4)};rot{self.rotation}'
         if close:
             return f'<{insides}>'
         return insides
