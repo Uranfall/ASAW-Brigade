@@ -28,6 +28,8 @@ class Unit(Entity):
     DEATH_EFFECTS = [BloodSplatter]
     MUZZLE_DISTANCE = 75
 
+    MELEE = False
+
     def __init__(self,
                  # unit_type: str,
                  position: tuple[float, float],
@@ -62,7 +64,7 @@ class Unit(Entity):
         scale = self.IMAGE_SCALE
         img = self.IMAGE
         dimensions = (img.get_width() * scale, img.get_height() * scale)
-        return get_collision_points(self.position, dimensions)
+        return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE)
 
 
     def calc_rotation(self):

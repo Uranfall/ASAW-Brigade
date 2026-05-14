@@ -21,6 +21,7 @@ class Entity:
     SHAPE_SIZE_ADJUST = 0.25
     RENDER_LAYER = 3
 
+    COLLIDER_SCALE = 1.0
 
     #seeThrough - Boolean that checks if you can see through the entity or not, used for ray logic
     #collision - if a unit can go through the object or not
@@ -50,7 +51,7 @@ class Entity:
         scale = self.IMAGE_SCALE
         img = self.IMAGE
         dimensions = (img.get_width() * scale, img.get_height() * scale)
-        return get_collision_points(self.position, dimensions)
+        return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE)
 
     def draw(self, camera: Camera):
         scale = camera(self.IMAGE_SCALE)
