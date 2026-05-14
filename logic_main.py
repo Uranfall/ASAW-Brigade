@@ -1,5 +1,6 @@
 import DebugGlobal
 from Entities.Units import Mouse, Tank, Soldier
+from Protocol.Command import Command
 from logic_utility import *
 import pygame
 import time
@@ -43,8 +44,8 @@ def Entity_Handler(entities: list[Entity],
             check_unit_current_action(unit, entities, units, logic_data, game_data)
     if logic_data.units_to_delete:
         for unit in logic_data.units_to_delete:
-            units.remove(unit)
-            entities.remove(unit)
+            game_data.units.remove(unit)
+            game_data.entities.remove(unit)
         logic_data.units_to_delete = []
     collision_logic(entities, units)
 
@@ -108,7 +109,8 @@ def collision_logic(entities: list[Entity],units: list[Unit]):
 def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGIC_DATA, game_data: GameDataServer):
 
     logic_data.start_new_frame()
-    for command in game_data.get_commands():
+    for command in sorted(game_data.get_commands(), key=lambda c: 0 if c.name == Command.GO_TO else 1):
+        print(command)
         if command.name == command.ATTACK:
             print('attack')
             game_data.get_unit_by_uid(command.unit_id).targetUnit = game_data.get_unit_by_uid(int(command.data))
@@ -124,9 +126,6 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
         game_data.clean_up_vfx()
-
-        print(game_data.get_player_currency(0), game_data.get_player_currency(1))
-
 
 units_to_spawn = {Mouse.NAME: [Mouse, 250], Soldier.NAME: [Soldier, 500], Tank.NAME: [Tank, 1000]}
 
