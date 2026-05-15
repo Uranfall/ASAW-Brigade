@@ -134,7 +134,7 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                         ExpandingCircle(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0.1),
                     ]
                 for unit in selected:
-                    if target is not None and target is Unit and target.team != unit.team:
+                    if target is not None and isinstance(target, Unit) and target.team != unit.team:
                         game_data.add_command(Command(Command.ATTACK, str(target.id), unit.id))
                         game_data.add_command(Command(Command.GO_TO, str(pos), unit.id))
                     else:
