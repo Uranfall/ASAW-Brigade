@@ -1,5 +1,6 @@
 import DebugGlobal
 from Entities.Units import Mouse, Tank, Soldier
+from GlobalVariables import reinforcement_time
 from Protocol.Command import Command
 from logic_utility import *
 import pygame
@@ -129,7 +130,7 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
             print('spawn')
             spawn(game_data, command.team, command.data)
     Entity_Handler(entities, units, grid, logic_data, game_data)
-    if time.time()-game_data.get_start_time() < 60*5 and logic_data.tick_counter % 120 == 0:
+    if time.time()-game_data.get_start_time() < reinforcement_time and logic_data.tick_counter % 120 == 0:
         game_data.update_player_currency(50, 0)
         game_data.update_player_currency(50, 1)
         game_data.clean_up_vfx()

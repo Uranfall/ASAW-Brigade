@@ -4,6 +4,7 @@ import time
 from typing import Iterator
 
 from Entity import Entity
+from GlobalVariables import reinforcement_time
 from Protocol.Command import Command
 from Protocol.Parameters import PORT
 from Protocol.converters import string_to_entity
@@ -81,6 +82,9 @@ class GameData:
         pass
 
     def get_start_time(self) -> float:
+        pass
+
+    def get_win(self) -> int:
         pass
 
 
@@ -174,6 +178,9 @@ class GameDataLocal(GameData):
     def get_start_time(self) -> float:
         return self.start_time
 
+    def is_game_win(self):
+        pass
+
 
 class GameDataServer(GameData):
     def __init__(self):
@@ -243,8 +250,8 @@ class GameDataServer(GameData):
                 self.connected -= 1
 
     def get_message(self, team: int):
-        return '$'.join(['['+', '.join(map(str, self.entities+self.units))+']',
-                         str(self.get_player_currency(team)), "0"])
+        return '$'.join(['['+', '.join(map(str, self.entities+self.units+self.vfx))+']',
+                         str(self.get_player_currency(team)), str(self.get_win())])
 
     def get_player_currency(self, team: int) -> int:
         if team == 0:
@@ -334,6 +341,12 @@ class GameDataServer(GameData):
 
     def get_start_time(self) -> float:
         return self.start_time
+
+    def get_win(self) -> int:
+        if time.time()-self.start_time > reinforcement_time:
+            if self.units and all(map(lambda unit: unit.team == self.units[0].team, self.units)):
+                return self.units[0].team
+        return -1
 
 
 class GameDataClient(GameData):
