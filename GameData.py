@@ -249,6 +249,18 @@ class GameDataServer(GameData):
                 self.error = e
                 self.connected -= 1
 
+    def get_win_state_for(self, team: int):
+        if self.connected < 2:
+            return 4
+        win_state = self.get_win()
+        if win_state == team:
+            return 1
+        if win_state == 1-team:
+            return 2
+        if win_state == -1:
+            return 0
+        return 3
+
     def get_message(self, team: int):
         return '$'.join(['['+', '.join(map(str, self.entities+self.units+self.vfx))+']',
                          str(self.get_player_currency(team)), str(self.get_win())])
@@ -346,6 +358,8 @@ class GameDataServer(GameData):
         if time.time()-self.start_time > reinforcement_time:
             if self.units and all(map(lambda unit: unit.team == self.units[0].team, self.units)):
                 return self.units[0].team
+            if not self.units:
+                return 3
         return -1
 
 
