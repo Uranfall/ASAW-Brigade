@@ -74,6 +74,8 @@ class Unit(Entity):
             target = self.targetUnit.position
         targetX = target[0] - self.position[0]
         targetY = target[1] - self.position[1]
+        if math.dist((targetX, targetY), (0, 0)) < 10:
+            return
         self.rotation = vector_to_angle((targetX, targetY))
 
     def move(self, targetX,targetY,deltatime):
