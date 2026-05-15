@@ -28,6 +28,8 @@ class Unit(Entity):
     DEATH_EFFECTS = [BloodSplatter]
     MUZZLE_DISTANCE = 75
 
+    COLLIDER_SCALE = 0.75
+
     MELEE = False
 
     def __init__(self,

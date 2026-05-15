@@ -14,7 +14,6 @@ class Mouse(Unit):
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.75
     RENDER_LAYER = 4
-    COLLIDER_SCALE = 0.75
 
     MELEE = True
 
