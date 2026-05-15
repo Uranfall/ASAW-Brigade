@@ -173,8 +173,8 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
         for entity in layer:
             entity.draw(ui_data.camera)
 
-            if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit):
-                if (is_within_box(entity.position, selection_box) and isinstance(entity, Unit)):
+            if pygame.mouse.get_pressed()[0] and isinstance(entity, Unit) and entity.team == game_data.get_team():
+                if is_within_box(entity.position, selection_box) and isinstance(entity, Unit):
                     entity.selected = True
                 elif not (pygame.key.get_pressed()[pygame.K_LSHIFT] or
                           pygame.key.get_pressed()[pygame.K_RSHIFT]):

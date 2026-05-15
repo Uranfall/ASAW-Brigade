@@ -3,6 +3,7 @@ import socket
 import time
 from typing import Iterator
 
+import Protocol.communication
 from Entity import Entity
 from GlobalVariables import reinforcement_time
 from Protocol.Command import Command
@@ -85,6 +86,9 @@ class GameData:
         pass
 
     def get_win(self) -> int:
+        pass
+
+    def get_team(self):
         pass
 
 
@@ -181,6 +185,9 @@ class GameDataLocal(GameData):
     def is_game_win(self):
         pass
 
+    def get_team(self):
+        return 1
+
 
 class GameDataServer(GameData):
     def __init__(self):
@@ -220,19 +227,16 @@ class GameDataServer(GameData):
                     except socket.timeout:
                         pass
                 team = self.next_team
-                print(team)
                 self.next_team = (self.next_team + 1) % 2
-                print(self.next_team)
                 self.connected += 1
                 print('connected')
                 # while self.running and not self.is_connected():
                 #     client_socket.send(str(self.connected).encode())
                 #     client_socket.recv(1024)
                 self.start_time = time.time()
-                client_socket.send((self.get_message(team)+'$'+str(team)).encode())
+                Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)))
                 while self.running:
-                    # print(self.get_message(team))
-                    data = client_socket.recv(1024).decode()
+                    data = Protocol.communication.recv_data(client_socket)
                     # print(data)
                     if len(data) > 2:
                         new_commands = list(map(lambda c: Command.from_string(c),
@@ -243,7 +247,7 @@ class GameDataServer(GameData):
                     for command in new_commands:
                         command.team = team
                         self.commands.append(command)
-                    client_socket.send(self.get_message(team).encode())
+                    Protocol.communication.send_data(client_socket, self.get_message(team))
 
             except socket.error as e:
                 print('error!', e)
@@ -263,8 +267,8 @@ class GameDataServer(GameData):
         return 3
 
     def get_message(self, team: int):
-        return '$'.join(['['+', '.join(map(str, self.entities+self.units+self.vfx))+']',
-                         str(self.get_player_currency(team)), str(self.get_win_state_for(team))])
+        return '$'.join(map(str, ('['+', '.join(map(str, self.entities+self.units+self.vfx))+']',
+                                  self.get_player_currency(team), self.get_win_state_for(team))))
 
     def get_player_currency(self, team: int) -> int:
         if team == 0:
@@ -386,13 +390,13 @@ class GameDataClient(GameData):
             sock.connect((self.ip, PORT))
             self.connected = True
             print('connected')
-            data = sock.recv(1024)
-            self.handle_data(data.decode())
+            data = Protocol.communication.recv_data(sock)
+            self.handle_data(data)
             while self.running:
                 cmds = list(self.get_commands())
                 time.sleep(0.01)
-                sock.send(('['+'+'.join(map(str, cmds))+']').encode())
-                data = sock.recv(1024).decode()
+                Protocol.communication.send_data(sock, ('['+'+'.join(map(str, cmds))+']'))
+                data = Protocol.communication.recv_data(sock)
                 self.handle_data(data)
 
         except socket.error as e:
@@ -510,3 +514,6 @@ class GameDataClient(GameData):
         for unit in self.units:
             if unit.id == uid:
                 return unit
+
+    def get_team(self):
+        return self.player_team
