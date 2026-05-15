@@ -231,6 +231,7 @@ class GameDataServer(GameData):
                 self.start_time = time.time()
                 client_socket.send((self.get_message(team)+'$'+str(team)).encode())
                 while self.running:
+                    # print(self.get_message(team))
                     data = client_socket.recv(1024).decode()
                     # print(data)
                     if len(data) > 2:
@@ -263,7 +264,7 @@ class GameDataServer(GameData):
 
     def get_message(self, team: int):
         return '$'.join(['['+', '.join(map(str, self.entities+self.units+self.vfx))+']',
-                         str(self.get_player_currency(team)), str(self.get_win())])
+                         str(self.get_player_currency(team)), str(self.get_win_state_for(team))])
 
     def get_player_currency(self, team: int) -> int:
         if team == 0:
