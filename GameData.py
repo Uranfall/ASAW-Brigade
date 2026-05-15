@@ -389,6 +389,8 @@ class GameDataClient(GameData):
         if self.player_team == -1:
             #entities, money, winstate, player
             data = data.split("$")
+            if len(data)<2:
+                print(data)
             entities = data[0]
             money = data[1]
             winstate = data[2]
@@ -435,9 +437,6 @@ class GameDataClient(GameData):
 
         for ent in entities_to_add:
             self.entities.append(ent)
-            if isinstance(ent,VFX):
-                print(ent)
-                self.vfx.append(ent)
         for unit in units_to_add:
             self.units.append(unit)
         for ent in entities_to_remove:
