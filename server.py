@@ -19,7 +19,7 @@ def start_server(data):
     logic_data = LOGIC_DATA()
     while data.connected:
         logic_tick(data.get_entities(), data.get_units(), data.grid, logic_data, data)
-        time.sleep(0.01)
+        time.sleep(0.05)
 
 
 if __name__ == '__main__':

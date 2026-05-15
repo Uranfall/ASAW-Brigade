@@ -117,13 +117,14 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
     logic_data.start_new_frame()
     for command in sorted(game_data.get_commands(), key=lambda c: 0 if c.name == Command.GO_TO else 1):
         print(command)
-        if command.name == command.ATTACK:
+        selected_unit = game_data.get_unit_by_uid(command.unit_id)
+        if command.name == command.ATTACK and selected_unit is not None:
             print('attack')
-            game_data.get_unit_by_uid(command.unit_id).targetUnit = game_data.get_unit_by_uid(int(command.data))
-        if command.name == command.GO_TO:
+            selected_unit.targetUnit = game_data.get_unit_by_uid(int(command.data))
+        if command.name == command.GO_TO and selected_unit is not None:
             print('move')
-            game_data.get_unit_by_uid(command.unit_id).target_pos = tuple(map(float, command.data[1:-1].split(',')))
-            game_data.get_unit_by_uid(command.unit_id).targetUnit = None
+            selected_unit.target_pos = tuple(map(float, command.data[1:-1].split(',')))
+            selected_unit.targetUnit = None
         if command.name == command.SPAWN:
             print('spawn')
             spawn(game_data, command.team, command.data)
