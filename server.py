@@ -18,8 +18,11 @@ def start_server(data):
         pass
     logic_data = LOGIC_DATA()
     while data.connected:
+        previous_update = time.time()
         logic_tick(data.get_entities(), data.get_units(), data.grid, logic_data, data)
-        time.sleep(0.05)
+        sleep_for = 1/60-(time.time()-previous_update)
+        if sleep_for > 0:
+            time.sleep(sleep_for)
 
 
 if __name__ == '__main__':
