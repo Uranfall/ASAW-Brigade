@@ -30,6 +30,7 @@ def start_server(data):
         print('game ended')
 
 def host_server(IP: str, client_data: GameDataClient):
+    running = True
     server_data = GameDataServer()
     server_data.set_ip(IP)
     t = threading.Thread(target=start_server, args=[server_data])
