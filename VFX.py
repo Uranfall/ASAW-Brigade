@@ -249,22 +249,25 @@ class BloodSplatter(Explosion):
 
 class SmallBloodParticle(Particle):
     COLOR_CURVE = ValueCurve(((175, 50, 50), 0), ((150, 50, 50), 0.2), ((75, 30, 30), 1))
-    SCALE_CURVE = ValueCurve((10, 0), (9, 0.25), (0, 1))
+    SCALE_CURVE = ValueCurve((8, 0), (5, 0.25), (0, 1))
     LIFETIME = 2
     DRAG = 5
 
 
-class SmallBloodSplatter(Explosion):
+class SmallBloodSplatter(ShotEffect, Explosion):
     NAME = "SB"
-    RENDER_LAYER = 1
+    RENDER_LAYER = 4
     PARTICLE_TYPE = SmallBloodParticle
-    FINAL_AMOUNT = 40
-    START_AMOUNT = 25
+    FINAL_AMOUNT = 30
+    START_AMOUNT = 15
     SMOKE_FACTOR = 0.0
-    MAX_SPEED = 100
+    MAX_SPEED = 70
     BURNING_TIME = 0.25
     SHOOT_OUT_FACTOR = 2
     SHOOT_OUT_CHANCE = 0.4
+
+    def __init__(self, position: tuple[int, int], rotation: float, distance=1000):
+        super(Explosion, self).__init__(position, rotation)
 
 
 class TankExhaustParticle(Particle):

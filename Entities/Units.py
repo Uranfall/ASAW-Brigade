@@ -1,6 +1,6 @@
 import pygame
 from Node import Node
-from VFX import Explosion, GunFire, SmokeTrail
+from VFX import Explosion, GunFire, SmokeTrail, SmallBloodSplatter
 from shared_utility import get_closest_node
 from EntityProps import MouseTail, TankExhaustPoint
 from UnitClass import Unit
@@ -13,7 +13,7 @@ class Mouse(Unit):
     IMAGE = pygame.image.load('Sprites/Units/mouse_no_tail.png')
     IMAGE_ROTATION = 90
     IMAGE_SCALE = 0.75
-    RENDER_LAYER = 4
+    SHOOTING_EFFECTS = [SmallBloodSplatter]
 
     MELEE = True
 
@@ -62,6 +62,7 @@ class Tank(Unit):
     DEATH_EFFECTS = [Explosion]
     MUZZLE_DISTANCE = 100
     RENDER_LAYER = 5
+
 
     def __init__(self, position: tuple[int, int], rotation: float, selected: bool = False, team: int = 0):
         super().__init__(position, rotation, selected)
