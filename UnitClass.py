@@ -6,6 +6,7 @@ from typing import Type
 
 import pygame
 import GlobalVariables
+import shared_utility
 from Node import Node
 from VFX import GunFire, BloodSplatter, SmokeTrail, ShotEffect
 from shared_utility import *
@@ -85,7 +86,8 @@ class Unit(Entity):
         currentY = self.position[1]
         if not is_within_box((currentX, currentY),[targetX-100, targetY-100,targetX+100, targetY+100]):
             dx, dy = (targetX - currentX, targetY - currentY)
-            stepX, stepY = (self.speed*dx*deltatime, self.speed*dy*deltatime)
+            stepX, stepY = shared_utility.angle_to_vector(shared_utility.vector_to_angle((dx, dy)),
+                                                          self.speed*deltatime*750)
             self.position = (currentX+stepX, currentY+stepY)
             self.change_rate = [stepX, stepY]
         else:
