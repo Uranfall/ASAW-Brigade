@@ -275,6 +275,7 @@ class SmallBloodSplatter(ShotEffect, Explosion):
 
     def __init__(self, position: tuple[int, int], rotation: float, distance=1000):
         super(Explosion, self).__init__(position, rotation)
+        self.distance = distance
 
 
 class TankExhaustParticle(Particle):
