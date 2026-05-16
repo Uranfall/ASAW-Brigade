@@ -384,6 +384,7 @@ class GameDataClient(GameData):
         self.ip = "127.0.0.1"
         self.player_team = -1
         self.start_time= 0
+        self.win = 0
 
     def connect(self):
         self.connected = False
@@ -399,7 +400,6 @@ class GameDataClient(GameData):
             while len(data)<2:
                 data = Protocol.communication.recv_data(sock)
                 Protocol.communication.send_data(sock, "")
-                print(data)
             self.handle_data(data)
             while self.running:
                 cmds = list(self.get_commands())
@@ -420,9 +420,9 @@ class GameDataClient(GameData):
             entities = data[0]
             money = data[1]
             winstate = data[2]
+            self.win = int(winstate)
             player = data[3]
             self.start_time = float(data[4])
-            print(self.start_time)
             self.player_team = int(player)
         else:
             # entities, money, winstate, player
@@ -434,6 +434,7 @@ class GameDataClient(GameData):
             money = data[1]
             self.currency = int(money)
             winstate = data[2]
+            self.win = int(winstate)
         self.update_player_currency(int(money), self.player_team)
         rec_entities = entities[1:-1].split(", ")
 
@@ -529,3 +530,6 @@ class GameDataClient(GameData):
 
     def get_team(self):
         return self.player_team
+
+    def get_win(self) -> int:
+        return self.win

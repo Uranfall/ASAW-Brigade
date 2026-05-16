@@ -16,5 +16,5 @@ TEXT_RED_CURVE = ValueCurve(((255, 100, 50), 0.1),
                             ((255, 100, 50), 0.8),
                             ((20, 20, 20), 0.9),
                             ((255, 100, 50), 1),)
-reinforcement_time = 60 * 5
-# reinforcement_time = 30
+#reinforcement_time = 60 * 5
+reinforcement_time = 30

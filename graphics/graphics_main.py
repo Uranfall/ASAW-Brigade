@@ -191,13 +191,13 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
 def end_game(wincondtion: int, ui_data: UIData):
     if wincondtion>0:
         if wincondtion == 1:
-            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU WON', [0,255,0], 5))
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU WON', [0,255,0], size = 30))
         if wincondtion == 2:
-            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU LOST', [255,0,0], 5))
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU LOST', [255,0,0], size = 30))
         if wincondtion == 3:
-            ui_data.add_on_screen_entity(Text((0, 0), 0, 'DRAW', [128,128,128], 5))
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'DRAW', [128,128,128], size = 30))
         if wincondtion == 4:
-            ui_data.add_on_screen_entity(Text((0, 0), 0, 'OTHER PLAYER RAGE QUIT', [128,128,128], 5))
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'OTHER PLAYER RAGE QUIT', [128,128,128], size = 30))
 
 def ui_tick(ui_data: UIData, game_data: GameData) -> UITickOut:
     """
@@ -211,5 +211,6 @@ def ui_tick(ui_data: UIData, game_data: GameData) -> UITickOut:
     handle_user_input(ui_data, game_data, out)
     go_over_entities(ui_data, game_data, out)
     ui_data.end_frame()
+    end_game(game_data.get_win(), ui_data)
     return out
 

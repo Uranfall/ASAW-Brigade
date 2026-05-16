@@ -21,10 +21,11 @@ class Mouse(Unit):
         super().__init__(position, rotation, selected)
         self.current_node = None
         self.team = team
-        self.speed = 0.75
+        self.speed = 1
         self.hp = 20
-        self.damage = 3
-        self.attackRange = 150
+        self.damage = 5
+        self.hitChance = 10
+        self.attackRange = 200
         self.attackTickSpeed = 20
         self.tail = MouseTail((0, -70), 180+rotation, self)
 
