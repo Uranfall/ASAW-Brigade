@@ -78,7 +78,7 @@ def check_unit_current_action(unit: Unit,
         for potential_target in game_data.get_units():
             if potential_target.team != unit.team and \
                     is_within_box(potential_target.position, scale_box(unit.get_attack_box(), 0.9)):
-                game_data.commands.append(Command(Command.ATTACK, str(id(potential_target)), id(unit)))
+                game_data.commands.append(Command(Command.ATTACK, str(id(potential_target)), id(unit), unit.team))
                 break
 
 
@@ -119,6 +119,8 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
     for command in sorted(game_data.get_commands(), key=lambda c: 0 if c.name == Command.GO_TO else 1):
         print(command)
         selected_unit = game_data.get_unit_by_uid(command.unit_id)
+        if selected_unit is not None and command.team != selected_unit.team:
+            continue
         if command.name == command.ATTACK and selected_unit is not None:
             print('attack')
             selected_unit.targetUnit = game_data.get_unit_by_uid(int(command.data))

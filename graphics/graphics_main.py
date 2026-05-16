@@ -135,10 +135,10 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
                     ]
                 for unit in selected:
                     if target is not None and isinstance(target, Unit) and target.team != unit.team:
-                        game_data.add_command(Command(Command.ATTACK, str(target.id), unit.id))
-                        game_data.add_command(Command(Command.GO_TO, str(pos), unit.id))
+                        game_data.add_command(Command(Command.ATTACK, str(target.id), unit.id, game_data.get_team()))
+                        game_data.add_command(Command(Command.GO_TO, str(pos), unit.id, game_data.get_team()))
                     else:
-                        game_data.add_command(Command(Command.GO_TO, str(pos), unit.id))
+                        game_data.add_command(Command(Command.GO_TO, str(pos), unit.id, game_data.get_team()))
             else:
                 game_data.add_vfx(Explosion(ui_data.camera.screen_to_global(*pygame.mouse.get_pos()), 0))
 
