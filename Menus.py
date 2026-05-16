@@ -18,7 +18,6 @@ from graphics.graphics_main import UIData, ui_tick
 from graphics.graphics_utility import Camera, CinematicCamera
 from main import main
 from shared_utility import ValueCurve, stepped_interpolation
-from screeninfo import get_monitors
 
 
 class Logo(Entity):

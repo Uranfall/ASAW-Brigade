@@ -84,7 +84,7 @@ def main(screen=pygame.display.set_mode((500, 500), pygame.RESIZABLE)):
         player_currency.text = str(game_data.get_player_currency(player_team))+"$"
 
         time_passed = (time.time()-game_data.get_start_time())
-        time_left_indicator.text = str(int(GlobalVariables.reinforcement_time-time_passed//60
+        time_left_indicator.text = str(int(GlobalVariables.reinforcement_time//60-time_passed//60
                                            - time_passed % 60/60)) + ":"
         seconds_left = str(int(60-time_passed % 60) % 60 - GlobalVariables.reinforcement_time%60).zfill(2)
         time_left_indicator.text += seconds_left

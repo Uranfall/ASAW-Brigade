@@ -178,7 +178,7 @@ class ColorfulFire(ColorfulExplosion):
 class ShotEffect(VFX):
     NAME = 'SX'
 
-    def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
+    def __init__(self, position: tuple[int, int], rotation: float, distance: float=1000.0):
         super().__init__(position, rotation)
         self.distance = distance
 
@@ -224,7 +224,8 @@ class SmokeTrail(ParticleHaving, ShotEffect):
     LIFETIME = 10
 
     def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
-        super().__init__(position, rotation)
+        super(ParticleHaving, self).__init__(position, rotation)
+        self.distance = distance
         pos = list(self.position)
         direction = shared_utility.angle_to_vector(rotation, self.PARTICLE_DISTANCE)
         self.particles = []
