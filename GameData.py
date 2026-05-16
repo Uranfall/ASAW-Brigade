@@ -196,6 +196,7 @@ class GameDataServer(GameData):
         self.entities = map_objects
         self.units = []
         self.grid = grid
+        self.IP = '0.0.0.0'
         self.vfx = []
         self.unit_spawn_points_team0 = unit_spawn_points_team0
         self.unit_spawn_points_team1 = unit_spawn_points_team1
@@ -207,7 +208,7 @@ class GameDataServer(GameData):
         self.connected = 0
         self.error = None
         self.socket = socket.socket()
-        self.socket.bind(('0.0.0.0', PORT))
+        self.socket.bind((self.IP, PORT))
         self.socket.listen()
         self.socket.settimeout(5)
         self.threads = []
@@ -321,6 +322,8 @@ class GameDataServer(GameData):
     def get_grid(self) -> list[list[Node]]:
         return copy.deepcopy(self.grid)
 
+    def set_ip(self, ip: str):
+        self.IP = ip
 
     def update_player_currency(self, update: int, team: int):
         if team==0:
@@ -376,6 +379,7 @@ class GameDataClient(GameData):
         super().__init__()
         self.connected = False
         self.error = None
+        self.host = None
         self.commands = []
         self.entities = []
         self.units = []
@@ -492,6 +496,8 @@ class GameDataClient(GameData):
     def disconnect(self):
         super().disconnect()
         self.connected = False
+        if self.host is not None:
+            self.host.disconnect()
 
     def is_connected(self) -> bool:
         return self.connected
@@ -533,3 +539,6 @@ class GameDataClient(GameData):
 
     def get_win(self) -> int:
         return self.win
+
+    def set_ip(self, ip: str):
+        self.IP = ip

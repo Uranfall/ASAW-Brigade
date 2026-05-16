@@ -4,7 +4,7 @@ import time
 
 from Entities.Units import Mouse
 from Entity import Entity
-from GameData import GameDataServer
+from GameData import GameDataServer, GameDataClient
 from UnitClass import Unit
 from logic_main import logic_tick, LOGIC_DATA
 from map import map_info
@@ -23,6 +23,14 @@ def start_server(data):
         sleep_for = 1/60-(time.time()-previous_update)
         if sleep_for > 0:
             time.sleep(sleep_for)
+
+def host_server(IP: str, client_data: GameDataClient):
+    server_data = GameDataServer()
+    server_data.set_ip(IP)
+    t = threading.Thread(target=start_server, args=[server_data])
+    t.start()
+    client_data.host = server_data
+
 
 
 if __name__ == '__main__':
