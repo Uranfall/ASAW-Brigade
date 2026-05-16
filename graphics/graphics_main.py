@@ -13,7 +13,7 @@ from VFX import Explosion, ColorfulExplosion
 from graphics.UI_Entities import UIEntity, ExpandingCircle, TargetTriangle
 from graphics.graphics_utility import Camera
 from shared_utility import is_within_box, get_closest_node
-from GameData import GameData
+from GameData import GameData, GameDataClient
 
 
 def get_selected_units(entities: Sequence[Entity]) -> Iterable:
@@ -211,6 +211,7 @@ def ui_tick(ui_data: UIData, game_data: GameData) -> UITickOut:
     handle_user_input(ui_data, game_data, out)
     go_over_entities(ui_data, game_data, out)
     ui_data.end_frame()
-    end_game(game_data.get_win(), ui_data)
+    if isinstance(game_data, GameDataClient):
+        end_game(game_data.get_win(), ui_data)
     return out
 
