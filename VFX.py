@@ -213,6 +213,7 @@ class GunFire(Explosion, ShotEffect):
 
     def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
         super().__init__(position, rotation)
+        self.distance = distance
 
 
 class SmokeTrail(ParticleHaving, ShotEffect):
