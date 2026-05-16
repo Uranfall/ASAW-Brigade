@@ -11,9 +11,13 @@ def string_to_entity(string: str) -> Entity:
     for key, value in map(lambda stat: (stat[:3], stat[3:]), list_of_stats):
         stats.update({key: value})
     try:
-        entity = eval(stats['cls']+f'(({stats["pos"]}), {stats["rot"]})')
+        args = [f'({stats["pos"]})', stats["rot"]]
+        entity_type = eval(stats['cls'])
+        if issubclass(entity_type, ShotEffect):
+            args.append(stats['dst'])
+        entity = eval(stats['cls']+f'({", ".join(args)})')
     except TypeError:
-        entity = eval(stats['cls']+f'()')
+        entity = eval(stats['cls'])()
     entity.id = int(stats['uid'])
     if isinstance(entity, Unit):
         entity.team = int(stats['plr'])

@@ -180,6 +180,13 @@ class ShotEffect(VFX):
 
     def __init__(self, position: tuple[int, int], rotation: float, distance=1000.0):
         super().__init__(position, rotation)
+        self.distance = distance
+
+    def __str__(self, close=True):
+        inside = f'{super().__str__(close=False)};dst{self.distance}'
+        if close:
+            return f'<{inside}>'
+        return inside
 
 
 class GunFireParticle(ExplosionParticle):

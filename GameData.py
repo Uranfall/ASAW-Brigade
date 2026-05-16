@@ -232,8 +232,8 @@ class GameDataServer(GameData):
                 print('connected')
                 #waiting lobby
                 while self.running and not self.is_connected():
-                     client_socket.send(str(self.connected).encode())
-                     client_socket.recv(1024)
+                    Protocol.communication.send_data(client_socket, str(self.connected))
+                    time.sleep(0.1)
                 Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)+'$'
                                                                  + str(self.start_time)))
                 while self.running:

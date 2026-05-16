@@ -129,7 +129,6 @@ class Unit(Entity):
         position = self.position[0]+offset[0], self.position[1]+offset[1]
         out = []
         for effect in self.SHOOTING_EFFECTS:
-            print(self.targetUnit.IMAGE_SCALE)
             out.append(effect(position,
                               rotation,
                               math.dist(self.position, self.targetUnit.position)
@@ -145,5 +144,8 @@ class Unit(Entity):
         return out
 
     def __str__(self, close=True):
-        return f'<{super().__str__(close=False)};plr{self.team}>'
+        inside = f'{super().__str__(close=False)};plr{self.team}'
+        if close:
+            return f'<{inside}>'
+        return inside
 
