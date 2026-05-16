@@ -234,7 +234,8 @@ class GameDataServer(GameData):
                 #     client_socket.send(str(self.connected).encode())
                 #     client_socket.recv(1024)
                 self.start_time = time.time()
-                Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)))
+                Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)+'$'
+                                                                 + str(self.start_time)))
                 while self.running:
                     data = Protocol.communication.recv_data(client_socket)
                     # print(data)

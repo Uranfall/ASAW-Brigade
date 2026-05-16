@@ -247,6 +247,26 @@ class BloodSplatter(Explosion):
     SHOOT_OUT_CHANCE = 0.4
 
 
+class SmallBloodParticle(Particle):
+    COLOR_CURVE = ValueCurve(((175, 50, 50), 0), ((150, 50, 50), 0.2), ((75, 30, 30), 1))
+    SCALE_CURVE = ValueCurve((10, 0), (9, 0.25), (0, 1))
+    LIFETIME = 2
+    DRAG = 5
+
+
+class SmallBloodSplatter(Explosion):
+    NAME = "SB"
+    RENDER_LAYER = 1
+    PARTICLE_TYPE = SmallBloodParticle
+    FINAL_AMOUNT = 40
+    START_AMOUNT = 25
+    SMOKE_FACTOR = 0.0
+    MAX_SPEED = 100
+    BURNING_TIME = 0.25
+    SHOOT_OUT_FACTOR = 2
+    SHOOT_OUT_CHANCE = 0.4
+
+
 class TankExhaustParticle(Particle):
     COLOR_CURVE = ValueCurve(((100, 100, 100), 0), ((200, 200, 200), 1))
     SCALE_CURVE = ValueCurve((1, 0), (2.5, 0.25), (1, 0.8), (0, 1))
