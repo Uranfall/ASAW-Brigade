@@ -150,14 +150,14 @@ class GameDataLocal(GameData):
     def shift_player_spawns(self, team: int):
         if team==0:
             point0 = self.unit_spawn_points_team0[0]
-            for x in range(1, len(self.unit_spawn_points_team0) - 1, 1):
+            for x in range(1, len(self.unit_spawn_points_team0)):
                 self.unit_spawn_points_team0[x-1] = self.unit_spawn_points_team0[x]
-            self.unit_spawn_points_team0.append(point0)
+            self.unit_spawn_points_team0[-1] = point0
         elif team==1:
             point0 = self.unit_spawn_points_team1[0]
-            for x in range(1, len(self.unit_spawn_points_team1) - 1, 1):
+            for x in range(1, len(self.unit_spawn_points_team1)):
                 self.unit_spawn_points_team1[x - 1] = self.unit_spawn_points_team1[x]
-            self.unit_spawn_points_team1.append(point0)
+            self.unit_spawn_points_team1[-1] = point0
 
     def add_command(self, command: Command):
         self.commands.append(command)
@@ -336,14 +336,14 @@ class GameDataServer(GameData):
     def shift_player_spawns(self, team: int):
         if team==0:
             point0 = self.unit_spawn_points_team0[0]
-            for x in range(1, len(self.unit_spawn_points_team0) - 1, 1):
+            for x in range(1, len(self.unit_spawn_points_team0)):
                 self.unit_spawn_points_team0[x-1] = self.unit_spawn_points_team0[x]
-            self.unit_spawn_points_team0.append(point0)
+            self.unit_spawn_points_team0[-1] = point0
         elif team==1:
             point0 = self.unit_spawn_points_team1[0]
-            for x in range(1, len(self.unit_spawn_points_team1) - 1, 1):
+            for x in range(1, len(self.unit_spawn_points_team1)):
                 self.unit_spawn_points_team1[x - 1] = self.unit_spawn_points_team1[x]
-            self.unit_spawn_points_team1.append(point0)
+            self.unit_spawn_points_team1[-1] = point0
 
     def add_command(self, command: Command):
         self.commands.append(command)
