@@ -234,6 +234,7 @@ class GameDataServer(GameData):
                 while self.running and not self.is_connected():
                     Protocol.communication.send_data(client_socket, str(self.connected))
                     time.sleep(0.1)
+                self.start_time = time.time()
                 Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)+'$'
                                                                  + str(self.start_time)))
                 while self.running:
