@@ -398,6 +398,7 @@ class GameDataClient(GameData):
             #waiting lobby
             while len(data)<2:
                 data = Protocol.communication.recv_data(sock)
+                Protocol.communication.send_data(sock, "")
                 print(data)
             self.handle_data(data)
             while self.running:
