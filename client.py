@@ -1,5 +1,7 @@
 import pygame
+import time
 
+import GlobalVariables
 from Protocol.Command import Command
 from Entities.Units import Mouse, Soldier, Tank
 from GameData import GameDataClient
@@ -40,11 +42,18 @@ def start(game_data: GameDataClient, screen: pygame.display):
         ui_data.add_on_screen_entity(c_b3)
         ui_data.add_on_screen_entity(Text((0, -180), 0, 'Creation Menu:', TEXT_RED_CURVE))
         ui_data.add_on_screen_entity(player_currency)
+        time_left_indicator = Text((-100, 220), 0, str(GlobalVariables.reinforcement_time),
+                                   TEXT_RED_CURVE)
+        ui_data.add_on_screen_entity(time_left_indicator)
 
         run = True
         while run:
             ui_out = ui_tick(ui_data, game_data)
             player_currency.text = str(game_data.currency) + "$"
+            time_passed = (time.time() - game_data.get_start_time())
+            time_left_indicator.text = str(int(5 - time_passed // 60 - time_passed % 60 / 60)) + ":"
+            seconds_left = str(int(60 - time_passed % 60) % 60).zfill(2)
+            time_left_indicator.text += seconds_left
             run = run and ui_out.run
 
 

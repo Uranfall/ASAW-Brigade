@@ -314,7 +314,7 @@ def main_menu():
     last_update = time.time()
 
     while run:
-        if game_data is not None and game_data.is_connected():
+        if game_data is not None and game_data.is_connected() and game_data.start_time != 0:
             client.start(game_data, camera.screen)
             game_data.disconnect()
             online_menu()

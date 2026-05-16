@@ -230,10 +230,10 @@ class GameDataServer(GameData):
                 self.next_team = (self.next_team + 1) % 2
                 self.connected += 1
                 print('connected')
-                # while self.running and not self.is_connected():
-                #     client_socket.send(str(self.connected).encode())
-                #     client_socket.recv(1024)
-                self.start_time = time.time()
+                #waiting lobby
+                while self.running and not self.is_connected():
+                     client_socket.send(str(self.connected).encode())
+                     client_socket.recv(1024)
                 Protocol.communication.send_data(client_socket, (self.get_message(team)+'$'+str(team)+'$'
                                                                  + str(self.start_time)))
                 while self.running:
@@ -370,6 +370,7 @@ class GameDataServer(GameData):
 
 
 class GameDataClient(GameData):
+
     def __init__(self):
         super().__init__()
         self.connected = False
@@ -381,6 +382,7 @@ class GameDataClient(GameData):
         self.currency = 0
         self.ip = "127.0.0.1"
         self.player_team = -1
+        self.start_time= 0
 
     def connect(self):
         self.connected = False
@@ -391,7 +393,11 @@ class GameDataClient(GameData):
             sock.connect((self.ip, PORT))
             self.connected = True
             print('connected')
-            data = Protocol.communication.recv_data(sock)
+            data = []
+            #waiting lobby
+            while len(data)<2:
+                data = Protocol.communication.recv_data(sock)
+                print(data)
             self.handle_data(data)
             while self.running:
                 cmds = list(self.get_commands())
@@ -409,12 +415,12 @@ class GameDataClient(GameData):
         if self.player_team == -1:
             #entities, money, winstate, player
             data = data.split("$")
-            if len(data)<2:
-                print(data)
             entities = data[0]
             money = data[1]
             winstate = data[2]
             player = data[3]
+            self.start_time = float(data[4])
+            print(self.start_time)
             self.player_team = int(player)
         else:
             # entities, money, winstate, player
@@ -515,6 +521,9 @@ class GameDataClient(GameData):
         for unit in self.units:
             if unit.id == uid:
                 return unit
+
+    def get_start_time(self) -> float:
+        return self.start_time
 
     def get_team(self):
         return self.player_team

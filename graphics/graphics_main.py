@@ -4,6 +4,7 @@ from typing import Sequence, Iterable
 
 import pygame
 
+from graphics.UI_Entities import *
 from Entity import Entity
 from GlobalVariables import FONT
 from Protocol.Command import Command
@@ -187,6 +188,16 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
     game_data.clean_up_vfx()
     return out
 
+def end_game(wincondtion: int, ui_data: UIData):
+    if wincondtion>0:
+        if wincondtion == 1:
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU WON', [0,255,0], 5))
+        if wincondtion == 2:
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU LOST', [255,0,0], 5))
+        if wincondtion == 3:
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'DRAW', [128,128,128], 5))
+        if wincondtion == 4:
+            ui_data.add_on_screen_entity(Text((0, 0), 0, 'OTHER PLAYER RAGE QUIT', [128,128,128], 5))
 
 def ui_tick(ui_data: UIData, game_data: GameData) -> UITickOut:
     """
