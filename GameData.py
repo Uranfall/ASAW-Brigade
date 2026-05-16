@@ -209,18 +209,19 @@ class GameDataServer(GameData):
         self.socket = socket.socket()
         self.socket.bind(('0.0.0.0', PORT))
         self.socket.listen()
-        self.socket.settimeout(5)
+        self.socket.settimeout(1)
         self.threads = []
         self.next_team = 0
         self.start_time = time.time()
+        self.game_end_time = None
 
     def connect(self):
         self.connected = False
         self.error = None
-        while self.running:
+        while self.running and self.start_time == 0:
             try:
                 client_socket, client_address = None, None
-                while self.running:
+                while self.running and self.start_time == 0:
                     try:
                         (client_socket, client_address) = self.socket.accept()
                         break
@@ -250,8 +251,14 @@ class GameDataServer(GameData):
                         command.team = team
                         self.commands.append(command)
                     Protocol.communication.send_data(client_socket, self.get_message(team))
+                    if self.game_end_time is None:
+                        if self.get_win_state_for(team):
+                            self.game_end_time = time.time()
+                    elif time.time() - self.game_end_time > 1:
+                        self.disconnect()
+                        return
 
-            except socket.error as e:
+            except (AttributeError, socket.error) as e:
                 print('error!', e)
                 self.error = e
                 self.connected -= 1
@@ -288,6 +295,7 @@ class GameDataServer(GameData):
     def disconnect(self):
         super().disconnect()
         self.connected = 0
+        self.start_time = 0
 
     def is_connected(self) -> bool:
         return self.connected >= 2
@@ -320,7 +328,6 @@ class GameDataServer(GameData):
 
     def get_grid(self) -> list[list[Node]]:
         return copy.deepcopy(self.grid)
-
 
     def update_player_currency(self, update: int, team: int):
         if team==0:
