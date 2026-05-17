@@ -13,6 +13,11 @@ quality = 200
 
 class GroundChunk(Entity):
 
+    """
+    A peace of ground.
+    Contains multiple images inside of it.
+    """
+
     AVAILABLE_TILES = [
         # pygame.image.load('./Sprites/Tiles/Ground/ground_tile.png'),
         pygame.image.load('./Sprites/Tiles/Ground/grass_tile.png'),
@@ -36,6 +41,9 @@ class GroundChunk(Entity):
 
 
 class NonImageChunk(GroundChunk):
+    """
+    The same piece of ground as GroundChunk but instead of images uses circles.
+    """
 
     def __init__(self, position: tuple[int, int]):
         super().__init__(position)
@@ -53,6 +61,12 @@ class NonImageChunk(GroundChunk):
 
 class Ground(Entity):
     RENDER_LAYER = 0
+
+    """
+    Contains ground chunks.
+    Renders them only when the camera can see them and then stores them in memory so they stay consistent.
+    The chunks are stored on server so both clients will see a slightly different ground.
+    """
 
     def __init__(self, position: tuple[int, int]=(0, 0)):
         super().__init__(position, 0)

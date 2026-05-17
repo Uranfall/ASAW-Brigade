@@ -2,6 +2,10 @@
 
 class Command:
 
+    """
+    Any input from the client that the server needs to know about.
+    """
+
     GO_TO = 'go_to'
     TARGET = 'target' #sends unit id and unit id for the targeted unit
     ATTACK = 'attack' #unit made a successful attack against another, send unit id of the hit unit and damage

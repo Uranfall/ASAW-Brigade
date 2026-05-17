@@ -9,6 +9,10 @@ from graphics.graphics_utility import Camera
 
 
 class EntityProp(Entity):
+    """
+    Entities that are linked to other entities.
+    Like the tail of a mouse or the exhaust of a tank.
+    """
     def __init__(self, relative_position: tuple[int, int], rotation: float, parent: Entity):
         super().__init__(relative_position, rotation)
         self.parent = parent
@@ -34,10 +38,17 @@ class GlobalPosEntityProp(EntityProp):
         self.position = super().get_real_position()
 
     def get_real_position(self):
+        """
+        Gets the non-relative position of the prop.
+        """
         return self.position
 
 
 class MouseTail(GlobalPosEntityProp):
+
+    """
+    The tail of a mouse.
+    """
 
     SEGMENT_COUNT = 20
     SEGMENT_WIDTH_CURVE = shared_utility.ValueCurve((10, 0), (8, 0.6), (1, 1))

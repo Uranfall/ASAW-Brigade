@@ -91,7 +91,7 @@ class GameData:
     def get_team(self):
         pass
 
-
+# single player game data, handles storing information
 class GameDataLocal(GameData):
     def __init__(self, entities: list[Entity], units: list[Unit], grid: list[list[Node]], unit_spawn_points_team0: list[tuple[int,int]],
                  unit_spawn_points_team1: list[tuple[int,int]], grid_size):

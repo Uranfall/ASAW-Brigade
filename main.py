@@ -7,7 +7,6 @@ import GlobalVariables
 from Entities.Units import *
 from GlobalVariables import TEXT_RED_CURVE
 from Protocol.Command import Command
-from Unit_AI import a_star
 from graphics.UI_Entities import Button, Text
 from shared_utility import get_closest_node
 from VFX import Explosion

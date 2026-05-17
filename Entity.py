@@ -10,6 +10,10 @@ from graphics.graphics_utility import Camera
 
 
 class Entity:
+    """
+    Any object that is rendered or that can interacted with in the game.
+    This includes all units, obstacles, explosions and ui elements.
+    """
     NAME = 'DE'
 
     IMAGE: pygame.image = pygame.image.load("./Sprites/PlaceHolders/place_holder.png")
@@ -34,7 +38,7 @@ class Entity:
                  unique_id: int = None):
         self.position = position
         self.rotation = rotation
-        self.collision_points = self.set_collision_points()
+        self.collision_points = self.get_collision_points()
         self.see_through = see_through
         self.collision = collision
         if unique_id is None:
@@ -42,19 +46,19 @@ class Entity:
         else:
             self.id = unique_id
 
-    def set_collision_points(self):
-        scale = self.IMAGE_SCALE
-        img = self.IMAGE
-        dimensions = (img.get_width() * scale, img.get_height() * scale)
-        return get_collision_points(self.position, dimensions)
-
     def get_collision_points(self, multiply=1.0):
+        """
+        Get the position and dimentions of the square containing the entity.
+        """
         scale = self.IMAGE_SCALE
         img = self.IMAGE
         dimensions = (img.get_width() * scale, img.get_height() * scale)
         return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE*multiply)
 
     def draw(self, camera: Camera):
+        """
+        Puts the entity on screen using according to the transforms of the camera.
+        """
         scale = camera(self.IMAGE_SCALE)
         img = self.IMAGE
         dimensions = (img.get_width()*scale, img.get_height()*scale)
@@ -84,6 +88,9 @@ class Entity:
         camera.screen.blit(img, corner2)  # Put the image onto the screen.
 
     def __str__(self, close=True):
+        """
+        Turns the entity into string before it's send to server.
+        """
         insides = f'cls{type(self).__name__};uid{self.id};' \
                f'pos{round(self.position[0],4)},{round(self.position[1],4)};rot{self.rotation}'
         if close:

@@ -3,9 +3,15 @@ from graphics.Ground import Ground
 from Entities.Units import *
 from Entities.Bonus import *
 from VFX import *
+from Entities.Entities import *
 
 
 def string_to_entity(string: str) -> Entity:
+
+    """
+    Gets a string in the format of Entity.__str__() and turns it into an entity.
+    """
+
     list_of_stats = string[1:-1].split(';')
     stats = dict()
     for key, value in map(lambda stat: (stat[:3], stat[3:]), list_of_stats):

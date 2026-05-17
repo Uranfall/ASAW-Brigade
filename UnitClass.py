@@ -21,7 +21,7 @@ def shot_fired(hit_chance: int):
     else:
         return False
 
-
+# class for the units in the game
 class Unit(Entity):
     NAME = 'DefaultUnit'
 
@@ -69,7 +69,7 @@ class Unit(Entity):
         dimensions = (img.get_width() * scale, img.get_height() * scale)
         return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE*multiply)
 
-
+    #makes the unit face it's destination
     def calc_rotation(self):
         #for self: when we add unit targeting, check if enemy is in range
         target = self.target_pos
@@ -81,6 +81,7 @@ class Unit(Entity):
             return
         self.rotation = vector_to_angle((targetX, targetY))
 
+    #moves the unit a certain amount
     def move(self, targetX,targetY,deltatime):
         currentX = self.position[0]
         currentY = self.position[1]

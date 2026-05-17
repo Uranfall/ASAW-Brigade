@@ -36,6 +36,9 @@ class Camera:
             if len(args) != 1 else args[0]*zoom
 
     def screen_to_global(self, *args: float):
+        """
+        Gets position on the screen and outputs the position on the map.
+        """
         zoom = self.get_zoom()
         size = self.screen.get_size()[0]/2, -self.screen.get_size()[1]/2
         args = invert_y(*args)
@@ -49,7 +52,7 @@ class Camera:
 
     def adjust_zoom(self,
                     amount: float,
-                    mouse_pos: tuple[float, float] | list[float, float] = None):
+                    mouse_pos: tuple[float, float] = None):
         """
         Zooms towards/away-from the mouse.
         """
@@ -71,16 +74,26 @@ class Camera:
         self.position[1] += offset[1]
 
     def adjust_position(self, amount: list[float, float], multiply=1):
+        """
+        Lets user adjust position without overwriting the variable completely.
+        Useful in cases where you only need to preview the new position, like when the user moves the camera.
+        """
         amount = invert_y(*amount)
         self.tmp_offset[0] = amount[0]*multiply/self.get_zoom()
         self.tmp_offset[1] = amount[1]*multiply/self.get_zoom()
 
     def apply(self):
+        """
+        Applies the adjusted position.
+        """
         self.position[0] += self.tmp_offset[0]
         self.position[1] += self.tmp_offset[1]
         self.tmp_offset = [0, 0]
 
     def render(self):
+        """
+        Show the entities drawn using the camera on screen.
+        """
         if self.linked_entities:
             static_camera = Camera([0, 0], 1, self.screen)
             for linked_entity in self.linked_entities:
@@ -91,6 +104,9 @@ class Camera:
 
 
 class CinematicCamera(Camera):
+    """
+    Allows cool animations.
+    """
     def __init__(self,
                  position: list[float, float],
                  zoom: float,
@@ -103,6 +119,9 @@ class CinematicCamera(Camera):
         self.progress = 0
 
     def animate(self, dt: float):
+        """
+        Responsible for smoothly moving the camera.
+        """
         if self.target_position is not None:
             self.position = lerp(self.position, self.target_position, min(dt*10, 1))
         if self.keyframes is not None:

@@ -46,15 +46,26 @@ class UIData:
         self.input_checks = []
 
     def add_on_screen_entity(self, entity: UIEntity,):
+        """
+        Link an entity with the camera so it's always rendered in the same spot on the screen.
+        This is helpful for making buttons that should move with the button.
+        """
         self.input_checks.extend(entity.get_checks())
         self.camera.linked_entities.append(entity)
 
     def start_new_frame(self, fps=60.0):
+        """
+        Readies the screen for the next frame.
+        """
         self.clock.tick(fps)
         self.delta_time = time.time()-self.previous_frame
         self.previous_frame = time.time()
 
     def end_frame(self):
+        """
+        Shows the screen to the player after all things are rendered.
+        Also shows the FPS.
+        """
         text_surface = FONT.render(str(self.clock.get_fps()), False, (0, 0, 0))
         self.screen.blit(text_surface, (0, 0))
         self.camera.render()
@@ -79,6 +90,10 @@ class UIData:
         return min(start[0], end[0]), min(start[1], end[1]), max(start[0], end[0]), max(start[1], end[1])
 
     def update_ui_entities(self):
+        """
+        Deletes ui entities assigned to the UIData that are expired.
+        Also draws them on the screen.
+        """
         for entity in self.ui_entities[:]:
             if entity.get_progress() > 1:
                 self.ui_entities.remove(entity)
@@ -95,7 +110,10 @@ class UITickOut:
 
 
 def get_closest_entity_to(pos, units):
-    closest: tuple[float, Unit] | None = None
+    """
+    Gets a position and returns the closest entity.
+    """
+    closest = None
     for unit in units:
         if closest is None or closest[0] > math.dist(pos, unit.position):
             closest = math.dist(pos, unit.position), unit
@@ -103,6 +121,9 @@ def get_closest_entity_to(pos, units):
 
 
 def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
+    """
+    Gets all pygame events and reacts to them.
+    """
     entities = game_data.get_entities()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -168,6 +189,10 @@ def handle_user_input(ui_data: UIData, game_data: GameData, out: UITickOut):
 
 
 def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
+    """
+    Renders all the entities sorted by their RENDER_LAYER property.
+    Also handles unit selection.
+    """
     selection_box = ui_data.get_selection_box()
 
     for layer in game_data.get_layers():
@@ -189,6 +214,9 @@ def go_over_entities(ui_data: UIData, game_data: GameData, out: UITickOut):
     return out
 
 def end_game(wincondtion: int, ui_data: UIData):
+    """
+    Displays the proper text when the game ends.
+    """
     if wincondtion>0:
         if wincondtion == 1:
             ui_data.add_on_screen_entity(Text((0, 0), 0, 'YOU WON', [0,255,0], size = 30))
