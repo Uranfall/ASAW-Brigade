@@ -1,3 +1,4 @@
+from Entities.Entities import Burrito, WoodenBox, Barrel
 from Entity import Entity
 from graphics.Ground import Ground
 from logic_utility import create_grid
@@ -6,7 +7,11 @@ from logic_utility import check_walkable
 
 #this is going to be the map with all the relavent information such as: entities (walls and stuff like that), grid, etc.
 def map_info():
-    map_entities: list[Entity] = [Entity((10, 10), 0, 1, False), Entity((0, 0), 0, 1, False)]
+    map_entities: list[Entity] = [Entity((10, 10), 0, 1, False),
+                                  Entity((0, 0), 0, 1, False),
+                                  Burrito((1000, 100), 0, 1, False),
+                                  WoodenBox((-1000, -100), 5, 1, False),
+                                  Barrel((500, 200), -2, 1, False)]
     unit_spawn_points_team0 = [[-500, -1500], [0, -1500], [500, -1500]]
     unit_spawn_points_team1 = [[-500, 1500], [0, 1500], [500, 1500]]
     GRID_SIZE = 10
