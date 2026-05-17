@@ -140,17 +140,28 @@ def logic_tick(entities: list[Entity], units: list[Unit], grid, logic_data: LOGI
 units_to_spawn = {Mouse.NAME: [Mouse, 250], Soldier.NAME: [Soldier, 500], Tank.NAME: [Tank, 1000]}
 
 
-def spawn(game_data, player_team, unit: str):
-    if units_to_spawn[unit] is None:
+def spawn(game_data, player_team, unit_spawn_info: str):
+    if units_to_spawn[unit_spawn_info] is None:
         return
-    unit = units_to_spawn[unit]
+    unit_spawn_info = units_to_spawn[unit_spawn_info]
     spawn_points = game_data.get_player_spawns(player_team)
     money = game_data.get_player_currency(player_team)
-    if money >= 250:
-        game_data.update_player_currency(-unit[1], player_team)
-        newUnit = unit[0](spawn_points[0], 90, False, player_team)
-        newUnit.current_node = get_closest_node(newUnit.get_position(), game_data.get_grid())
-        newUnit.target_node = newUnit.current_node
+    if money >= unit_spawn_info[1]:
+        game_data.update_player_currency(-unit_spawn_info[1], player_team)
+        newUnit = unit_spawn_info[0](spawn_points[0], 90, False, player_team)
+        while True:
+            for entity in game_data.get_entities():
+                if entity.collision and \
+                        boxes_overlap(newUnit.get_collision_points(multiply=2), entity.get_collision_points(multiply=2)):
+                    move_amount = 100
+                    while boxes_overlap(newUnit.get_collision_points(multiply=2), entity.get_collision_points(multiply=2)):
+                        new_pos = newUnit.get_position()[0]+random.uniform(-move_amount, move_amount), \
+                                  newUnit.get_position()[1]+random.uniform(-move_amount, move_amount)
+                        newUnit.set_position(new_pos)
+                        move_amount += 100
+                    break
+            else:
+                break
         # add unit
         game_data.units.append(newUnit)
         game_data.entities.append(newUnit)

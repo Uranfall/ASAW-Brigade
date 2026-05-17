@@ -63,11 +63,11 @@ class Unit(Entity):
 
     def get_attack_box(self):
         return [self.position[0]-self.attackRange, self.position[1]-self.attackRange, self.position[0]+self.attackRange, self.position[1]+self.attackRange]
-    def get_collision_points(self):
+    def get_collision_points(self, multiply=1.0):
         scale = self.IMAGE_SCALE
         img = self.IMAGE
         dimensions = (img.get_width() * scale, img.get_height() * scale)
-        return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE)
+        return scale_box(get_collision_points(self.position, dimensions), self.COLLIDER_SCALE*multiply)
 
 
     def calc_rotation(self):
